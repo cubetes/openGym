@@ -97,6 +97,7 @@
      the clear pair is for round buttons over a photo, with a dim layer for bright pictures. */
   --glass-bg:color-mix(in srgb,var(--bg-el) 74%,transparent);
   --glass-bg-bar:color-mix(in srgb,var(--bg) 74%,transparent);   /* pinned bars sit on the page, not on a card */
+  --glass-bg-tab:color-mix(in srgb,var(--bg-el) 58%,transparent);   /* the floating tab bar: thinner, so the page shows through (phone check) */
   --sheet-bg:color-mix(in srgb,var(--bg-el) 94%,transparent);
   --glass-blur:saturate(180%) blur(20px);
   --glass-bg-clear:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.35)),color-mix(in srgb,var(--bg-el) 58%,transparent);
@@ -3004,7 +3005,7 @@ body.no-tabbar.resting #toast{bottom:calc(100px + var(--sab))}
    keeps its size, so only the compositor works while it shrinks. */
 :root[data-platform="ios"] #tabbar::before,:root[data-platform="ios"] #tabbar::after{content:"";position:absolute;left:0;right:0;bottom:0;height:calc(100% + var(--rh));border-radius:calc(var(--bh)/2);pointer-events:none;
   clip-path:inset(-40px round 32px);transition:height var(--mt) var(--spring-soft),clip-path var(--mt) var(--spring-soft)}
-:root[data-platform="ios"] #tabbar::before{z-index:-1;background:var(--glass-bg);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+:root[data-platform="ios"] #tabbar::before{z-index:-1;background:var(--glass-bg-tab);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
   box-shadow:var(--glass-edge),var(--glass-shadow)}
 :root[data-platform="ios"] #tabbar.min::before,:root[data-platform="ios"] #tabbar.min::after{clip-path:inset(var(--dh) calc(100vw - 32px - var(--mw)) 0 0 round 32px)}   /* the shadow goes with the full bar */
 :root[data-platform="ios"] #tabbar [role="tablist"]{display:contents}
@@ -3326,7 +3327,7 @@ body.no-tabbar.resting #toast{bottom:calc(100px + var(--sab))}
    setting, the media query may not reach WKWebView), no backdrop-filter, no color-mix (Safari 15, tokens only). */
 @media (prefers-reduced-transparency: reduce),(prefers-contrast: more){
   :root:root{
-    --glass-bg:var(--bg-el);--glass-bg-bar:var(--bg);--sheet-bg:var(--bg-el);--glass-bg-clear:var(--bg-el);
+    --glass-bg:var(--bg-el);--glass-bg-tab:var(--bg-el);--glass-bg-bar:var(--bg);--sheet-bg:var(--bg-el);--glass-bg-clear:var(--bg-el);
     --glass-blur:none;--glass-blur-clear:none;--glass-shadow:none;
     --glass-edge:inset 0 0 0 1px var(--sep-op);
     --glass-lens:var(--surface-2);--glass-lens-edge:inset 0 0 0 1px var(--sep);--glass-prom-edge:none;
@@ -3336,20 +3337,20 @@ body.no-tabbar.resting #toast{bottom:calc(100px + var(--sab))}
   :root:root{--glass-edge:inset 0 0 0 1px var(--sep);--glass-label:var(--label);--glass-lens-edge:inset 0 0 0 1.5px var(--label)}
 }
 :root:root[data-reduce-transparency]{
-  --glass-bg:var(--bg-el);--glass-bg-bar:var(--bg);--sheet-bg:var(--bg-el);--glass-bg-clear:var(--bg-el);
+  --glass-bg:var(--bg-el);--glass-bg-tab:var(--bg-el);--glass-bg-bar:var(--bg);--sheet-bg:var(--bg-el);--glass-bg-clear:var(--bg-el);
   --glass-blur:none;--glass-blur-clear:none;--glass-shadow:none;
   --glass-edge:inset 0 0 0 1px var(--sep-op);
   --glass-lens:var(--surface-2);--glass-lens-edge:inset 0 0 0 1px var(--sep);--glass-prom-edge:none;
 }
 @supports not (color:color-mix(in srgb,red 50%,blue)){
   :root,:root[data-theme="light"]{
-    --glass-bg:var(--bg-el);--glass-bg-bar:var(--bg);--sheet-bg:var(--bg-el);--glass-bg-clear:var(--bg-el);
+    --glass-bg:var(--bg-el);--glass-bg-tab:var(--bg-el);--glass-bg-bar:var(--bg);--sheet-bg:var(--bg-el);--glass-bg-clear:var(--bg-el);
     --glass-edge:inset 0 0 0 1px var(--sep-op);
   }
 }
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   :root:root{
-    --glass-bg:var(--bg-el);--glass-bg-bar:var(--bg);--sheet-bg:var(--bg-el);--glass-bg-clear:var(--bg-el);
+    --glass-bg:var(--bg-el);--glass-bg-tab:var(--bg-el);--glass-bg-bar:var(--bg);--sheet-bg:var(--bg-el);--glass-bg-clear:var(--bg-el);
     --glass-blur:none;--glass-blur-clear:none;--glass-shadow:none;
     --glass-edge:inset 0 0 0 1px var(--sep-op);
     --glass-lens:var(--surface-2);--glass-lens-edge:inset 0 0 0 1px var(--sep);--glass-prom-edge:none;
