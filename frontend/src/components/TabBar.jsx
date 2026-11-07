@@ -40,10 +40,15 @@ function RunName({ start, pausedAt }) {
 
 // How long a press on Start is held before it opens the picker instead (#930).
 export const START_HOLD_MS = 450
+// The disc starts to shrink after this, so a tap never sees it and a hold reads as charging up.
+export const START_HOLDING_MS = 150
 
 export default function TabBar({ onStart, onPick }) {
   const nav = useNavigate()
   const hold = useRef(null)
+  const holdingT = useRef(null)
+  const [holding, setHolding] = useState(false)
+  useEffect(() => () => { clearTimeout(hold.current); clearTimeout(holdingT.current) }, [])
   const loc = useLocation()
   const S = useStore(s => s.S)
   const user = useStore(s => s.user)
@@ -189,13 +194,20 @@ export default function TabBar({ onStart, onPick }) {
   const holdStart = () => {
     if (S.active || !onPick) return
     clearTimeout(hold.current)
+    clearTimeout(holdingT.current)
+    holdingT.current = setTimeout(() => setHolding(true), START_HOLDING_MS)
     hold.current = setTimeout(() => {
       hold.current = 'fired'
+      setHolding(false)
       try { navigator.vibrate?.(10) } catch { /* no vibration here */ }
       onPick()
     }, ios ? 500 : START_HOLD_MS)   // 500 ms is the iPhone's own long press
   }
-  const holdEnd = () => { if (hold.current !== 'fired') { clearTimeout(hold.current); hold.current = null } }
+  const holdEnd = () => {
+    clearTimeout(holdingT.current)
+    setHolding(false)
+    if (hold.current !== 'fired') { clearTimeout(hold.current); hold.current = null }
+  }
   const startProps = {
     'data-tour': 'start', onClick: startWorkout,
     onPointerDown: holdStart, onPointerUp: holdEnd, onPointerLeave: holdEnd, onPointerCancel: holdEnd,
@@ -211,7 +223,7 @@ export default function TabBar({ onStart, onPick }) {
         <div role="tablist" aria-label={t('Sections')}>{tabs.slice(0, 2)}</div>
         {/* Start is an action, not a section: it sits between the two lists, outside both. Its
             name carries the word and the running time; the orb's own text is for the eye. */}
-        <button {...startProps} className={'orb' + (S.active ? ' rec' : '')} aria-keyshortcuts="Shift+Enter"
+        <button {...startProps} className={'orb' + (holding ? ' holding' : '') + (S.active ? ' rec' : '')} aria-keyshortcuts="Shift+Enter"
           aria-label={S.active ? undefined : t('Start workout')}
           onKeyDown={e => { if (e.key === 'Enter' && e.shiftKey && !S.active && onPick) { e.preventDefault(); onPick() } }}>
           <span className="cir" aria-hidden="true">{running ? <span className="t"><Elapsed start={S.active.start} pausedAt={S.active.pausedAt} /></span> : <Icon name="play" />}</span>
@@ -240,7 +252,7 @@ export default function TabBar({ onStart, onPick }) {
           A live session you stepped away from shows its running time instead of a word, the
           button still named Resume; a past workout being edited or logged after the fact has no
           clock to run. */}
-      <button {...startProps} className={'start' + (S.active ? ' rec' : '') + (S.active && cur === 'workout' ? ' on' : '')}
+      <button {...startProps} className={'start' + (holding ? ' holding' : '') + (S.active ? ' rec' : '') + (S.active && cur === 'workout' ? ' on' : '')}
         aria-label={running ? t('Resume') : undefined}>
         <span className="cir"><Icon name="play" /></span>
         {running ? <span className="tab-time"><Elapsed start={S.active.start} pausedAt={S.active.pausedAt} /></span>
