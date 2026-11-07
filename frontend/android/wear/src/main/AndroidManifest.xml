@@ -3,6 +3,8 @@
 
     <uses-feature android:name="android.hardware.type.watch" />
 
+    <!-- The rest-over alarm to the second where the watch allows it; else it comes "while idle", a little late in Doze. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -47,6 +49,9 @@
             android:name=".WorkoutService"
             android:exported="false"
             android:foregroundServiceType="health" />
+
+        <!-- The rest's end with the app asleep: an alarm buzzes (RestOverReceiver). Explicit, not exported. -->
+        <receiver android:name=".RestOverReceiver" android:exported="false" />
 
         <!-- What the phone sends: the workout snapshot and the exercises' stills (data items) and "open the app" (a message). -->
         <service

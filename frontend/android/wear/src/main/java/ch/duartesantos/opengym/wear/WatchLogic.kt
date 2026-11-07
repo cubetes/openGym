@@ -171,6 +171,14 @@ data class Keypad(val decimals: Int, val text: String = "") {
 object RestMath {
     const val STEP_MS = 15_000L
 
+    /**
+     * Whether the rest-over buzz for the rest ending at `alarm` is still due: that rest is the one
+     * running (`running`, the saved end; not skipped or moved) and nobody buzzed for it yet
+     * (`buzzed`). The app's own timer and the alarm behind it (RestOverReceiver) both ask, so a
+     * rest buzzes once.
+     */
+    fun buzzDue(running: Long?, alarm: Long, buzzed: Long?) = alarm > 0 && running == alarm && buzzed != alarm
+
     /** The rest's end after −15 s, or null when that is the end of it (a Skip, as on the phone). */
     fun minus(end: Long, now: Long, by: Long = STEP_MS): Long? = (end - by).takeIf { it - now >= 1000 }
 

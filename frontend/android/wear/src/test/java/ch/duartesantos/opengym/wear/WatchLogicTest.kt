@@ -403,6 +403,15 @@ class WatchLogicTest {
         assertEquals(1234.0, WireJson.decodeFromString(ActiveWorkout.serializer(), newer).activeAt!!, 0.0)
     }
 
+    @Test fun aRestBuzzesOnceWhicheverOfTheAppAndTheAlarmComesFirst() {
+        assertTrue("the rest running, nobody buzzed", RestMath.buzzDue(running = 90_000, alarm = 90_000, buzzed = null))
+        assertFalse("already buzzed for it", RestMath.buzzDue(running = 90_000, alarm = 90_000, buzzed = 90_000))
+        assertTrue("a buzz for an earlier rest does not count", RestMath.buzzDue(running = 90_000, alarm = 90_000, buzzed = 30_000))
+        assertFalse("skipped: no rest running", RestMath.buzzDue(running = null, alarm = 90_000, buzzed = null))
+        assertFalse("moved by ±15: the old alarm is not this rest's", RestMath.buzzDue(running = 105_000, alarm = 90_000, buzzed = null))
+        assertFalse(RestMath.buzzDue(running = 0, alarm = 0, buzzed = null))
+    }
+
     /* ---------- SensorPlanTests.swift: the heart-rate sensor rests in a workout nobody finishes ---------- */
 
     private val h = 3600.0 * 1000
