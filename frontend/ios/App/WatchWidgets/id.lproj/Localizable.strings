@@ -28,6 +28,7 @@
 "Start without weighing in" = "Mulailah tanpa menimbang";
 "Body weight" = "Berat badan";
 "Effort" = "Tingkat usaha";
+"Muscles" = "Otot";
 "None" = "Tidak ada";
 "Exercises" = "Daftar Latihan";
 "Save" = "Simpan";
@@ -98,3 +99,6 @@
 "Set %lld · %@ is lost" = "Set %lld · %@ hilang";
 "Set %lld removed" = "Set %lld dihapus";
 "at the end" = "di akhir";
+"No sets yet" = "Belum ada set";
+"+%lld more" = "+%lld lagi";
+"%@ sets" = "%@ set";

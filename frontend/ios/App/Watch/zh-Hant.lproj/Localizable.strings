@@ -28,6 +28,7 @@
 "Start without weighing in" = "不量體重直接開始";
 "Body weight" = "體重";
 "Effort" = "強度表現";
+"Muscles" = "肌肉";
 "None" = "無";
 "Exercises" = "動作庫";
 "Save" = "儲存";
@@ -98,3 +99,6 @@
 "Set %lld · %@ is lost" = "第 %lld 組 · %@ 將遺失";
 "Set %lld removed" = "已刪除第 %lld 組";
 "at the end" = "在末尾";
+"No sets yet" = "還沒有組";
+"+%lld more" = "還有 %lld 個";
+"%@ sets" = "%@ 組";

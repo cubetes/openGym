@@ -28,6 +28,7 @@
 "Start without weighing in" = "Bắt đầu không cần cân";
 "Body weight" = "Thể trọng";
 "Effort" = "Độ gắng sức";
+"Muscles" = "Nhóm cơ";
 "None" = "Không";
 "Exercises" = "Bài tập";
 "Save" = "Lưu";
@@ -98,3 +99,6 @@
 "Set %lld · %@ is lost" = "Hiệp %lld · %@ sẽ mất";
 "Set %lld removed" = "Đã xóa hiệp %lld";
 "at the end" = "ở cuối";
+"No sets yet" = "Chưa có hiệp nào";
+"+%lld more" = "+%lld nữa";
+"%@ sets" = "%@ hiệp";

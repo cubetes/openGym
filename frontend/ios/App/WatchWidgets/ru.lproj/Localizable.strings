@@ -28,6 +28,7 @@
 "Start without weighing in" = "Начать без взвешивания";
 "Body weight" = "Вес тела";
 "Effort" = "Усилие";
+"Muscles" = "Мышцы";
 "None" = "Нет";
 "Exercises" = "Упражнения";
 "Save" = "Сохранить";
@@ -98,3 +99,6 @@
 "Set %lld · %@ is lost" = "Подход %lld · %@ будет потерян";
 "Set %lld removed" = "Подход %lld удалён";
 "at the end" = "в конце";
+"No sets yet" = "Подходов пока нет";
+"+%lld more" = "ещё %lld";
+"%@ sets" = "Подходов: %@";

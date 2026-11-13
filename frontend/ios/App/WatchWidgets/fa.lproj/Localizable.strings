@@ -28,6 +28,7 @@
 "Start without weighing in" = "شروع بدون وزن‌کشی";
 "Body weight" = "وزن بدن";
 "Effort" = "شدت";
+"Muscles" = "عضلات";
 "None" = "هیچ‌کدام";
 "Exercises" = "تمرینات";
 "Save" = "ذخیره";
@@ -98,3 +99,6 @@
 "Set %lld · %@ is lost" = "ست %lld · %@ از بین می‌رود";
 "Set %lld removed" = "ست %lld حذف شد";
 "at the end" = "در آخر";
+"No sets yet" = "هنوز ستی نیست";
+"+%lld more" = "+%lld مورد دیگر";
+"%@ sets" = "%@ ست";

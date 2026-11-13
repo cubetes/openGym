@@ -28,6 +28,7 @@
 "Start without weighing in" = "ওজন না মেপেই শুরু করুন";
 "Body weight" = "শরীরের ওজন";
 "Effort" = "পরিশ্রম";
+"Muscles" = "পেশি";
 "None" = "কিছু না";
 "Exercises" = "ব্যায়াম";
 "Save" = "সেভ করুন";
@@ -98,3 +99,6 @@
 "Set %lld · %@ is lost" = "সেট %lld · %@ হারিয়ে যাবে";
 "Set %lld removed" = "সেট %lld সরানো হয়েছে";
 "at the end" = "শেষে";
+"No sets yet" = "এখনো কোনো সেট নেই";
+"+%lld more" = "+%lld আরও";
+"%@ sets" = "%@ সেট";

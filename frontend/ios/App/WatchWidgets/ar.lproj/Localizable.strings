@@ -28,6 +28,7 @@
 "Start without weighing in" = "بدء دون تسجيل الوزن";
 "Body weight" = "وزن الجسم";
 "Effort" = "الجهد";
+"Muscles" = "العضلات";
 "None" = "بدون";
 "Exercises" = "التمارين";
 "Save" = "حفظ";
@@ -98,3 +99,6 @@
 "Set %lld · %@ is lost" = "المجموعة %lld · %@ ستُفقد";
 "Set %lld removed" = "تمت إزالة المجموعة %lld";
 "at the end" = "في النهاية";
+"No sets yet" = "لا مجموعات بعد";
+"+%lld more" = "+%lld أخرى";
+"%@ sets" = "%@ مجموعات";

@@ -28,6 +28,7 @@
 "Start without weighing in" = "Starta utan att väga in";
 "Body weight" = "Kroppsvikt";
 "Effort" = "Ansträngning";
+"Muscles" = "Muskler";
 "None" = "Ingen";
 "Exercises" = "Övningar";
 "Save" = "Spara";
@@ -98,3 +99,6 @@
 "Set %lld · %@ is lost" = "Set %lld · %@ går förlorat";
 "Set %lld removed" = "Set %lld borttaget";
 "at the end" = "på slutet";
+"No sets yet" = "Inga set än";
+"+%lld more" = "+%lld till";
+"%@ sets" = "%@ set";

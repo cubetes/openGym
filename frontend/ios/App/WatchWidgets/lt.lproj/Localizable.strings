@@ -28,6 +28,7 @@
 "Start without weighing in" = "Pradėti neįsvertus";
 "Body weight" = "Kūno svoris";
 "Effort" = "Pastangos";
+"Muscles" = "Raumenys";
 "None" = "Nėra";
 "Exercises" = "Pratimai";
 "Save" = "Išsaugoti";
@@ -98,3 +99,6 @@
 "Set %lld · %@ is lost" = "%lld serija · %@ bus prarasta";
 "Set %lld removed" = "Pašalinta %lld serija";
 "at the end" = "pabaigoje";
+"No sets yet" = "Dar nėra serijų";
+"+%lld more" = "+%lld daugiau";
+"%@ sets" = "Serijų: %@";

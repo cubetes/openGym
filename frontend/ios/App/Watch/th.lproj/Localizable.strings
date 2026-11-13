@@ -28,6 +28,7 @@
 "Start without weighing in" = "เริ่มโดยไม่ชั่งน้ำหนัก";
 "Body weight" = "น้ำหนักตัว";
 "Effort" = "ความหนัก";
+"Muscles" = "กล้ามเนื้อ";
 "None" = "ไม่มี";
 "Exercises" = "ท่าออกกำลังกาย";
 "Save" = "บันทึก";
@@ -98,3 +99,6 @@
 "Set %lld · %@ is lost" = "เซต %lld · %@ จะหายไป";
 "Set %lld removed" = "ลบเซต %lld แล้ว";
 "at the end" = "ท้ายสุด";
+"No sets yet" = "ยังไม่มีเซ็ต";
+"+%lld more" = "+%lld อื่นๆ";
+"%@ sets" = "%@ เซ็ต";

@@ -28,6 +28,7 @@
 "Start without weighing in" = "Почати без зважування";
 "Body weight" = "Вага тіла";
 "Effort" = "Зусилля";
+"Muscles" = "М’язи";
 "None" = "Немає";
 "Exercises" = "Вправи";
 "Save" = "Зберегти";
@@ -98,3 +99,6 @@
 "Set %lld · %@ is lost" = "Підхід %lld · %@ буде втрачено";
 "Set %lld removed" = "Підхід %lld видалено";
 "at the end" = "у кінці";
+"No sets yet" = "Підходів ще немає";
+"+%lld more" = "ще %lld";
+"%@ sets" = "Підходів: %@";

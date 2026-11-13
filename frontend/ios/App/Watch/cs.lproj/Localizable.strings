@@ -28,6 +28,7 @@
 "Start without weighing in" = "Začít bez vážení";
 "Body weight" = "Tělesná váha";
 "Effort" = "Náročnost";
+"Muscles" = "Svaly";
 "None" = "Žádná";
 "Exercises" = "Cviky";
 "Save" = "Uložit";
@@ -98,3 +99,6 @@
 "Set %lld · %@ is lost" = "Série %lld · %@ se ztratí";
 "Set %lld removed" = "Série %lld odebrána";
 "at the end" = "na konci";
+"No sets yet" = "Zatím žádné série";
+"+%lld more" = "+%lld další";
+"%@ sets" = "Sérií: %@";

@@ -28,6 +28,7 @@
 "Start without weighing in" = "Zacznij bez ważenia";
 "Body weight" = "Masa ciała";
 "Effort" = "Wysiłek";
+"Muscles" = "Mięśnie";
 "None" = "Brak";
 "Exercises" = "Ćwiczenia";
 "Save" = "Zapisz";
@@ -98,3 +99,6 @@
 "Set %lld · %@ is lost" = "Seria %lld · %@ zniknie";
 "Set %lld removed" = "Usunięto serię %lld";
 "at the end" = "na końcu";
+"No sets yet" = "Jeszcze bez serii";
+"+%lld more" = "+%lld więcej";
+"%@ sets" = "Serie: %@";
