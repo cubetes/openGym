@@ -64,6 +64,9 @@ object WearStore {
     val summary: StateFlow<WorkoutSummary?> = _summary
     private val _heartRate = MutableStateFlow<Int?>(null)
     val heartRate: StateFlow<Int?> = _heartRate
+    // heartRate skips equal values; this counts every reading so the Pulse page redraws on each
+    private val _readingCount = MutableStateFlow(0)
+    val readingCount: StateFlow<Int> = _readingCount
     /** Whether the phone is connected right now. */
     val phoneNear = MutableStateFlow(true)
 
@@ -775,6 +778,7 @@ object WearStore {
         _heartRate.value = bpm
         readings.addLast(at to bpm)
         while (readings.size > 20_000) readings.removeFirst()
+        _readingCount.value++
     }
 
     // The calories stay with the workout: an exercise restarted mid-workout adds to them (KcalCount).
@@ -789,6 +793,8 @@ object WearStore {
 
     /** A new Health Services exercise starts (counting from zero) for the running workout. */
     fun startCalories() { kcal.start(_state.value.workout?.id); _calories.value = kcal.value }
+    /** The workout's heart-rate readings so far (time, bpm), for the Pulse page. */
+    fun heartSamples(): List<Pair<Long, Int>> = readings.toList()
 
     /**
      * A set ticked on the phone: measured here like a tick on the wrist, from when the set started
