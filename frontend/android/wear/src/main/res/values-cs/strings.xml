@@ -67,7 +67,7 @@
     <string name="n_sets">Sérií: %1$s</string>
     <string name="next_set_btn">Další série</string>
     <string name="no_age_set">Věk není nastaven</string>
-    <string name="no_effort_yet">Zatím žádná namáhavost</string>
+    <string name="no_effort_yet">Zatím žádné hodnocení náročnosti</string>
     <string name="no_set_for">Už %1$d min žádná série. Pořád cvičíš?</string>
     <string name="no_sets_yet">Zatím žádné série</string>
     <string name="no_workout">Žádný trénink neběží</string>
