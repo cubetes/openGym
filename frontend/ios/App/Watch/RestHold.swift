@@ -158,7 +158,7 @@ struct RestView: View {
                     Spacer(minLength: 4)
                     if name { RestReadouts() } // with the chips the load needs the width; the time is on Metrics
                 }
-                if name && !typeSize.isAccessibilitySize {
+                if name { // at accessibility sizes too: the countdown above gives way (it fills what is left)
                     Group {
                         if let side = store.sideUp {
                             Text("\(e.name), set \(Int64(SetNav.place(e, si).n))") + Text(verbatim: " · ")
