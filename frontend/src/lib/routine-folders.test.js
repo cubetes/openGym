@@ -2,7 +2,7 @@
 import { t } from './i18n-core.js'
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
-  cleanFolder, foldersOf, groupRoutines, isArchive, folderOpen, setFolderOpen,
+  cleanFolder, foldersOf, groupRoutines, isArchive,
   isLive, activeRoutines, folderList, currentFolder, setCurrent, createFolder, renameFolder, removeFolder, moveToFolder, reorderFolders,
 } from './routine-folders.js'
 
@@ -23,15 +23,7 @@ describe('routine folders', () => {
     expect(g[1].routines.map(x => x.id)).toEqual(['a', 'd'])
     expect(foldersOf(list)).toEqual(['Block 2', 'Archive'])
   })
-  it('folds the archive by default and remembers what was left open', () => {
-    expect(isArchive('archive')).toBe(true)
-    expect(folderOpen('Archive', {})).toBe(false)
-    expect(folderOpen('Push', {})).toBe(true)
-    setFolderOpen('Archive', true)
-    expect(folderOpen('Archive')).toBe(true)
-    setFolderOpen('Push', false)
-    expect(folderOpen('push')).toBe(false)
-  })
+  it('knows the reserved Archive name', () => expect(isArchive('archive')).toBe(true))
 
   describe('the synced folder list', () => {
     const draft = () => ({

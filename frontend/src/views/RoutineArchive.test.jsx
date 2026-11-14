@@ -56,6 +56,10 @@ describe('Archive screen', () => {
     expect([...host.querySelectorAll('.arch-folder .grow, .arch-routine .tt')].map(e => e.textContent))
       .toEqual(['Block 2', 'Old push', 'Old pull', 'Loose old'])
     expect(host.textContent).not.toContain('Live one')
+    // the loose ones sit in their own card under a caption, not under the last folder
+    const cards = [...host.querySelectorAll('.plan-group')]
+    expect(cards.map(c => c.textContent.includes('Loose old'))).toEqual([false, true])
+    expect(host.textContent).toContain('Not in a folder')
     const back = host.querySelector('[data-back="/plan"]')
     expect(back.getAttribute('aria-label')).toBe('Plan')
     click(back)

@@ -128,18 +128,3 @@ export function reorderFolders(s, from, to) {
   list.splice(to, 0, ...list.splice(from, 1))
   s.routineFolders = list
 }
-
-const KEY = 'og_plan_folders'
-function readOpen() {
-  try { const v = JSON.parse(localStorage.getItem(KEY) || '{}'); return v && typeof v === 'object' && !Array.isArray(v) ? v : {} } catch (e) { return {} }
-}
-/** Whether a folder shows its routines on this device: as last left, else open (the archive folded). */
-export function folderOpen(name, saved = readOpen()) {
-  const k = cleanFolder(name).toLowerCase()
-  return typeof saved[k] === 'boolean' ? saved[k] : !isArchive(name)
-}
-export function setFolderOpen(name, open) {
-  const saved = readOpen()
-  saved[cleanFolder(name).toLowerCase()] = !!open
-  try { localStorage.setItem(KEY, JSON.stringify(saved)) } catch (e) { /* not remembered then */ }
-}

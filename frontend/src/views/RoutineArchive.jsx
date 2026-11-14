@@ -1,6 +1,5 @@
 // Plan → Archive (docs/dev/ROUTINE_FOLDERS.md): archived folders as headers with their routines,
 // then the loose archived ones. Restore and Delete for good, each delete naming what it takes.
-import { Fragment } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store/useStore.js'
 import { useUI } from '../store/useUI.js'
@@ -14,6 +13,7 @@ import Icon from '../components/Icon.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 import RoutineTile from '../components/RoutineTile.jsx'
 import { withUndo } from '../components/RoutineMenus.jsx'
+import { MoreButton } from '../components/RoutineRow.jsx'
 
 const update = fn => useStore.getState().update(fn)
 
@@ -42,9 +42,6 @@ function folderMenu(name, ids) {
     { icon: 'trash', label: t('Delete folder for good'), danger: true, onClick: () => deleteForGood(ids, routineCount(ids.length), t('“{0}” and its routines gone.', name)) },
   ] }] })
 }
-
-const MoreButton = ({ name, onClick }) => <button type="button" className="plan-more" aria-label={t('More for {0}', said(name))}
-  onClick={e => { e.stopPropagation(); onClick() }}><Icon name="more" /></button>
 
 const restoreOne = r => { update(s => { restoreRoutines(s, [r.id]) }); restored(r.name) }
 
@@ -75,16 +72,18 @@ export default function RoutineArchive() {
       </div>
     </div>
     {archived.length ? <>
-      <div className="list plan-group routine-list plan-routines">
-        {folders.map(g => <Fragment key={g.folder}>
-          <div className="plan-folder-bar arch-folder">
-            <span className="plan-folder"><Icon name="folder" /><span className="grow">{g.folder}</span><span className="n">{g.routines.length}</span></span>
-            <MoreButton name={g.folder} onClick={() => folderMenu(g.folder, g.routines.map(r => r.id))} />
-          </div>
-          {rows(g.routines)}
-        </Fragment>)}
-        {rows(loose.routines)}
-      </div>
+      {/* One card per archived folder, then the loose ones in their own, so they never read as part of the last folder. */}
+      {folders.map(g => <div key={g.folder} className="list plan-group routine-list plan-routines">
+        <div className="plan-folder-bar arch-folder">
+          <span className="plan-folder"><Icon name="folder" /><span className="grow">{g.folder}</span><span className="n">{g.routines.length}</span></span>
+          <MoreButton name={g.folder} onClick={() => folderMenu(g.folder, g.routines.map(r => r.id))} />
+        </div>
+        {rows(g.routines)}
+      </div>)}
+      {loose.routines.length > 0 && <>
+        {folders.length > 0 && <h4 className="sec plan-hdr">{t('Not in a folder')}</h4>}
+        <div className="list plan-group routine-list plan-routines">{rows(loose.routines)}</div>
+      </>}
       <button type="button" className="arch-delete-all" onClick={() => deleteForGood(archived.map(r => r.id), all, t('{0} deleted.', all))}>
         {t('Delete all {0} for good', archived.length)}</button>
     </> : <EmptyState icon="archive" title={t('Nothing archived.')} />}
