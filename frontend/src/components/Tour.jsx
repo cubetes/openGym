@@ -568,7 +568,8 @@ function Run({ at, flow = 'tour' }) {
         <p id="tour-b">{body}</p>
         <div className="tour-acts">
           {i > 0 && <Button size="sm" onClick={() => go(-1)}>{t('Back')}</Button>}
-          <Button size="sm" variant="primary" onClick={() => go(1)}>{t('Next')}</Button>
+          {/* A way on (step.go) is the user's own action: Next would skip it and leave no routine made. */}
+          {!step.go && <Button size="sm" variant="primary" onClick={() => go(1)}>{t('Next')}</Button>}
         </div>
       </div>
     </div>
