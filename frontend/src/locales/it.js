@@ -5956,4 +5956,8 @@ export default {
   "“{0}” restored.": "«{0}» ripristinata.",
   "{0} deleted.": "{0} eliminate.",
   "Nothing archived.": "Niente in archivio.",
+  "Starred": "Con stella",
+  "Not in a folder": "Fuori da una cartella",
+  "No starred routines yet.": "Ancora nessuna routine con la stella.",
+  "Show all routines": "Mostra tutte le routine",
 }

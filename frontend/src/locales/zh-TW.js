@@ -5939,4 +5939,8 @@ export default {
   "“{0}” restored.": "已還原「{0}」。",
   "{0} deleted.": "已刪除{0}。",
   "Nothing archived.": "封存裡沒有內容。",
+  "Starred": "已加星號",
+  "Not in a folder": "不在資料夾中",
+  "No starred routines yet.": "還沒有加星號的例行訓練。",
+  "Show all routines": "顯示所有例行訓練",
 }

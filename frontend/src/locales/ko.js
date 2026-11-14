@@ -5946,4 +5946,8 @@ export default {
   "“{0}” restored.": "“{0}” 복원했어요.",
   "{0} deleted.": "{0} 삭제했어요.",
   "Nothing archived.": "보관된 항목이 없어요.",
+  "Starred": "별표",
+  "Not in a folder": "폴더 없음",
+  "No starred routines yet.": "별표한 루틴이 아직 없어요.",
+  "Show all routines": "루틴 모두 보기",
 }

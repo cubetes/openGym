@@ -5,6 +5,7 @@ import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Plan from './Plan.jsx'
+import { menuSheet } from '../sheets.jsx'
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
@@ -24,7 +25,7 @@ vi.mock('../store/useStore.js', () => {
 })
 vi.mock('react-router-dom', () => ({ useNavigate: () => (...a) => mocks.nav(...a) }))
 vi.mock('../lib/mobile.js', () => ({ MOBILE: false, isAndroid: () => Promise.resolve(false), shareExport: vi.fn(), syncReminder: vi.fn() }))
-vi.mock('../sheets.jsx', () => ({ starterPlanSheet: vi.fn(), dayAssignSheet: vi.fn() }))
+vi.mock('../sheets.jsx', () => ({ starterPlanSheet: vi.fn(), dayAssignSheet: vi.fn(), menuSheet: vi.fn() }))
 
 let host, root
 beforeEach(() => {
@@ -50,13 +51,23 @@ describe('Plan with no routines', () => {
 })
 
 describe('Plan new routine colour', () => {
-  it('gives a new routine a colour the loose routines do not use', () => {
+  it('gives a new routine a colour the loose routines do not use (New in the pill)', () => {
     mocks.S.routines = [{ id: 'a', name: 'A', ex: [], color: 'blue' }]
     localStorage.setItem('gym_plan_view', 'routines')
     act(() => root.render(<Plan />))
-    act(() => [...host.querySelectorAll('button')].find(b => b.textContent.includes('New routine')).click())
+    act(() => host.querySelector('.plan-pill-new').click())
+    act(() => menuSheet.mock.lastCall[0].items[0].onClick())
     const made = mocks.S.routines.find(r => r.id !== 'a')
     expect(made.color).toBeTruthy()
     expect(made.color).not.toBe('blue')
+  })
+})
+
+describe('Routines tab with no routines', () => {
+  it('shows the empty state and still has New in the pill', () => {
+    localStorage.setItem('gym_plan_view', 'routines')
+    act(() => root.render(<Plan />))
+    expect(host.textContent).toContain('No routines yet.')
+    expect(host.querySelector('.plan-pill-new')).toBeTruthy()
   })
 })

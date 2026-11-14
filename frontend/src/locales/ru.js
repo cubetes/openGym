@@ -5950,4 +5950,8 @@ export default {
   "“{0}” restored.": "«{0}» восстановлена.",
   "{0} deleted.": "Удалено: {0}.",
   "Nothing archived.": "В архиве ничего нет.",
+  "Starred": "Со звёздочкой",
+  "Not in a folder": "Вне папок",
+  "No starred routines yet.": "Пока нет рутин со звёздочкой.",
+  "Show all routines": "Показать все рутины",
 }

@@ -5942,4 +5942,8 @@ export default {
   "“{0}” restored.": "„{0}“ atkurta.",
   "{0} deleted.": "{0} ištrinta.",
   "Nothing archived.": "Archyve nieko nėra.",
+  "Starred": "Pažymėtos",
+  "Not in a folder": "Ne aplanke",
+  "No starred routines yet.": "Pažymėtų rutinų dar nėra.",
+  "Show all routines": "Rodyti visas rutinas",
 }

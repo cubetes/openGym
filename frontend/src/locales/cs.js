@@ -5912,4 +5912,8 @@ export default {
   "“{0}” restored.": "„{0}“ obnoveno.",
   "{0} deleted.": "{0} smazáno.",
   "Nothing archived.": "Nic není v archivu.",
+  "Starred": "S hvězdičkou",
+  "Not in a folder": "Mimo složku",
+  "No starred routines yet.": "Zatím žádné rutiny s hvězdičkou.",
+  "Show all routines": "Zobrazit všechny rutiny",
 }

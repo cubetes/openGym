@@ -6025,4 +6025,8 @@ export default {
   "“{0}” restored.": "“{0}” পুনরুদ্ধার হয়েছে।",
   "{0} deleted.": "{0} মুছে ফেলা হয়েছে।",
   "Nothing archived.": "আর্কাইভে কিছু নেই।",
+  "Starred": "তারকা চিহ্নিত",
+  "Not in a folder": "কোনো ফোল্ডারে নেই",
+  "No starred routines yet.": "এখনও কোনো তারকা চিহ্নিত রুটিন নেই।",
+  "Show all routines": "সব রুটিন দেখান",
 }

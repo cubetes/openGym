@@ -6001,4 +6001,8 @@ export default {
   "“{0}” restored.": "تمت استعادة «{0}».",
   "{0} deleted.": "تم حذف {0}.",
   "Nothing archived.": "لا شيء في الأرشيف.",
+  "Starred": "مميّز بنجمة",
+  "Not in a folder": "غير موجودة في مجلد",
+  "No starred routines yet.": "لا توجد روتينات مميّزة بعد.",
+  "Show all routines": "إظهار كل الروتينات",
 }

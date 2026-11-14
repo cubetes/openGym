@@ -18,7 +18,7 @@ vi.mock('../sheets.jsx', () => ({
   planHasRoutines: () => true, exportPlanFile: vi.fn(), printWholePlan: vi.fn(), importPlanFile: vi.fn(),
 }))
 
-import { confirmSheet } from '../sheets.jsx'
+import { confirmSheet, menuSheet } from '../sheets.jsx'
 
 const routine = (id, name) => ({ id, name, emoji: null, ex: [{ id: '0025' }] })
 let host, root
@@ -135,11 +135,10 @@ describe('routine order', () => {
     expect(host.querySelector('.plan-minus')).toBeTruthy()
   })
 
-  it('New routine sits at the top and opens the editor on the new routine', () => {
+  it('New, in the pill, offers New routine and opens the editor on the new routine', () => {
     mount()
-    const add = button('New routine')
-    expect(add.compareDocumentPosition(rows()[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-    click(add)
+    click(button('New'))
+    menuSheet.mock.lastCall[0].items[0].onClick()
     const created = useStore.getState().S.routines.at(-1)
     expect(created.name).toBe('New routine')
     expect(nav).toHaveBeenCalledWith('/plan/r/' + created.id)

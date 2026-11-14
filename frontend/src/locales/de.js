@@ -5966,4 +5966,8 @@ export default {
   "“{0}” restored.": "„{0}“ wiederhergestellt.",
   "{0} deleted.": "{0} gelöscht.",
   "Nothing archived.": "Nichts im Archiv.",
+  "Starred": "Markiert",
+  "Not in a folder": "Nicht in einem Ordner",
+  "No starred routines yet.": "Noch keine markierten Routinen.",
+  "Show all routines": "Alle Routinen zeigen",
 }

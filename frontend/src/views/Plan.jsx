@@ -34,9 +34,11 @@ import {
   chooseRotation, chooseFixedWeek, sequenceOf, isSimpleSequence, segmentAt, REST,
 } from '../lib/rotation.js'
 import { isOn } from '../lib/modules.js'
-import { activeRoutines, groupRoutines, folderOpen, setFolderOpen, folderOf, isLive } from '../lib/routine-folders.js'
+import { activeRoutines, currentFolder, folderList, folderOf, isLive } from '../lib/routine-folders.js'
 import { routineMenu, folderMenu, duplicateRoutine } from '../components/RoutineMenus.jsx'
 import { isFavRoutine } from '../lib/routine-favs.js'
+import RoutineRow, { MoreButton } from '../components/RoutineRow.jsx'
+import { folderNameSheet } from '../components/RoutineFolder.jsx'
 import { routineFromWorkoutSheet } from '../components/RoutineFromWorkout.jsx'
 import { routineSources } from '../lib/session-routines.js'
 
@@ -440,24 +442,19 @@ function Schedule({ S, update, nav, mode }) {
 
 /* ================================ Routines ================================ */
 
-// The "…" on a routine row and a folder header: the menus (components/RoutineMenus.jsx).
-function MoreButton({ name, onClick }) {
-  return <button type="button" className="plan-more" aria-label={t('More for {0}', said(name))}
-    onClick={e => { e.stopPropagation(); onClick() }}><Icon name="more" /></button>
-}
-
 function Routines({ S, update, nav }) {
   const [edit, setEdit] = useState(false)
   const [flash, setFlash] = useState(null)
-  // Which folders are open on this device (lib/routine-folders.js), keyed by lower-case name.
-  const [openFolders, setOpenFolders] = useState({})
-  const toggleFolder = (f, open) => { setFolderOpen(f, open); setOpenFolders(o => ({ ...o, [f.toLowerCase()]: open })) }
+  const [starred, setStarred] = useState(false)
   const swipe = workoutControls(S).swipeSets
   // Archived routines are not listed here (they have their own screen); they keep their place in S.routines.
   const routines = activeRoutines(S)
-  // The way into the Archive, at the end of the list (also when everything is archived).
-  const archiveRow = (S.routines || []).length > routines.length && !edit
-    && <Row icon="download" title={t('Archive')} subtitle={routineCount((S.routines || []).length - routines.length)} accessory="chevron" onClick={() => nav('/plan/archive')} />
+  const archived = (S.routines || []).length - routines.length
+  const folders = folderList(S)
+  const at = f => r => folderOf(r).toLowerCase() === f.name.toLowerCase()
+  const cur = folders.find(f => f.name.toLowerCase() === currentFolder(S)?.toLowerCase())
+  const others = folders.filter(f => f !== cur)
+  const loose = routines.filter(r => !folderOf(r))
   // The order of this list is the order of `S.routines`, and every other screen reads the same
   // array (the Start screen, the day sheets, the routine pickers), so moving a routine here moves
   // it everywhere (#142). Reordering lives behind Edit, like on an iPhone.
@@ -470,6 +467,10 @@ function Routines({ S, update, nav }) {
   }))
 
   const addRoutine = () => newRoutine(update, nav)
+  const newMenu = () => menuSheet({ items: [
+    { icon: 'plus', label: t('New routine'), onClick: addRoutine },
+    { icon: 'folder', label: t('New folder'), onClick: () => folderNameSheet({ mode: 'new' }) },
+  ] })
   // The same delete as RoutineEdit's "Delete routine" button (lib/routines.js), with an Undo in
   // place of its confirm (v1.3.11): the swipe and the edit-mode minus both land here.
   const remove = r => deleteRoutineWithUndo(r.id)
@@ -480,17 +481,29 @@ function Routines({ S, update, nav }) {
   // The weekdays a routine is on, short, in the order the week runs.
   const order = weekOrder(weekStartOf(S))
   const daysOf = id => order.filter(d => [].concat(S.week[d] || []).includes(id)).map(d => t(DAYS[d]))
-  // A routine a trainer assigned or changed says who (docs/TRAINERS.md, `_by`).
-  const sub = r => [exCount(r.ex.length), daysOf(r.id).join(', '), r._by?.kind === 'trainer' && r._by.name ? t('from {0}', r._by.name) : null, edit ? folderOf(r) : null].filter(Boolean).join(' · ')
+  // A routine a trainer assigned or changed says who (docs/TRAINERS.md, `_by`); `where` names its folder under Starred.
+  const sub = (r, where) => [where, exCount(r.ex.length), daysOf(r.id).join(', '), r._by?.kind === 'trainer' && r._by.name ? t('from {0}', r._by.name) : null, edit ? folderOf(r) : null].filter(Boolean).join(' · ')
+  // Swipe (v1.3.11, Settings → Swipe actions): toward the start deletes with an Undo, toward the
+  // end duplicates. Edit's minus and the routine's own page stay the way in for a keyboard and a screen reader.
+  const rowOf = (r, where) => <RoutineRow key={r.id} r={r} sub={sub(r, where)} body={S.body} onOpen={() => nav('/plan/r/' + r.id)} onMenu={() => routineMenu(r)}
+    swipe={swipe && { copyLabel: t('Duplicate'), deleteName: t('Delete {0}', said(r.name)), copyName: nameIn(r.name, t('Duplicate')),
+      onDelete: () => remove(r), onCopy: () => duplicate(r), flash: flash?.id === r.id ? flash.n : 0 }} />
+  const group = (key, rows, cls = '') => <div key={key} className={'list plan-group ' + cls}>{rows}</div>
+  const folderRow = (key, tile, name, count, onOpen, onMenu, cls = '') => <div key={key} className={'item plan-folder ' + cls} {...tappable(onOpen)}>
+    <span className="lrow-i plan-ftile">{tile}</span>
+    <div className="grow"><div className="tt">{name}</div><div className="ss">{count}</div></div>
+    {onMenu && <MoreButton name={name} onClick={onMenu} />}
+    <Icon name="chevronRight" className="chev" />
+  </div>
+  const starredRoutines = routines.filter(isFavRoutine)
 
   return <>
     <div className="row between plan-sec-h plan-routines-bar">
       {routines.length > 0
         ? <button className="plan-textbtn" aria-pressed={edit} onClick={() => setEdit(e => !e)}>{edit ? t('Done') : t('Edit')}</button>
         : <span />}
-      <Button size="sm" variant="tinted" icon="plus" data-tour="plan-new" onClick={addRoutine}>{t('New routine')}</Button>
     </div>
-    {routines.length ? <>
+    {routines.length || folders.length || archived ? <div className="plan-routes">
       {edit
         ? <div className="list routine-list plan-routines is-editing" ref={reorder.listRef}>{routines.map((r, i) =>
           <div key={r.id} data-reorder-row className="item plan-routine" style={reorder.rowStyle(i)}>
@@ -500,51 +513,36 @@ function Routines({ S, update, nav }) {
             {routines.length > 1 && <button className="plan-handle" aria-label={t('Move {0}', r.name)} title={t('Drag to reorder')}
               {...reorder.handle(i)}><Icon name="chevronsUpDown" /></button>}
           </div>)}</div>
-        // Starred routines first, under Favourites (#327, lib/routine-favs.js): out of their
-        // folder while starred, so each routine shows once. Edit still orders S.routines itself.
-        : [...(routines.some(isFavRoutine) ? [{ folder: '', fav: true, routines: routines.filter(isFavRoutine) }] : []),
-          ...groupRoutines(routines.filter(r => !isFavRoutine(r)))].map(g => {
-          if (!g.routines.length) return null
-          const open = !g.folder || (openFolders[g.folder.toLowerCase()] ?? folderOpen(g.folder))
-          const list = open && <div key={'l' + (g.fav ? '*' : g.folder)} className="list routine-list plan-routines" data-folder={g.folder || undefined} data-favs={g.fav || undefined}>{g.routines.map(r => {
-          const row = <div key={r.id} className="item plan-routine" {...tappable(() => nav('/plan/r/' + r.id))}>
-            <RoutineTile r={r} />
-            <div className="grow"><div className="tt">{isFavRoutine(r) && <Icon name="starFill" className="fav-star" />}{r.name}</div><div className="ss">{sub(r)}</div></div>
-            <MiniBodyMap routines={[r]} tint={colorOf(r)} body={S.body} />
-            <MoreButton name={r.name} onClick={() => routineMenu(r)} /></div>
-          // Swipe (v1.3.11, Settings → Swipe actions): toward the start deletes with an Undo,
-          // toward the end duplicates. Edit's minus and the routine's own page stay the way in
-          // for a keyboard and a screen reader.
-          return swipe
-            ? <SwipeRow key={r.id} className="swrow-item" copyLabel={t('Duplicate')} deleteName={t('Delete {0}', said(r.name))} copyName={nameIn(r.name, t('Duplicate'))}
-              onDelete={() => remove(r)} onCopy={() => duplicate(r)}
-              flash={flash?.id === r.id ? flash.n : 0}>{row}</SwipeRow>
-            : row
-        })}</div>
-          if (g.fav) return <div key="favs" className="plan-folder-sect plan-favs">
-            <h4 className="sec plan-favs-h"><Icon name="starFill" className="fav-star" />{t('Favourites')}</h4>
-            {list}
-          </div>
-          if (!g.folder) return list
-          // A folder's header folds its routines away; where it was left is remembered here.
-          return <div key={'f' + g.folder} className="plan-folder-sect">
-            <div className="plan-folder-bar">
-              <button type="button" className="plan-folder" aria-expanded={open} onClick={() => toggleFolder(g.folder, !open)}>
-                <Icon name="folder" /><span className="grow">{g.folder}</span><span className="n">{g.routines.length}</span>
-                <Icon name="chevronRight" className="chev" />
-              </button>
-              <MoreButton name={g.folder} onClick={() => folderMenu(g.folder)} />
-            </div>
-            {list}
-          </div>
-        })}
-      {archiveRow}
-      <p className="sect-f">{edit ? t('Drag to reorder. Tap the minus to delete.') : t('Tap a routine to edit it. Reorder and delete are behind Edit.')}</p>
-    </> : <>
-      <EmptyState icon="clipboard" title={t('No routines yet.')} text={t('Make one, or grab the starter plan to get going.')}>
-        <Button variant="tinted" icon="clipboard" onClick={starterPlanSheet}>{t('Load starter plan')}</Button>
-      </EmptyState>
-      {archiveRow}
-    </>}
+        : starred
+          ? (starredRoutines.length
+            ? group('starred', starredRoutines.map(r => rowOf(r, cur && at(cur)(r) ? t('Current plan') : folderOf(r))), 'routine-list plan-routines')
+            : <EmptyState icon="star" title={t('No starred routines yet.')}>
+              <Button variant="tinted" onClick={() => setStarred(false)}>{t('Show all routines')}</Button>
+            </EmptyState>)
+          : <>
+            {cur && group('cur', [
+              <div key="cur" className="item plan-current">
+                <span className="lrow-i"><Icon name="mapPin" /></span>
+                <div className="grow"><div className="tt">{cur.name}</div><div className="ss"><b>{t('Current plan')}</b> · {routineCount(cur.live)}</div></div>
+                <MoreButton name={cur.name} onClick={() => folderMenu(cur.name)} />
+              </div>, ...routines.filter(at(cur)).map(r => rowOf(r))], 'routine-list plan-routines')}
+            {loose.length > 0 && <>
+              {(cur || others.length > 0) && <h4 className="sec plan-hdr">{t('Not in a folder')}</h4>}
+              {group('loose', loose.map(r => rowOf(r)), 'routine-list plan-routines')}
+            </>}
+            {others.length > 0 && group('folders', others.map(f => folderRow('f' + f.name, <Icon name="folder" />, f.name, routineCount(f.live),
+              () => nav('/plan/folder/' + encodeURIComponent(f.name)), () => folderMenu(f.name))))}
+            {archived > 0 && group('archive', folderRow('archive', <Icon name="archive" />, t('Archive'), routineCount(archived), () => nav('/plan/archive')))}
+          </>}
+      {edit && <p className="sect-f">{t('Drag to reorder. Tap the minus to delete.')}</p>}
+    </div> : <EmptyState icon="clipboard" title={t('No routines yet.')} text={t('Make one, or grab the starter plan to get going.')}>
+      <Button variant="tinted" icon="clipboard" onClick={starterPlanSheet}>{t('Load starter plan')}</Button>
+    </EmptyState>}
+    {!edit && <div className="plan-pill">
+      <button type="button" className="plan-pill-star" aria-label={t('Starred')} aria-pressed={starred} onClick={() => setStarred(v => !v)}>
+        <Icon name={starred ? 'starFill' : 'star'} />{starred && <span>{t('Starred')}</span>}
+      </button>
+      <button type="button" className="plan-pill-new" data-tour="plan-new" onClick={newMenu}><Icon name="plus" />{t('New')}</button>
+    </div>}
   </>
 }

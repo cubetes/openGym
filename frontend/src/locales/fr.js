@@ -5946,4 +5946,8 @@ export default {
   "“{0}” restored.": "« {0} » restaurée.",
   "{0} deleted.": "{0} supprimées.",
   "Nothing archived.": "Rien n’est archivé.",
+  "Starred": "Favoris",
+  "Not in a folder": "Hors dossier",
+  "No starred routines yet.": "Aucune routine favorite pour l’instant.",
+  "Show all routines": "Afficher toutes les routines",
 }

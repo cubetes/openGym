@@ -5911,4 +5911,8 @@ export default {
   "“{0}” restored.": "“{0}” dipulihkan.",
   "{0} deleted.": "{0} dihapus.",
   "Nothing archived.": "Tidak ada yang diarsipkan.",
+  "Starred": "Berbintang",
+  "Not in a folder": "Tanpa folder",
+  "No starred routines yet.": "Belum ada rutinitas berbintang.",
+  "Show all routines": "Tampilkan semua rutinitas",
 };

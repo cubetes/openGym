@@ -5993,4 +5993,8 @@ export default {
   "“{0}” restored.": "“{0}” återställd.",
   "{0} deleted.": "{0} raderade.",
   "Nothing archived.": "Inget i arkivet.",
+  "Starred": "Stjärnmärkta",
+  "Not in a folder": "Inte i en mapp",
+  "No starred routines yet.": "Inga stjärnmärkta rutiner än.",
+  "Show all routines": "Visa alla rutiner",
 }

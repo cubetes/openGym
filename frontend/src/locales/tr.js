@@ -5946,4 +5946,8 @@ export default {
   "“{0}” restored.": "“{0}” geri yüklendi.",
   "{0} deleted.": "{0} silindi.",
   "Nothing archived.": "Arşivde bir şey yok.",
+  "Starred": "Yıldızlı",
+  "Not in a folder": "Klasörde değil",
+  "No starred routines yet.": "Henüz yıldızlı rutin yok.",
+  "Show all routines": "Tüm rutinleri göster",
 }

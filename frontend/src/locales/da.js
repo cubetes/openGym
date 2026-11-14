@@ -5886,4 +5886,8 @@ export default {
   "“{0}” restored.": "“{0}” gendannet.",
   "{0} deleted.": "{0} slettet.",
   "Nothing archived.": "Intet i arkivet.",
+  "Starred": "Med stjerne",
+  "Not in a folder": "Ikke i en mappe",
+  "No starred routines yet.": "Ingen rutiner med stjerne endnu.",
+  "Show all routines": "Vis alle rutiner",
 }

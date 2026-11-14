@@ -78,6 +78,6 @@ export default function RoutineArchive() {
       <div style={{ height: 16 }} />
       <Button variant="danger" icon="trash" onClick={() => deleteForGood(archived.map(r => r.id), all, t('{0} deleted.', all))}>
         {t('Delete all {0} for good', archived.length)}</Button>
-    </> : <EmptyState icon="download" title={t('Nothing archived.')} />}
+    </> : <EmptyState icon="archive" title={t('Nothing archived.')} />}
   </div>
 }

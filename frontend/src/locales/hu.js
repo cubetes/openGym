@@ -5949,4 +5949,8 @@ export default {
   "“{0}” restored.": "„{0}” visszaállítva.",
   "{0} deleted.": "{0} törölve.",
   "Nothing archived.": "Nincs semmi az archívumban.",
+  "Starred": "Csillagozott",
+  "Not in a folder": "Mappán kívül",
+  "No starred routines yet.": "Még nincs csillagozott rutin.",
+  "Show all routines": "Összes rutin mutatása",
 }

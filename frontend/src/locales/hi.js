@@ -5946,4 +5946,8 @@ export default {
   "“{0}” restored.": "“{0}” पुनर्स्थापित हुई।",
   "{0} deleted.": "{0} हटा दिए गए।",
   "Nothing archived.": "आर्काइव में कुछ नहीं है।",
+  "Starred": "तारांकित",
+  "Not in a folder": "किसी फ़ोल्डर में नहीं",
+  "No starred routines yet.": "अभी कोई तारांकित रूटीन नहीं।",
+  "Show all routines": "सभी रूटीन दिखाएँ",
 }

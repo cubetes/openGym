@@ -5912,4 +5912,8 @@ export default {
   "“{0}” restored.": "Đã khôi phục “{0}”.",
   "{0} deleted.": "Đã xóa {0}.",
   "Nothing archived.": "Chưa có gì trong kho lưu trữ.",
+  "Starred": "Gắn sao",
+  "Not in a folder": "Không trong thư mục",
+  "No starred routines yet.": "Chưa có bài tập nào gắn sao.",
+  "Show all routines": "Hiện tất cả bài tập",
 };

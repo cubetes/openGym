@@ -5943,4 +5943,8 @@ export default {
   "“{0}” restored.": "«{0}» відновлено.",
   "{0} deleted.": "Видалено: {0}.",
   "Nothing archived.": "В архіві нічого немає.",
+  "Starred": "Із зірочкою",
+  "Not in a folder": "Поза папками",
+  "No starred routines yet.": "Рутин із зірочкою ще немає.",
+  "Show all routines": "Показати всі рутини",
 }

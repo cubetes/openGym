@@ -5957,4 +5957,8 @@ export default {
   "“{0}” restored.": "กู้คืน “{0}” แล้ว",
   "{0} deleted.": "ลบ {0} แล้ว",
   "Nothing archived.": "ไม่มีอะไรในที่เก็บถาวร",
+  "Starred": "ติดดาว",
+  "Not in a folder": "ไม่อยู่ในโฟลเดอร์",
+  "No starred routines yet.": "ยังไม่มีรูทีนที่ติดดาว",
+  "Show all routines": "แสดงรูทีนทั้งหมด",
 }

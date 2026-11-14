@@ -109,7 +109,7 @@ export function routineMenu(r) {
       { icon: 'palette', label: t('Colour and icon'), onClick: () => routineLookSheet(r.id) },
       { icon: 'copy', label: t('Duplicate'), onClick: () => duplicateRoutine(r) },
       { icon: 'folder', label: t('Move to folder'), onClick: () => moveSheet([r.id]) },
-      { icon: 'download', label: t('Archive'), onClick: () => archiveRoutineWithUndo(r) },
+      { icon: 'archive', label: t('Archive'), onClick: () => archiveRoutineWithUndo(r) },
     ] }, { items: [
       { icon: 'trash', label: t('Delete'), danger: true, onClick: () => deleteRoutineWithUndo(r.id) },
     ] }],
@@ -124,7 +124,7 @@ export function folderMenu(name) {
       { icon: 'mapPin', label: current ? t('Not the current plan') : t('Make current plan'), onClick: () => update(s => setCurrent(s, current ? null : name)) },
       { icon: 'pencil', label: t('Rename'), onClick: () => folderNameSheet({ mode: 'rename', name }) },
       { icon: 'plus', label: t('New routine here'), onClick: () => newRoutine(update, nav, name) },
-      { icon: 'download', label: t('Archive folder and routines'), onClick: () => archiveFolderWithUndo(name) },
+      { icon: 'archive', label: t('Archive folder and routines'), onClick: () => archiveFolderWithUndo(name) },
     ] }, { items: [
       { icon: 'folder', label: t('Remove folder'), onClick: () => removeFolderWithUndo(name) },
       { icon: 'trash', label: t('Delete folder and routines'), danger: true, onClick: () => deleteFolderConfirm(name) },

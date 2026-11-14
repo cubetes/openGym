@@ -5912,4 +5912,8 @@ export default {
   "“{0}” restored.": "«{0}» بازیابی شد.",
   "{0} deleted.": "{0} حذف شد.",
   "Nothing archived.": "چیزی بایگانی نشده است.",
+  "Starred": "ستاره‌دار",
+  "Not in a folder": "بدون پوشه",
+  "No starred routines yet.": "هنوز برنامه ستاره‌داری نیست.",
+  "Show all routines": "نمایش همه برنامه‌ها",
 }

@@ -5946,4 +5946,8 @@ export default {
   "“{0}” restored.": "Przywrócono „{0}”.",
   "{0} deleted.": "Usunięto: {0}.",
   "Nothing archived.": "Archiwum jest puste.",
+  "Starred": "Z gwiazdką",
+  "Not in a folder": "Poza folderem",
+  "No starred routines yet.": "Nie ma jeszcze rutyn z gwiazdką.",
+  "Show all routines": "Pokaż wszystkie rutyny",
 }

@@ -5946,4 +5946,8 @@ export default {
   "“{0}” restored.": "«{0}» restaurada.",
   "{0} deleted.": "{0} eliminadas.",
   "Nothing archived.": "Nada arquivado.",
+  "Starred": "Com estrela",
+  "Not in a folder": "Fora das pastas",
+  "No starred routines yet.": "Ainda não há rotinas com estrela.",
+  "Show all routines": "Mostrar todas as rotinas",
 }
