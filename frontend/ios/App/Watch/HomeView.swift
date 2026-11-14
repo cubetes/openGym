@@ -74,7 +74,9 @@ struct HomeView: View {
 /// The phone, beside the clock on the start screen, always: a green iPhone while it is in reach (grey
 /// would read as off),
 /// an amber crossed-out one and "Phone away" when not (shape and words, never colour alone). Nothing
-/// moves, so the watch still sleeps here. The workout's own sign is SyncPill, shown only when sets wait.
+/// moves, so the watch still sleeps here. "In reach" is WatchConnectivity's isReachable: it is also false
+/// while a nearby iPhone is locked or its app is not running, and that is when sets wait, so "Phone away"
+/// stays the short word for "the watch cannot reach the phone now". The workout's own sign is SyncPill, shown only when sets wait.
 struct PhoneMark: View {
     @EnvironmentObject var store: SessionStore
 
