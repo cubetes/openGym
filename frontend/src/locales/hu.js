@@ -5958,4 +5958,6 @@ export default {
   "Favourites only, {0} of {1}": "Csak kedvencek, {0} / {1}",
   "Show all": "Mind",
   "Tap … on a routine, then Add to favourites.": "Koppints a rutin … gombjára, majd a Hozzáadás a kedvencekhez lehetőségre.",
+  "{0} archived.": "Archiválva: {0}.",
+  "{0} gone.": "Törölve: {0}.",
 }

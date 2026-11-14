@@ -5951,4 +5951,6 @@ export default {
   "Favourites only, {0} of {1}": "Tik mėgstamiausios, {0} iš {1}",
   "Show all": "Rodyti visas",
   "Tap … on a routine, then Add to favourites.": "Palieskite … prie rutinos, tada Pridėti prie mėgstamiausių.",
+  "{0} archived.": "Suarchyvuota: {0}.",
+  "{0} gone.": "Ištrinta: {0}.",
 }

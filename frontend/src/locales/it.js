@@ -5965,4 +5965,6 @@ export default {
   "Favourites only, {0} of {1}": "Solo preferiti, {0} di {1}",
   "Show all": "Mostra tutti",
   "Tap … on a routine, then Add to favourites.": "Tocca … su una routine, poi Aggiungi ai preferiti.",
+  "{0} archived.": "{0} archiviate.",
+  "{0} gone.": "{0} eliminate.",
 }

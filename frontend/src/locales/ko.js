@@ -5955,4 +5955,6 @@ export default {
   "Favourites only, {0} of {1}": "즐겨찾기만, {1}개 중 {0}개",
   "Show all": "모두 보기",
   "Tap … on a routine, then Add to favourites.": "루틴의 …를 누른 다음 즐겨찾기에 추가를 누르세요.",
+  "{0} archived.": "{0}을(를) 보관했어요.",
+  "{0} gone.": "{0}을(를) 삭제했어요.",
 }

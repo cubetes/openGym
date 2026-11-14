@@ -4222,6 +4222,25 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .plan-new-here{width:100%;text-align:start;color:var(--acc-ink);font-weight:600}
 .plan-new-here .lrow-i{background:var(--acc-soft);color:var(--acc-ink)}
 .plan-more{flex:none;display:grid;place-items:center;width:44px;height:44px;color:var(--label-2)}
+/* Edit with select: a check circle at the start, a grip at the end, a bar for what is ticked */
+.plan-check{flex:none;display:grid;place-items:center;width:44px;height:44px;margin-inline:-10px -4px}
+.plan-check span{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--label-3);color:transparent;font-size:.875rem;--icon-stroke:2.8}
+.plan-check[aria-checked="true"] span{background:var(--label);border-color:var(--label);color:var(--bg)}
+.plan-group .item.is-selected{background:var(--surface-3)}
+.plan-grip{flex:none;display:grid;place-items:center;width:44px;height:44px;margin-inline-end:-8px;color:var(--label-3);font-size:1.125rem;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.plan-grip:active{cursor:grabbing;color:var(--label-2)}
+.plan-selcount{margin:0 4px 10px;font-size:var(--fs-title1,28px);font-weight:700;letter-spacing:-.01em}
+.plan-editbar{
+  position:fixed;z-index:40;bottom:calc(88px + var(--sab));inset-inline:max(var(--pad),calc((100vw - 560px)/2 + var(--pad)));
+  display:flex;justify-content:space-around;padding:4px;border-radius:var(--r-card);
+  background:color-mix(in srgb,var(--bg-el) 92%,transparent);
+  -webkit-backdrop-filter:saturate(180%) blur(12px);backdrop-filter:saturate(180%) blur(12px);
+  border:var(--hair) solid var(--sep-op);box-shadow:0 4px 18px rgba(0,0,0,.28);
+}
+.plan-editbar button{flex:1;min-width:0;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 6px;font-size:var(--fs-footnote);font-weight:500;color:var(--label);text-align:center}
+.plan-editbar button.danger{color:var(--red)}
+.plan-editbar button:disabled{opacity:.4}
+
 
 /* Tempo (#572, components/Tempo.jsx): the tag on an exercise, the picker's big readout and the
    guide's stage. The phase tints the stage so a glance from the bench says lower or lift. */

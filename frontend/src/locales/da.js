@@ -5895,4 +5895,6 @@ export default {
   "Favourites only, {0} of {1}": "Kun favoritter, {0} af {1}",
   "Show all": "Vis alle",
   "Tap … on a routine, then Add to favourites.": "Tryk på … ved en rutine, og vælg Tilføj til favoritter.",
+  "{0} archived.": "{0} arkiveret.",
+  "{0} gone.": "{0} slettet.",
 }

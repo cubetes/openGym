@@ -5920,4 +5920,6 @@ export default {
   "Favourites only, {0} of {1}": "Hanya favorit, {0} dari {1}",
   "Show all": "Tampilkan semua",
   "Tap … on a routine, then Add to favourites.": "Ketuk … pada rutinitas, lalu Tambah ke favorit.",
+  "{0} archived.": "{0} diarsipkan.",
+  "{0} gone.": "{0} dihapus.",
 };

@@ -5955,4 +5955,6 @@ export default {
   "Favourites only, {0} of {1}": "सिर्फ़ पसंदीदा, {1} में से {0}",
   "Show all": "सब दिखाएं",
   "Tap … on a routine, then Add to favourites.": "किसी रूटीन पर … दबाएं, फिर पसंदीदा में जोड़ें।",
+  "{0} archived.": "{0} संग्रहीत किए गए।",
+  "{0} gone.": "{0} हटा दिए गए।",
 }

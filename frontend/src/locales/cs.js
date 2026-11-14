@@ -5921,4 +5921,6 @@ export default {
   "Favourites only, {0} of {1}": "Jen oblíbené, {0} z {1}",
   "Show all": "Zobrazit vše",
   "Tap … on a routine, then Add to favourites.": "Klepni na … u rutiny a pak na Přidat do oblíbených.",
+  "{0} archived.": "Archivováno: {0}.",
+  "{0} gone.": "Smazáno: {0}.",
 }

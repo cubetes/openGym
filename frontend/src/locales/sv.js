@@ -6002,4 +6002,6 @@ export default {
   "Favourites only, {0} of {1}": "Bara favoriter, {0} av {1}",
   "Show all": "Visa alla",
   "Tap … on a routine, then Add to favourites.": "Tryck på … vid en rutin och välj Lägg till i favoriter.",
+  "{0} archived.": "{0} arkiverade.",
+  "{0} gone.": "{0} borttagna.",
 }

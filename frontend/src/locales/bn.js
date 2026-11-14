@@ -6034,4 +6034,6 @@ export default {
   "Favourites only, {0} of {1}": "শুধু প্রিয়, {1}-এর মধ্যে {0}",
   "Show all": "সব দেখান",
   "Tap … on a routine, then Add to favourites.": "কোনো রুটিনে … চাপুন, তারপর «প্রিয়তে যোগ করুন»।",
+  "{0} archived.": "{0} আর্কাইভ করা হয়েছে।",
+  "{0} gone.": "{0} মুছে ফেলা হয়েছে।",
 }

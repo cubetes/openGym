@@ -2108,6 +2108,7 @@ export const PT_BR_OVERRIDES = {
   'Too late, that one’s gone': 'Tarde demais, já era',
   'Copied as “{0}”.': 'Copiada como “{0}”.',
   '“{0}” gone.': '“{0}” já era.',
+  '{0} gone.': '{0} excluídas.',
   '“{0}” is out of the loop.': '“{0}” saiu do ciclo.',
   '“{0}” left the routine.': '“{0}” saiu da rotina.',
   'Swipe actions': 'Ações de deslizar',

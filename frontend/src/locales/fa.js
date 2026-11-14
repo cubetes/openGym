@@ -5921,4 +5921,6 @@ export default {
   "Favourites only, {0} of {1}": "فقط موارد دلخواه، {0} از {1}",
   "Show all": "نمایش همه",
   "Tap … on a routine, then Add to favourites.": "روی … در یک برنامه بزنید، سپس «افزودن به علاقه‌مندی‌ها».",
+  "{0} archived.": "{0} بایگانی شد.",
+  "{0} gone.": "{0} حذف شد.",
 }

@@ -6010,4 +6010,6 @@ export default {
   "Favourites only, {0} of {1}": "المفضلة فقط، {0} من {1}",
   "Show all": "عرض الكل",
   "Tap … on a routine, then Add to favourites.": "اضغط على … في أي روتين، ثم «إضافة إلى المفضلة».",
+  "{0} archived.": "تمت أرشفة {0}.",
+  "{0} gone.": "تم حذف {0}.",
 }

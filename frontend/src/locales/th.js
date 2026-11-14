@@ -5966,4 +5966,6 @@ export default {
   "Favourites only, {0} of {1}": "เฉพาะรายการโปรด {0} จาก {1}",
   "Show all": "แสดงทั้งหมด",
   "Tap … on a routine, then Add to favourites.": "แตะ … ที่รูทีน แล้วแตะเพิ่มในรายการโปรด",
+  "{0} archived.": "เก็บ {0} เข้าคลังแล้ว",
+  "{0} gone.": "ลบ {0} แล้ว",
 }

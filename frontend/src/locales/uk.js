@@ -5952,4 +5952,6 @@ export default {
   "Favourites only, {0} of {1}": "Лише вибране, {0} з {1}",
   "Show all": "Показати все",
   "Tap … on a routine, then Add to favourites.": "Торкніться … біля рутини, потім «Додати до вибраного».",
+  "{0} archived.": "В архіві: {0}.",
+  "{0} gone.": "Видалено: {0}.",
 }

@@ -5948,4 +5948,6 @@ export default {
   "Favourites only, {0} of {1}": "僅顯示收藏，共 {1} 個中的 {0} 個",
   "Show all": "顯示全部",
   "Tap … on a routine, then Add to favourites.": "點一下訓練的 …，再選「加入收藏」。",
+  "{0} archived.": "已封存 {0}。",
+  "{0} gone.": "已刪除 {0}。",
 }

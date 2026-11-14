@@ -127,6 +127,16 @@ export function migrateArchiveFolder(s) {
   return true
 }
 
+/** Deletes the live routines among `ids`, as Plan's Edit does; undoSnapshot restores them. */
+export function deleteLive(s, ids) {
+  const snap = { archived: [], seq: [], deleted: [], entry: null }
+  for (const r of (s.routines || []).filter(x => ids.includes(x.id) && isLive(x))) {
+    snap.deleted.push(routineSnapshot(s, r.id))
+    deleteRoutine(s, r.id)
+  }
+  return snap
+}
+
 /** Deletes the archived routines among `ids` for good (live ones stay); undoSnapshot restores them. */
 export function deleteArchived(s, ids) {
   const snap = { archived: [], seq: [], deleted: [], entry: null }

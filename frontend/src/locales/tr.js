@@ -5955,4 +5955,6 @@ export default {
   "Favourites only, {0} of {1}": "Yalnızca favoriler, {0} / {1}",
   "Show all": "Tümünü göster",
   "Tap … on a routine, then Add to favourites.": "Bir rutinde … simgesine dokun, sonra Favorilere ekle'yi seç.",
+  "{0} archived.": "{0} arşivlendi.",
+  "{0} gone.": "{0} silindi.",
 }

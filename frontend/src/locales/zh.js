@@ -5955,4 +5955,6 @@ export default {
   "Favourites only, {0} of {1}": "仅显示收藏，共 {1} 个中的 {0} 个",
   "Show all": "显示全部",
   "Tap … on a routine, then Add to favourites.": "点按训练计划上的 …，然后选择“添加到收藏”。",
+  "{0} archived.": "已归档 {0}。",
+  "{0} gone.": "已删除 {0}。",
 }

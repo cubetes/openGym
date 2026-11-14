@@ -5921,4 +5921,6 @@ export default {
   "Favourites only, {0} of {1}": "Chỉ mục yêu thích, {0} trên {1}",
   "Show all": "Hiện tất cả",
   "Tap … on a routine, then Add to favourites.": "Chạm … ở một bài tập, rồi chọn Thêm vào yêu thích.",
+  "{0} archived.": "Đã lưu trữ {0}.",
+  "{0} gone.": "Đã xóa {0}.",
 };
