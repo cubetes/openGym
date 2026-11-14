@@ -1379,7 +1379,7 @@ body.chips-dragging *{cursor:inherit}
 .dev-item+.dev-item{border-top:var(--hair) solid var(--sep)}
 .dev-state,.dev-speed{display:inline-flex;align-items:center;gap:4px;flex:none;font-size:var(--fs-footnote);font-weight:600;color:var(--label-2)}
 .dev-state .icn,.dev-speed .icn{width:16px;height:16px}
-.dev-state.warn{color:var(--orange)}
+.dev-state.warn{color:var(--orange-ink)}
 /* a link that syncs: its glyph in the button's status green, with the same soft glow; the word keeps the label colour to stay readable */
 .dev-item{--lit:var(--green)}
 @media not all and (prefers-contrast:more){:root[data-theme="light"] .dev-item{--lit:#1f9d48}}
