@@ -66,6 +66,13 @@ describe('the live link signals', () => {
     expect(watchRow(Date.now() + 30_000)).toMatchObject({ state: 'delayed', speed: null })
   })
 
+  it('on Android a Garmin alone is no Wear OS watch: the wear flags decide', async () => {
+    const wear = { supported: false, paired: false, installed: false, reachable: false }
+    _setWatchPluginForTest(plugin({ status: vi.fn(async () => ({ paired: true, installed: true, activated: true, reachable: false, garmin: true, wear })) }), () => state)
+    await checkLinks()
+    expect(watchRow()).toBeUndefined()
+  })
+
   it('never pings a watch that is not reachable', async () => {
     const p = plugin()
     _setWatchPluginForTest(p, () => state)

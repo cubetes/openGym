@@ -31,7 +31,9 @@ export function checkLinks ({ ping: withPing = false } = {}) {
   flight = (async () => {
     try {
       platform = await nativePlatform()
-      watch = await watchStatus()
+      const st = await watchStatus()
+      // Android's one status also counts a Garmin as a watch; this link is the Wear OS watch alone
+      watch = st.wear ? { ...st, ...st.wear } : st
       // a status that says reachable is itself a sign of life; it keeps a quiet watch from going Delayed
       if (watch.reachable) noteHeard(watchState()?.S?.active?.id)
       else ping = null

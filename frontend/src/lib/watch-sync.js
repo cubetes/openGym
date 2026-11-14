@@ -1161,7 +1161,7 @@ export async function watchStatus () {
     const st = await p.WatchBridge.status()
     // `activated` false: the link is still starting (right after launch), paired/installed not known yet.
     // `reachable`: the watch app is there right now (open, or running its workout session).
-    return { supported: true, paired: !!st?.paired, installed: !!st?.installed, activated: st?.activated !== false, reachable: !!st?.reachable }
+    return { supported: true, paired: !!st?.paired, installed: !!st?.installed, activated: st?.activated !== false, reachable: !!st?.reachable, ...(st?.wear && { wear: st.wear }) }
   } catch { return { supported: true, paired: false, installed: false } }
 }
 
