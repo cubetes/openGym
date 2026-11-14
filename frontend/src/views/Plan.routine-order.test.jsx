@@ -62,7 +62,7 @@ describe('routine order', () => {
     // each named for its routine, so a screen reader can tell three of them apart
     expect([...host.querySelectorAll('[role="checkbox"]')].map(b => b.getAttribute('aria-label'))).toEqual(['Select Push A', 'Select Pull A', 'Select Legs A'])
     expect(handles().map(b => b.getAttribute('aria-label'))).toEqual(['Move Push A', 'Move Pull A', 'Move Legs A'])
-    click(rows()[0])
+    click(rows()[0].querySelector('[role="checkbox"]'))
     expect(nav).not.toHaveBeenCalled()
     expect(rows()[0].classList.contains('is-selected')).toBe(true)
     click(button('Done'))

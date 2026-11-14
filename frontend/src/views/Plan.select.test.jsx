@@ -67,7 +67,7 @@ describe('Edit with select', () => {
     mount()
     edit()
     expect(bar().querySelectorAll('button')[0].disabled).toBe(true)
-    click(host.querySelector('.plan-routine'))
+    click(host.querySelector('.plan-routine [role="checkbox"]'))   // the check circle is the row's stretched primary
     expect(nav).not.toHaveBeenCalled()
     expect(label('Select Push A').getAttribute('aria-checked')).toBe('true')
     expect(host.textContent).toContain('1 selected')
@@ -83,15 +83,46 @@ describe('Edit with select', () => {
   it('the bar reads Archive, Move to folder, Delete; Archive takes the selection off the list, Undo puts it back', () => {
     mount()
     edit()
-    pick('Push A', 'Core')
+    pick('Mobility', 'Core')
     expect([...bar().querySelectorAll('button')].map(b => b.textContent.trim())).toEqual(['Archive', 'Move to folder', 'Delete'])
     click(button('Archive'))
-    expect(live()).toEqual(['Mobility', 'Old legs', 'Pull A'])
+    expect(confirmSheet).not.toHaveBeenCalled()
+    expect(live()).toEqual(['Push A', 'Old legs', 'Pull A'])
     expect(useUI.getState().toastMsg).toBe('2 routines archived.')
     expect(host.textContent).not.toContain('selected')
     act(() => useUI.getState().runToastAction())
     expect(live()).toEqual(['Push A', 'Mobility', 'Old legs', 'Pull A', 'Core'])
+  })
+
+  it('Archive asks first when a ticked routine is on the schedule, then takes it off, and Undo puts it back', () => {
+    mount()
+    edit()
+    pick('Push A', 'Core')
+    click(button('Archive'))
+    expect(live()).toContain('Push A')
+    expect(confirmSheet.mock.calls[0][0].message).toBe('2 routines are on your schedule. Archive takes them off the schedule.')
+    act(() => confirmSheet.mock.calls[0][0].onConfirm())
+    expect(live()).toEqual(['Mobility', 'Old legs', 'Pull A'])
+    expect(useStore.getState().S.week[1] || []).toEqual([])
+    act(() => useUI.getState().runToastAction())
+    expect(live()).toEqual(['Push A', 'Mobility', 'Old legs', 'Pull A', 'Core'])
     expect(useStore.getState().S.week[1]).toEqual(['a'])
+  })
+
+  it('one scheduled routine goes the routine menu way: a confirm that names its days', () => {
+    mount()
+    edit()
+    pick('Push A')
+    click(button('Archive'))
+    expect(confirmSheet.mock.calls[0][0].message).toContain('Push A is on')
+  })
+
+  it('focus lands on Select all when Edit opens and on Edit when Done closes it', () => {
+    mount()
+    edit()
+    expect(document.activeElement).toBe(button('Select all'))
+    click(button('Done'))
+    expect(document.activeElement).toBe(button('Edit'))
   })
 
   it('Edit takes the header and tabs away: Select all and Done, then "Select items" until something is ticked', () => {

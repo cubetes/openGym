@@ -54,6 +54,15 @@ export function archiveRoutineWithUndo(r) {
   confirmSheet({ title: t('Archive'), message: t('{0} is on {1}. Archive takes it off the schedule.', r.name, whenText(r.id)), confirmText: t('Archive'), onConfirm: go })
 }
 
+/** Edit's Archive bar: one routine goes the routine menu's way; several ask first when any is on the schedule. */
+export function archiveIdsWithUndo(ids) {
+  const r = ids.length === 1 && S().routines.find(x => x.id === ids[0])
+  if (r) return archiveRoutineWithUndo(r)
+  const go = () => withUndo(t('{0} archived.', routineCount(ids.length)), s => archiveRoutines(s, ids))
+  if (!ids.some(isScheduled)) return go()
+  confirmSheet({ title: t('Archive'), message: t('{0} are on your schedule. Archive takes them off the schedule.', routineCount(ids.length)), confirmText: t('Archive'), onConfirm: go })
+}
+
 export function archiveFolderWithUndo(name) {
   const go = () => withUndo(t('“{0}” archived.', name), s => archiveFolder(s, name))
   if (!S().routines.some(r => isLive(r) && same(folderOf(r), name) && isScheduled(r.id))) return go()
