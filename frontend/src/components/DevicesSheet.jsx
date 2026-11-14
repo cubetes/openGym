@@ -23,7 +23,7 @@ const STATE = {
 const NAME = { apple: () => t('Apple Watch'), wear: () => t('Wear OS watch'), zepp: () => t('Zepp OS watch'), server: () => t('Sync server'), hr: () => t('Heart rate') }
 const TILE = { apple: 'watch', wear: 'watch', zepp: 'watch', server: 'cloud', hr: 'heart' }
 const WATCH_SYNCS = () => t('Sets, rest timer, heart rate per set')
-const SYNCS = { apple: WATCH_SYNCS, wear: WATCH_SYNCS, server: () => t('Workouts, plans and history'), hr: () => t('From Apple Health') }
+const SYNCS = { apple: WATCH_SYNCS, wear: WATCH_SYNCS, zepp: WATCH_SYNCS, server: () => t('Workouts, plans and history'), hr: () => t('From Apple Health') }
 
 function detail(r) {
   if (r.state === 'offline') return r.lastHeard ? t('Last heard {0}', fmtAgo(r.lastHeard)) : null

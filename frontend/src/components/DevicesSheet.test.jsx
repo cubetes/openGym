@@ -49,6 +49,10 @@ describe('DevicesSheet', () => {
     await render([row('watch', 'wear', 'offline', { warn: true, fix: 'watchSettings', lastHeard: Date.now() - 4 * 60e3 })])
     expect(host.textContent).toContain('Last heard')
   })
+  it('says what a Zepp watch syncs', async () => {
+    await render([row('zepp', 'zepp', 'live')])
+    expect(host.textContent).toContain('Sets, rest timer, heart rate per set')
+  })
   it('names the device that measures the heart rate when iOS gives one', async () => {
     await render([row('hr', 'hr', 'live', { bpm: 120, device: 'AirPods Pro' })])
     expect(host.textContent).toContain('AirPods Pro')
