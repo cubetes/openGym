@@ -71,7 +71,7 @@ export function routineSnapshot(S, id) {
   return { routine: structuredClone(S.routines[index]), index, week, dayPlan, seqAt, queueAt }
 }
 
-const putBack = (list, at, id) => {
+export const putBack = (list, at, id) => {
   if (list.includes(id)) return list
   const next = list.slice()
   next.splice(Math.min(at, next.length), 0, id)
