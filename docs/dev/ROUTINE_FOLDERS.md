@@ -82,9 +82,11 @@ S.routineFolders = [
 
 **Migration** (once per state, syncs): routines whose folder is "Archive" in English or in the
 device's language get `archived: true` and lose that folder name. It runs when the synced marker
-`S.archiveMoved` (a plain setting, stamped whole) is absent, then sets it, so it never runs twice
-and a later folder can never be swept. Older apps then show those routines loose; acceptable,
-and they update.
+`S.archiveMoved` (a plain setting, stamped whole) is absent, and sets it only when something
+moves (a bare marker would dirty every synced copy). The guard runs at boot and after each
+pull, so an older device's late Archive routine is moved on arrival; "Archive" is a reserved
+folder name, so a later folder can never be swept. Older apps then show those routines loose;
+acceptable, and they update.
 
 Every rule above is a pure helper in `lib/routine-folders.js` (and `lib/routine-archive.js` if it
 grows), each with a unit test: group, order, current, rename, remove, archive folder, restore,
