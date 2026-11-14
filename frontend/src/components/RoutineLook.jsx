@@ -27,15 +27,20 @@ const glyphName = n => ({
 function LookSheet({ id, close }) {
   const r = useStore(s => s.S.routines.find(x => x.id === id))
   const update = useStore(s => s.update)
-  const [color, setColor] = useState(colorOf(r))
-  const [glyph, setGlyph] = useState(glyphOf(r?.emoji))
+  // Only what the user picks here is written: a colour or icon another device synced in while the
+  // sheet is open shows live and survives Done.
+  const [pick, setPick] = useState({})
+  const color = 'color' in pick ? pick.color : colorOf(r)
+  const glyph = pick.glyph || glyphOf(r?.emoji)
+  const setColor = c => setPick(p => ({ ...p, color: c }))
+  const setGlyph = g => setPick(p => ({ ...p, glyph: g }))
   if (!r) return null
   const save = () => {
     update(s => {
       const x = s.routines.find(y => y.id === id)
       if (!x) return
-      x.emoji = glyph
-      if (color) x.color = color; else delete x.color
+      if (pick.glyph) x.emoji = pick.glyph
+      if ('color' in pick) { if (pick.color) x.color = pick.color; else delete x.color }
     })
     close()
   }
