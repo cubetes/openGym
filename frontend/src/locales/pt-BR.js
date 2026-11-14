@@ -4322,6 +4322,13 @@ export const PT_BR_OVERRIDES = {
   "Android Settings, Apps, openGym, Notifications.": "Configurações do Android, Apps, openGym, Notificações.",
   "Follows the main page. Switch this on to pick the details and buttons for this type yourself.": "Segue a página principal. Ative isto para escolher você mesmo os detalhes e os botões deste tipo.",
   "Home gym": "Academia em casa",
+  "Delete folder and routines": "Excluir pasta e rotinas",
+  "Delete {0} and its {1}? Your past workouts stay in History.": "Excluir {0} e as {1} dela? Seus treinos anteriores ficam no Histórico.",
+  "{0} has routines on your schedule. Archive takes them off the schedule.": "{0} tem rotinas no seu horário. Arquivar tira as rotinas do horário.",
+  "{0} is on {1}. Archive takes it off the schedule.": "{0} está em {1}. Arquivar tira a rotina do horário.",
+  "“{0}” and its routines gone.": "“{0}” e as rotinas dela foram excluídas.",
+  "“{0}” archived.": "“{0}” arquivada.",
+  "“{0}” removed. Its routines are loose now.": "“{0}” removida. As rotinas dela ficam sem pasta.",
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

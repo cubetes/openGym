@@ -48,4 +48,21 @@ describe('routine folders in Plan', () => {
     mount()
     expect(names()).toEqual(['Mobility', 'Old legs'])
   })
+
+  it('has a "…" on each routine row and folder header that opens its menu', async () => {
+    const { menuSheet } = await import('../sheets.jsx')
+    mount()
+    const more = n => host.querySelector(`[aria-label="More for ${n}"]`)
+    click(more('Mobility'))
+    expect(menuSheet).toHaveBeenLastCalledWith(expect.objectContaining({ title: 'Mobility' }))
+    click(more('Block 2'))
+    expect(menuSheet).toHaveBeenLastCalledWith(expect.objectContaining({ title: 'Block 2' }))
+    expect(host.querySelector('.plan-folder[aria-expanded="true"]')).toBeTruthy()   // the tap did not fold it
+  })
+
+  it('does not list an archived routine', () => {
+    useStore.setState(st => ({ S: { ...st.S, routines: st.S.routines.map(r => (r.id === 'b' ? { ...r, archived: true } : r)) } }))
+    mount()
+    expect(names()).toEqual(['Push A', 'Pull A'])
+  })
 })

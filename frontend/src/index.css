@@ -4190,6 +4190,9 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .plan-folder[aria-expanded="true"] .chev{transform:rotate(90deg)}
 [dir="rtl"] .plan-folder[aria-expanded="false"] .chev{transform:rotate(180deg)}
 @media (prefers-reduced-motion:reduce){.plan-folder .chev{transition:none}}
+.plan-folder-bar{display:flex;align-items:center}
+.plan-folder-bar .plan-folder{flex:1;min-width:0;width:auto}
+.plan-more{flex:none;display:grid;place-items:center;width:44px;height:44px;color:var(--label-2)}
 
 /* Tempo (#572, components/Tempo.jsx): the tag on an exercise, the picker's big readout and the
    guide's stage. The phase tints the stage so a glance from the bench says lower or lift. */
