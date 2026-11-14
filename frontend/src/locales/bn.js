@@ -6031,4 +6031,7 @@ export default {
   "Show all routines": "সব রুটিন দেখান",
   "No routines here yet.": "এখানে এখনও কোনো রুটিন নেই।",
   "New routine in this folder": "এই ফোল্ডারে নতুন রুটিন",
+  "Favourites only, {0} of {1}": "শুধু প্রিয়, {1}-এর মধ্যে {0}",
+  "Show all": "সব দেখান",
+  "Tap … on a routine, then Add to favourites.": "কোনো রুটিনে … চাপুন, তারপর «প্রিয়তে যোগ করুন»।",
 }

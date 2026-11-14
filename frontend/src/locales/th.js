@@ -5963,4 +5963,7 @@ export default {
   "Show all routines": "แสดงรูทีนทั้งหมด",
   "No routines here yet.": "ยังไม่มีรูทีนที่นี่",
   "New routine in this folder": "รูทีนใหม่ในโฟลเดอร์นี้",
+  "Favourites only, {0} of {1}": "เฉพาะรายการโปรด {0} จาก {1}",
+  "Show all": "แสดงทั้งหมด",
+  "Tap … on a routine, then Add to favourites.": "แตะ … ที่รูทีน แล้วแตะเพิ่มในรายการโปรด",
 }

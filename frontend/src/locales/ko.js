@@ -5952,4 +5952,7 @@ export default {
   "Show all routines": "루틴 모두 보기",
   "No routines here yet.": "아직 루틴이 없습니다.",
   "New routine in this folder": "이 폴더에 새 루틴",
+  "Favourites only, {0} of {1}": "즐겨찾기만, {1}개 중 {0}개",
+  "Show all": "모두 보기",
+  "Tap … on a routine, then Add to favourites.": "루틴의 …를 누른 다음 즐겨찾기에 추가를 누르세요.",
 }

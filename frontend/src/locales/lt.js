@@ -5948,4 +5948,7 @@ export default {
   "Show all routines": "Rodyti visas rutinas",
   "No routines here yet.": "Čia dar nėra programų.",
   "New routine in this folder": "Nauja programa šiame aplanke",
+  "Favourites only, {0} of {1}": "Tik mėgstamiausios, {0} iš {1}",
+  "Show all": "Rodyti visas",
+  "Tap … on a routine, then Add to favourites.": "Palieskite … prie rutinos, tada Pridėti prie mėgstamiausių.",
 }

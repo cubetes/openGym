@@ -5955,4 +5955,7 @@ export default {
   "Show all routines": "Összes rutin mutatása",
   "No routines here yet.": "Itt még nincsenek rutinok.",
   "New routine in this folder": "Új rutin ebben a mappában",
+  "Favourites only, {0} of {1}": "Csak kedvencek, {0} / {1}",
+  "Show all": "Mind",
+  "Tap … on a routine, then Add to favourites.": "Koppints a rutin … gombjára, majd a Hozzáadás a kedvencekhez lehetőségre.",
 }

@@ -5952,4 +5952,7 @@ export default {
   "Show all routines": "सभी रूटीन दिखाएँ",
   "No routines here yet.": "यहाँ अभी कोई रूटीन नहीं है।",
   "New routine in this folder": "इस फ़ोल्डर में नया रूटीन",
+  "Favourites only, {0} of {1}": "सिर्फ़ पसंदीदा, {1} में से {0}",
+  "Show all": "सब दिखाएं",
+  "Tap … on a routine, then Add to favourites.": "किसी रूटीन पर … दबाएं, फिर पसंदीदा में जोड़ें।",
 }

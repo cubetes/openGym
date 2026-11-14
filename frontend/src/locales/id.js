@@ -5917,4 +5917,7 @@ export default {
   "Show all routines": "Tampilkan semua rutinitas",
   "No routines here yet.": "Belum ada rutinitas di sini.",
   "New routine in this folder": "Rutinitas baru di folder ini",
+  "Favourites only, {0} of {1}": "Hanya favorit, {0} dari {1}",
+  "Show all": "Tampilkan semua",
+  "Tap … on a routine, then Add to favourites.": "Ketuk … pada rutinitas, lalu Tambah ke favorit.",
 };

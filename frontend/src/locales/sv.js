@@ -5999,4 +5999,7 @@ export default {
   "Show all routines": "Visa alla rutiner",
   "No routines here yet.": "Inga rutiner här ännu.",
   "New routine in this folder": "Ny rutin i den här mappen",
+  "Favourites only, {0} of {1}": "Bara favoriter, {0} av {1}",
+  "Show all": "Visa alla",
+  "Tap … on a routine, then Add to favourites.": "Tryck på … vid en rutin och välj Lägg till i favoriter.",
 }

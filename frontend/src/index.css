@@ -3460,6 +3460,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .plan-sec-h>.plan-sec-acts{margin-inline-start:auto}
 .plan-sec-h h4.sec{margin:0}
 .plan-routines-bar{margin-top:0}
+.plan-starred-bar{align-items:center;padding:0 var(--pad) 6px}
 .plan-textbtn{color:var(--acc-ink);font-size:var(--fs-callout);padding:6px 4px;position:relative}
 .plan-textbtn::before{content:'';position:absolute;inset:-6px}
 .plan .sect-f{margin:0 0 4px}

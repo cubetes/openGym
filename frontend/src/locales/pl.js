@@ -5952,4 +5952,7 @@ export default {
   "Show all routines": "Pokaż wszystkie rutyny",
   "No routines here yet.": "Nie ma tu jeszcze rutyn.",
   "New routine in this folder": "Nowa rutyna w tym folderze",
+  "Favourites only, {0} of {1}": "Tylko ulubione, {0} z {1}",
+  "Show all": "Pokaż wszystkie",
+  "Tap … on a routine, then Add to favourites.": "Dotknij … przy rutynie, a potem Dodaj do ulubionych.",
 }

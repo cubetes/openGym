@@ -5892,4 +5892,7 @@ export default {
   "Show all routines": "Vis alle rutiner",
   "No routines here yet.": "Ingen rutiner her endnu.",
   "New routine in this folder": "Ny rutine i denne mappe",
+  "Favourites only, {0} of {1}": "Kun favoritter, {0} af {1}",
+  "Show all": "Vis alle",
+  "Tap … on a routine, then Add to favourites.": "Tryk på … ved en rutine, og vælg Tilføj til favoritter.",
 }

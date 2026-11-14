@@ -6007,4 +6007,7 @@ export default {
   "Show all routines": "إظهار كل الروتينات",
   "No routines here yet.": "لا توجد روتينات هنا بعد.",
   "New routine in this folder": "روتين جديد في هذا المجلد",
+  "Favourites only, {0} of {1}": "المفضلة فقط، {0} من {1}",
+  "Show all": "عرض الكل",
+  "Tap … on a routine, then Add to favourites.": "اضغط على … في أي روتين، ثم «إضافة إلى المفضلة».",
 }

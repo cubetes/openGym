@@ -5952,4 +5952,7 @@ export default {
   "Show all routines": "Tüm rutinleri göster",
   "No routines here yet.": "Burada henüz rutin yok.",
   "New routine in this folder": "Bu klasörde yeni rutin",
+  "Favourites only, {0} of {1}": "Yalnızca favoriler, {0} / {1}",
+  "Show all": "Tümünü göster",
+  "Tap … on a routine, then Add to favourites.": "Bir rutinde … simgesine dokun, sonra Favorilere ekle'yi seç.",
 }

@@ -5952,4 +5952,7 @@ export default {
   "Show all routines": "显示所有例行训练",
   "No routines here yet.": "这里还没有训练日。",
   "New routine in this folder": "在此文件夹新建训练日",
+  "Favourites only, {0} of {1}": "仅显示收藏，共 {1} 个中的 {0} 个",
+  "Show all": "显示全部",
+  "Tap … on a routine, then Add to favourites.": "点按训练计划上的 …，然后选择“添加到收藏”。",
 }

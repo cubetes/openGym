@@ -5949,4 +5949,7 @@ export default {
   "Show all routines": "Показати всі рутини",
   "No routines here yet.": "Тут ще немає програм.",
   "New routine in this folder": "Нова програма в цій папці",
+  "Favourites only, {0} of {1}": "Лише вибране, {0} з {1}",
+  "Show all": "Показати все",
+  "Tap … on a routine, then Add to favourites.": "Торкніться … біля рутини, потім «Додати до вибраного».",
 }

@@ -131,6 +131,7 @@ describe('The pill', () => {
     expect(label('Starred').getAttribute('aria-pressed')).toBe('true')
     expect(rowNames()).toEqual(['Pull A'])
     act(() => root.unmount()); root = createRoot(host)
+    localStorage.removeItem('og_plan_starred') // the filter is remembered; start this half off
     useStore.setState(s => ({ S: { ...s.S, routines: s.S.routines.map(r => ({ ...r, fav: undefined })) } }))
     mount()
     click(label('Starred'))

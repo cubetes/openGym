@@ -5918,4 +5918,7 @@ export default {
   "Show all routines": "نمایش همه برنامه‌ها",
   "No routines here yet.": "هنوز روتینی اینجا نیست.",
   "New routine in this folder": "روتین جدید در این پوشه",
+  "Favourites only, {0} of {1}": "فقط موارد دلخواه، {0} از {1}",
+  "Show all": "نمایش همه",
+  "Tap … on a routine, then Add to favourites.": "روی … در یک برنامه بزنید، سپس «افزودن به علاقه‌مندی‌ها».",
 }

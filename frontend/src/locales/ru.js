@@ -5956,4 +5956,7 @@ export default {
   "Show all routines": "Показать все рутины",
   "No routines here yet.": "Здесь пока нет рутин.",
   "New routine in this folder": "Новая рутина в этой папке",
+  "Favourites only, {0} of {1}": "Только избранное, {0} из {1}",
+  "Show all": "Показать все",
+  "Tap … on a routine, then Add to favourites.": "Нажмите … у рутины, затем «Добавить в избранное».",
 }

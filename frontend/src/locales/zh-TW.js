@@ -5945,4 +5945,7 @@ export default {
   "Show all routines": "顯示所有例行訓練",
   "No routines here yet.": "這裡還沒有課表。",
   "New routine in this folder": "在此資料夾新增課表",
+  "Favourites only, {0} of {1}": "僅顯示收藏，共 {1} 個中的 {0} 個",
+  "Show all": "顯示全部",
+  "Tap … on a routine, then Add to favourites.": "點一下訓練的 …，再選「加入收藏」。",
 }

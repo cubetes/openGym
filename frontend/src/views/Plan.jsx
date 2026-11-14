@@ -445,7 +445,11 @@ function Schedule({ S, update, nav, mode }) {
 function Routines({ S, update, nav }) {
   const [edit, setEdit] = useState(false)
   const [flash, setFlash] = useState(null)
-  const [starred, setStarred] = useState(false)
+  const [starred, setStarredNow] = useState(() => { try { return localStorage.getItem('og_plan_starred') === '1' } catch { return false } })
+  const setStarred = v => {
+    setStarredNow(v)
+    try { v ? localStorage.setItem('og_plan_starred', '1') : localStorage.removeItem('og_plan_starred') } catch { /* private mode: the filter just isn't remembered */ }
+  }
   const swipe = workoutControls(S).swipeSets
   // Archived routines are not listed here (they have their own screen); they keep their place in S.routines.
   const routines = activeRoutines(S)
@@ -515,8 +519,14 @@ function Routines({ S, update, nav }) {
           </div>)}</div>
         : starred
           ? (starredRoutines.length
-            ? group('starred', starredRoutines.map(r => rowOf(r, cur && at(cur)(r) ? t('Current plan') : folderOf(r))), 'routine-list plan-routines')
-            : <EmptyState icon="star" title={t('No starred routines yet.')}>
+            ? <>
+              <div className="row between plan-starred-bar">
+                <span className="ss">{t('Favourites only, {0} of {1}', starredRoutines.length, routines.length)}</span>
+                <button className="plan-textbtn" onClick={() => setStarred(false)}>{t('Show all')}</button>
+              </div>
+              {group('starred', starredRoutines.map(r => rowOf(r, cur && at(cur)(r) ? t('Current plan') : folderOf(r))), 'routine-list plan-routines')}
+            </>
+            : <EmptyState icon="star" title={t('No starred routines yet.')} text={t('Tap … on a routine, then Add to favourites.')}>
               <Button variant="tinted" onClick={() => setStarred(false)}>{t('Show all routines')}</Button>
             </EmptyState>)
           : <>
@@ -539,7 +549,7 @@ function Routines({ S, update, nav }) {
       <Button variant="tinted" icon="clipboard" onClick={starterPlanSheet}>{t('Load starter plan')}</Button>
     </EmptyState>}
     {!edit && <div className="plan-pill">
-      <button type="button" className="plan-pill-star" aria-label={t('Starred')} aria-pressed={starred} onClick={() => setStarred(v => !v)}>
+      <button type="button" className="plan-pill-star" aria-label={t('Starred')} aria-pressed={starred} onClick={() => setStarred(!starred)}>
         <Icon name={starred ? 'starFill' : 'star'} />{starred && <span>{t('Starred')}</span>}
       </button>
       <button type="button" className="plan-pill-new" data-tour="plan-new" onClick={newMenu}><Icon name="plus" />{t('New')}</button>
