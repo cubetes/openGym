@@ -777,9 +777,9 @@ h4.sec{
    is missing; a browser that has it keeps the bars see-through even with Reduce Transparency on.
    Same opaque fills, on every translucent surface. */
 @media (prefers-reduced-transparency: reduce){
-  #tabbar,#timer,#toast,.conn-bar,.whdr.stick,.stats-index,.tr-bulk,.gl-sticky{-webkit-backdrop-filter:none;backdrop-filter:none}
+  #tabbar,#timer,#toast,.conn-bar,.whdr.stick,.stats-index,.tr-bulk,.gl-sticky,.plan-pill{-webkit-backdrop-filter:none;backdrop-filter:none}
   .pp-pill{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(0,0,0,.78)}
-  .tr-bulk{background:var(--bg-el)}
+  .tr-bulk,.plan-pill{background:var(--bg-el)}
   #tabbar{background:var(--bg-el)}
   :root[data-theme="light"] #tabbar{background:#f9f9fb}
   #timer{background:var(--surface-raised)}
@@ -4218,6 +4218,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .plan-folder-bar .plan-folder .grow{min-width:0;overflow-wrap:anywhere;color:var(--label)}
 .plan-folder-bar .plan-folder .n{font-weight:400;font-variant-numeric:tabular-nums}
 .plan-folder{cursor:pointer}
+.plan-folder.is-edit{cursor:default}
 .plan-folder .tt{overflow-wrap:anywhere}
 .plan-folder .chev{flex:none;color:var(--label-3)}
 [dir="rtl"] .plan-folder .chev{transform:scaleX(-1)}
@@ -4235,7 +4236,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .plan-pill{
   position:fixed;z-index:40;bottom:calc(92px + var(--sab));inset-inline-end:max(var(--pad),calc((100vw - 560px)/2 + var(--pad)));
   display:flex;align-items:center;min-height:52px;padding:4px;border-radius:26px;
-  background:color-mix(in srgb,var(--bg-el) 88%,transparent);
+  background:var(--bg-el);background:color-mix(in srgb,var(--bg-el) 88%,transparent);
   -webkit-backdrop-filter:saturate(180%) blur(12px);backdrop-filter:saturate(180%) blur(12px);
   border:var(--hair) solid var(--sep-op);box-shadow:0 4px 18px rgba(0,0,0,.28);
 }
@@ -4466,7 +4467,6 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .cr-v{font-size:var(--fs-title3,1.25rem);font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px}
 .cr-s{font-size:var(--fs-footnote);color:var(--label-2,var(--label-dim));font-variant-numeric:tabular-nums;margin-top:2px}
 .cr-s.accent{color:var(--acc-ink)}
-/* Favourite routines (#327): the starred ones under their own quiet heading on Plan. */
 /* The skill ladder's next rung under the progression line (views/Workout.jsx LadderNext). */
 .ladder-next{display:flex;align-items:center;gap:10px;margin:6px 0 0;padding:10px 12px;border-radius:var(--r);background:var(--acc-soft);color:var(--label)}
 .ladder-next .grow{display:grid;gap:1px;min-width:0}
