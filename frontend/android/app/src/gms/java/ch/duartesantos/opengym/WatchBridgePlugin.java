@@ -88,6 +88,8 @@ public class WatchBridgePlugin extends Plugin {
     private static volatile WatchBridgePlugin live;
 
     private final ExecutorService io = Executors.newSingleThreadExecutor();
+    // a watch that never answers a ping holds its thread for 5 s: not the one that carries the events
+    private final ExecutorService pinger = Executors.newSingleThreadExecutor();
     private CapabilityClient.OnCapabilityChangedListener capListener;
 
     @Override
@@ -109,6 +111,7 @@ public class WatchBridgePlugin extends Plugin {
         if (live == this) live = null;
         try { if (capListener != null) Wearable.getCapabilityClient(getContext()).removeListener(capListener); } catch (Exception ignored) {}
         io.shutdown();
+        pinger.shutdown();
     }
 
     /* ---------- the page's calls ---------- */
@@ -240,7 +243,7 @@ public class WatchBridgePlugin extends Plugin {
     /** The link check: the watch answers a request, timed here. The first reachable watch that does wins. */
     @PluginMethod
     public void ping(PluginCall call) {
-        io.execute(() -> {
+        pinger.execute(() -> {
             JSObject out = new JSObject().put("ok", false);
             try {
                 Context ctx = getContext();
