@@ -117,6 +117,7 @@ describe('Edit with select', () => {
   })
 
   it('deleting every routine leaves Done on screen so Edit can be left', () => {
+    useStore.setState(s => ({ S: { ...s.S, routines: [routine('b', 'Mobility'), routine('e', 'Core')], routineFolders: [], week: {} } }))
     mount()
     edit()
     click(button('Select all'))
