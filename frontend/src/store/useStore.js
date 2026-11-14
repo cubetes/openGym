@@ -4,6 +4,8 @@ import { api, setRemoteAuth } from '../lib/api.js'
 import { localTZ } from '../lib/format.js'
 import { t } from '../lib/i18n.js'
 import { registerCustom, healCustomEx } from '../lib/exercises.js'
+import { isArchive } from '../lib/routine-folders.js'
+import { migrateArchiveFolder } from '../lib/routine-archive.js'
 import { syncGymInventory } from '../lib/gym-inventory.js'
 import { DEMO, DEMO_SEEDED } from '../lib/demo.js'
 import { rememberDefaultLang } from '../lib/default-lang.js'
@@ -772,6 +774,11 @@ export const useStore = create((set, get) => {
   }
   // Boot's last step: from here on changes push, and one made during boot goes now.
   const finishBoot = (extra = {}) => {
+    // The old Archive folder becomes the archive flag once, through update() so it is stamped and
+    // syncs; a push it asks for waits for `ready` below. Not in persist: that stamps nothing.
+    // Only when there is something to move: a bare marker would make every synced copy owe a push.
+    // lean: a copy with no Archive folder never gets the marker; set it on the first Archive use.
+    if (!get().S.archiveMoved && get().S.routines.some(r => isArchive(r.folder))) get().update(migrateArchiveFolder)
     set({ ready: true, ...extra })
     if (pushPending && get().user) {
       clearTimeout(pushTm)

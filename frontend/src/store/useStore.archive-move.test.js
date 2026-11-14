@@ -1,0 +1,34 @@
+// @vitest-environment happy-dom
+// The old folder called Archive becomes the archive flag once, through update(), so the move is
+// stamped and syncs (lib/routine-archive.js migrateArchiveFolder).
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+vi.mock('../lib/api.js', () => ({ api: vi.fn(), setRemoteAuth: vi.fn() }))
+
+import { DEF, useStore } from './useStore.js'
+
+const clone = v => JSON.parse(JSON.stringify(v))
+const routine = (id, folder) => ({ id, name: id, _ts: 100, ex: [], ...(folder ? { folder } : {}) })
+
+beforeEach(() => { localStorage.clear() })
+
+describe('boot', () => {
+  it('moves routines in the Archive folder to archived, stamped, once', async () => {
+    useStore.setState({
+      S: { ...clone(DEF), _ts: 100, routines: [routine('a', 'Archive'), routine('b', 'Push')] },
+      user: null, ready: false,
+    })
+    await useStore.getState().boot()
+    const S = useStore.getState().S
+    expect(S.routines[0].archived).toBe(true)
+    expect(S.routines[0].folder).toBeUndefined()
+    expect(S.routines[0]._f.archived).toBeGreaterThan(100)
+    expect(S.routines[1].folder).toBe('Push')
+    expect(S.archiveMoved).toBe(true)
+    expect(S.edited.archiveMoved).toBeGreaterThan(100)
+
+    const stamp = S._ts
+    await useStore.getState().boot()
+    expect(useStore.getState().S._ts).toBe(stamp)
+  })
+})
