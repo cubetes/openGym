@@ -5943,4 +5943,6 @@ export default {
   "Not in a folder": "不在資料夾中",
   "No starred routines yet.": "還沒有加星號的例行訓練。",
   "Show all routines": "顯示所有例行訓練",
+  "No routines here yet.": "這裡還沒有課表。",
+  "New routine in this folder": "在此資料夾新增課表",
 }

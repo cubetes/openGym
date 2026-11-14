@@ -116,13 +116,13 @@ export function routineMenu(r) {
   })
 }
 
-export function folderMenu(name) {
+export function folderMenu(name, onRenamed) {
   const current = same(currentFolder(S()), name)
   menuSheet({
     title: name,
     sections: [{ items: [
       { icon: 'mapPin', label: current ? t('Not the current plan') : t('Make current plan'), onClick: () => update(s => setCurrent(s, current ? null : name)) },
-      { icon: 'pencil', label: t('Rename'), onClick: () => folderNameSheet({ mode: 'rename', name }) },
+      { icon: 'pencil', label: t('Rename'), onClick: () => folderNameSheet({ mode: 'rename', name, onDone: onRenamed }) },
       { icon: 'plus', label: t('New routine here'), onClick: () => newRoutine(update, nav, name) },
       { icon: 'archive', label: t('Archive folder and routines'), onClick: () => archiveFolderWithUndo(name) },
     ] }, { items: [

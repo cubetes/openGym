@@ -6005,4 +6005,6 @@ export default {
   "Not in a folder": "غير موجودة في مجلد",
   "No starred routines yet.": "لا توجد روتينات مميّزة بعد.",
   "Show all routines": "إظهار كل الروتينات",
+  "No routines here yet.": "لا توجد روتينات هنا بعد.",
+  "New routine in this folder": "روتين جديد في هذا المجلد",
 }

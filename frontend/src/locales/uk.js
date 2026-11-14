@@ -5947,4 +5947,6 @@ export default {
   "Not in a folder": "Поза папками",
   "No starred routines yet.": "Рутин із зірочкою ще немає.",
   "Show all routines": "Показати всі рутини",
+  "No routines here yet.": "Тут ще немає програм.",
+  "New routine in this folder": "Нова програма в цій папці",
 }

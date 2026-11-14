@@ -5890,4 +5890,6 @@ export default {
   "Not in a folder": "Ikke i en mappe",
   "No starred routines yet.": "Ingen rutiner med stjerne endnu.",
   "Show all routines": "Vis alle rutiner",
+  "No routines here yet.": "Ingen rutiner her endnu.",
+  "New routine in this folder": "Ny rutine i denne mappe",
 }

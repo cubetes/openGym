@@ -5946,4 +5946,6 @@ export default {
   "Not in a folder": "Ne aplanke",
   "No starred routines yet.": "Pažymėtų rutinų dar nėra.",
   "Show all routines": "Rodyti visas rutinas",
+  "No routines here yet.": "Čia dar nėra programų.",
+  "New routine in this folder": "Nauja programa šiame aplanke",
 }

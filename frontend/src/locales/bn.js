@@ -6029,4 +6029,6 @@ export default {
   "Not in a folder": "কোনো ফোল্ডারে নেই",
   "No starred routines yet.": "এখনও কোনো তারকা চিহ্নিত রুটিন নেই।",
   "Show all routines": "সব রুটিন দেখান",
+  "No routines here yet.": "এখানে এখনও কোনো রুটিন নেই।",
+  "New routine in this folder": "এই ফোল্ডারে নতুন রুটিন",
 }

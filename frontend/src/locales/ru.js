@@ -5954,4 +5954,6 @@ export default {
   "Not in a folder": "Вне папок",
   "No starred routines yet.": "Пока нет рутин со звёздочкой.",
   "Show all routines": "Показать все рутины",
+  "No routines here yet.": "Здесь пока нет рутин.",
+  "New routine in this folder": "Новая рутина в этой папке",
 }

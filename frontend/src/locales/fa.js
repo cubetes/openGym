@@ -5916,4 +5916,6 @@ export default {
   "Not in a folder": "بدون پوشه",
   "No starred routines yet.": "هنوز برنامه ستاره‌داری نیست.",
   "Show all routines": "نمایش همه برنامه‌ها",
+  "No routines here yet.": "هنوز روتینی اینجا نیست.",
+  "New routine in this folder": "روتین جدید در این پوشه",
 }

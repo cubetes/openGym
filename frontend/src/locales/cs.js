@@ -5916,4 +5916,6 @@ export default {
   "Not in a folder": "Mimo složku",
   "No starred routines yet.": "Zatím žádné rutiny s hvězdičkou.",
   "Show all routines": "Zobrazit všechny rutiny",
+  "No routines here yet.": "Zatím tu nejsou žádné rutiny.",
+  "New routine in this folder": "Nová rutina v této složce",
 }

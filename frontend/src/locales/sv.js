@@ -5997,4 +5997,6 @@ export default {
   "Not in a folder": "Inte i en mapp",
   "No starred routines yet.": "Inga stjärnmärkta rutiner än.",
   "Show all routines": "Visa alla rutiner",
+  "No routines here yet.": "Inga rutiner här ännu.",
+  "New routine in this folder": "Ny rutin i den här mappen",
 }

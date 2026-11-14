@@ -5960,4 +5960,6 @@ export default {
   "Not in a folder": "Fuori da una cartella",
   "No starred routines yet.": "Ancora nessuna routine con la stella.",
   "Show all routines": "Mostra tutte le routine",
+  "No routines here yet.": "Qui non ci sono ancora routine.",
+  "New routine in this folder": "Nuova routine in questa cartella",
 }

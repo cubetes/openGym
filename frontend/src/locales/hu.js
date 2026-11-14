@@ -5953,4 +5953,6 @@ export default {
   "Not in a folder": "Mappán kívül",
   "No starred routines yet.": "Még nincs csillagozott rutin.",
   "Show all routines": "Összes rutin mutatása",
+  "No routines here yet.": "Itt még nincsenek rutinok.",
+  "New routine in this folder": "Új rutin ebben a mappában",
 }

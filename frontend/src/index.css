@@ -4216,6 +4216,10 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .plan-pill-star{color:var(--label)}
 .plan-pill-star[aria-pressed="true"]{background:var(--acc);color:var(--on-acc)}
 .plan-pill-new{color:var(--acc-ink)}
+.plan-crumb{align-items:center;min-height:44px}
+.plan-crumb .plan-textbtn{display:flex;align-items:center;gap:4px;min-height:44px}
+.plan-new-here{width:100%;text-align:start;color:var(--acc-ink);font-weight:600}
+.plan-new-here .lrow-i{background:var(--acc-soft);color:var(--acc-ink)}
 .plan-more{flex:none;display:grid;place-items:center;width:44px;height:44px;color:var(--label-2)}
 
 /* Tempo (#572, components/Tempo.jsx): the tag on an exercise, the picker's big readout and the

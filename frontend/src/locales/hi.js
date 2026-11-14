@@ -5950,4 +5950,6 @@ export default {
   "Not in a folder": "किसी फ़ोल्डर में नहीं",
   "No starred routines yet.": "अभी कोई तारांकित रूटीन नहीं।",
   "Show all routines": "सभी रूटीन दिखाएँ",
+  "No routines here yet.": "यहाँ अभी कोई रूटीन नहीं है।",
+  "New routine in this folder": "इस फ़ोल्डर में नया रूटीन",
 }

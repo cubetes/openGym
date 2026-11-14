@@ -5950,4 +5950,6 @@ export default {
   "Not in a folder": "不在文件夹中",
   "No starred routines yet.": "还没有加星标的例行训练。",
   "Show all routines": "显示所有例行训练",
+  "No routines here yet.": "这里还没有训练日。",
+  "New routine in this folder": "在此文件夹新建训练日",
 }

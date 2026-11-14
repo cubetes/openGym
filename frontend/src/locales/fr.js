@@ -5950,4 +5950,6 @@ export default {
   "Not in a folder": "Hors dossier",
   "No starred routines yet.": "Aucune routine favorite pour l’instant.",
   "Show all routines": "Afficher toutes les routines",
+  "No routines here yet.": "Aucune routine ici pour l’instant.",
+  "New routine in this folder": "Nouvelle routine dans ce dossier",
 }

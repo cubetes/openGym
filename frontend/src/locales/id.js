@@ -5915,4 +5915,6 @@ export default {
   "Not in a folder": "Tanpa folder",
   "No starred routines yet.": "Belum ada rutinitas berbintang.",
   "Show all routines": "Tampilkan semua rutinitas",
+  "No routines here yet.": "Belum ada rutinitas di sini.",
+  "New routine in this folder": "Rutinitas baru di folder ini",
 };

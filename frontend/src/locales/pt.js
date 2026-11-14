@@ -5950,4 +5950,6 @@ export default {
   "Not in a folder": "Fora das pastas",
   "No starred routines yet.": "Ainda não há rotinas com estrela.",
   "Show all routines": "Mostrar todas as rotinas",
+  "No routines here yet.": "Ainda não há rotinas aqui.",
+  "New routine in this folder": "Nova rotina nesta pasta",
 }

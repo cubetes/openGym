@@ -5916,4 +5916,6 @@ export default {
   "Not in a folder": "Không trong thư mục",
   "No starred routines yet.": "Chưa có bài tập nào gắn sao.",
   "Show all routines": "Hiện tất cả bài tập",
+  "No routines here yet.": "Chưa có lịch tập nào ở đây.",
+  "New routine in this folder": "Lịch tập mới trong thư mục này",
 };

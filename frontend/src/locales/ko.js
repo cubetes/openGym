@@ -5950,4 +5950,6 @@ export default {
   "Not in a folder": "폴더 없음",
   "No starred routines yet.": "별표한 루틴이 아직 없어요.",
   "Show all routines": "루틴 모두 보기",
+  "No routines here yet.": "아직 루틴이 없습니다.",
+  "New routine in this folder": "이 폴더에 새 루틴",
 }

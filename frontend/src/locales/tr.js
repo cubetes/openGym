@@ -5950,4 +5950,6 @@ export default {
   "Not in a folder": "Klasörde değil",
   "No starred routines yet.": "Henüz yıldızlı rutin yok.",
   "Show all routines": "Tüm rutinleri göster",
+  "No routines here yet.": "Burada henüz rutin yok.",
+  "New routine in this folder": "Bu klasörde yeni rutin",
 }

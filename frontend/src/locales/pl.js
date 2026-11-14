@@ -5950,4 +5950,6 @@ export default {
   "Not in a folder": "Poza folderem",
   "No starred routines yet.": "Nie ma jeszcze rutyn z gwiazdką.",
   "Show all routines": "Pokaż wszystkie rutyny",
+  "No routines here yet.": "Nie ma tu jeszcze rutyn.",
+  "New routine in this folder": "Nowa rutyna w tym folderze",
 }

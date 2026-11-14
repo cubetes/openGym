@@ -5961,4 +5961,6 @@ export default {
   "Not in a folder": "ไม่อยู่ในโฟลเดอร์",
   "No starred routines yet.": "ยังไม่มีรูทีนที่ติดดาว",
   "Show all routines": "แสดงรูทีนทั้งหมด",
+  "No routines here yet.": "ยังไม่มีรูทีนที่นี่",
+  "New routine in this folder": "รูทีนใหม่ในโฟลเดอร์นี้",
 }
