@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('../lib/api.js', () => ({ api: vi.fn(), setRemoteAuth: vi.fn() }))
 
+import { api } from '../lib/api.js'
 import { DEF, useStore } from './useStore.js'
 
 const clone = v => JSON.parse(JSON.stringify(v))
@@ -30,5 +31,18 @@ describe('boot', () => {
     const stamp = S._ts
     await useStore.getState().boot()
     expect(useStore.getState().S._ts).toBe(stamp)
+  })
+})
+
+describe('pull', () => {
+  it('moves Archive-folder routines that an older copy brings in after boot', async () => {
+    useStore.setState({ S: { ...clone(DEF), _ts: 0 }, user: { id: 'u' }, ready: true })
+    const theirs = { ...clone(DEF), _ts: 500, _wid: 'w', routines: [routine('a', 'Archive')] }
+    api.mockResolvedValue({ state: theirs, rev: 3 })
+    await useStore.getState().pullState()
+    const S = useStore.getState().S
+    expect(S.routines[0].archived).toBe(true)
+    expect(S.routines[0].folder).toBeUndefined()
+    expect(S.archiveMoved).toBe(true)
   })
 })

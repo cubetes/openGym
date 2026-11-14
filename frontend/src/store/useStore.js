@@ -772,13 +772,17 @@ export const useStore = create((set, get) => {
       pushTm = setTimeout(() => get().pushState(), 1500)
     }
   }
+  // Also after a pull: an older app's copy can still carry routines in the Archive folder.
+  const moveArchive = () => {
+    if (!get().S.archiveMoved && get().S.routines.some(r => isArchive(r.folder))) get().update(migrateArchiveFolder)
+  }
   // Boot's last step: from here on changes push, and one made during boot goes now.
   const finishBoot = (extra = {}) => {
     // The old Archive folder becomes the archive flag once, through update() so it is stamped and
     // syncs; a push it asks for waits for `ready` below. Not in persist: that stamps nothing.
     // Only when there is something to move: a bare marker would make every synced copy owe a push.
     // lean: a copy with no Archive folder never gets the marker; set it on the first Archive use.
-    if (!get().S.archiveMoved && get().S.routines.some(r => isArchive(r.folder))) get().update(migrateArchiveFolder)
+    moveArchive()
     set({ ready: true, ...extra })
     if (pushPending && get().user) {
       clearTimeout(pushTm)
@@ -1941,7 +1945,10 @@ export const useStore = create((set, get) => {
           pushPending = false
           await get().pushState()
         } catch (e) { if (isCurrent(tok)) failed(e) /* keep local; the poll retries */ }
-        finally { if (tok === syncSession) pulling = null }
+        finally {
+          if (tok === syncSession) pulling = null
+          if (isCurrent(tok) && get().ready) moveArchive()   // not before boot's own move
+        }
       })()
       return pulling
     },
