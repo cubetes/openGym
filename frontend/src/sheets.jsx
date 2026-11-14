@@ -3276,7 +3276,7 @@ export const effortPickerSheet = (kind, value, onPick, { cardio = false } = {}) 
 export const planHasRoutines = st => (st.routines || []).some(r => r.ex && r.ex.length)
 export async function exportPlanFile() {
   const st = S(), user = useStore.getState().user
-  const bundle = buildPlanBundle(st, user?.name ? t('{0}’s plan', user.name) : '')
+  const bundle = buildPlanBundle({ ...st, routines: activeRoutines(st) }, user?.name ? t('{0}’s plan', user.name) : '')
   const json = JSON.stringify(bundle, null, 2)
   const name = 'opengym-plan-' + todayISO() + '.json'
   if (MOBILE) { try { await shareExport(json, name) } catch (e) { /* dismissed */ } return }
