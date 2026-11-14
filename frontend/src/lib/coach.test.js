@@ -80,6 +80,12 @@ describe('plan fingerprint', () => {
     expect(planHash(week)).not.toBe(planHash(S))
   })
 
+  it('drops weekdays that point at an archived routine', () => {
+    const S = state({ week: { 1: ['r1', 'r2'], 3: 'r2' } }); S.routines[1].archived = true
+    expect(canonicalPlan(S).week).toEqual({ 1: ['r1'] })
+    expect(serverPayload.cleanPlan(S, 0).week).toEqual({ 1: ['r1'] })
+  })
+
   it('cannot tell "no weight" from "0 kg" — both mean unloaded', () => {
     const a = state(); delete a.routines[0].ex[2].weight
     const b = state(); b.routines[0].ex[2].weight = 0
@@ -101,7 +107,8 @@ describe('plan fingerprint', () => {
     withFlags.routines[0].ex[0] = { ...withFlags.routines[0].ex[0], repsMin: 8, repsMax: 20, bodyweight: true }
     withFlags.routines[1].ex[0] = { ...withFlags.routines[1].ex[0], side: true, reps: 16 }
     const combined = state({ week: { 1: ['r1', 'r2'], 3: 'r2', 5: [] } })
-    for (const S of [state(), state({ week: {} }), state({ routines: [] }), withFlags, combined]) {
+    const arch = state({ week: { 1: ['r1', 'r2'], 3: 'r2' } }); arch.routines[1].archived = true
+    for (const S of [state(), state({ week: {} }), state({ routines: [] }), withFlags, combined, arch]) {
       expect(canonicalPlan(S)).toEqual(serverPayload.canonicalPlan(S))
       expect(planHash(S)).toBe(serverHashPlan(serverPayload.canonicalPlan(S)))
       expect(hashPlan(canonicalPlan(S))).toBe(serverHashPlan(serverPayload.canonicalPlan(S)))
