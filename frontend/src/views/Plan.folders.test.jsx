@@ -40,7 +40,7 @@ const rowNames = () => [...host.querySelectorAll('.plan-hdr, .plan-current, .pla
 describe('Routines list', () => {
   it('goes current plan, Not in a folder, loose, one row per other folder, Archive', () => {
     mount()
-    expect(rowNames()).toEqual(['Block 2', 'Push A', 'Pull A', '#Not in a folder', 'Mobility', 'Hyper & more', 'Travel', 'Archive'])
+    expect(rowNames()).toEqual(['Block 2', 'Push A', 'Pull A', '#Not in a folder', 'Mobility', '#Folders', 'Hyper & more', 'Travel', 'Archive'])
     const cur = host.querySelector('.plan-current')
     expect(cur.textContent).toContain('Block 2')
     expect(cur.textContent).toContain('Current plan · 2 routines')
@@ -110,12 +110,12 @@ describe('Routines list', () => {
 })
 
 describe('The pill', () => {
-  it('has Starred and New; New offers New routine and New folder', async () => {
+  it('has the Favourites star and New; New offers New routine and New folder', async () => {
     const { menuSheet } = await import('../sheets.jsx')
     const { folderNameSheet } = await import('../components/RoutineFolder.jsx')
     mount()
     const pill = host.querySelector('.plan-pill')
-    expect(label('Starred').getAttribute('aria-pressed')).toBe('false')
+    expect(label('Favourites').getAttribute('aria-pressed')).toBe('false')
     click([...pill.querySelectorAll('button')].find(b => b.textContent.includes('New')))
     const items = menuSheet.mock.lastCall[0].items
     expect(items.map(i => i.label)).toEqual(['New routine', 'New folder'])
@@ -125,17 +125,17 @@ describe('The pill', () => {
     expect(nav).toHaveBeenLastCalledWith(expect.stringMatching(/^\/plan\/r\//))
   })
 
-  it('Starred lists only starred routines, and says so when there are none', () => {
+  it('The Favourites star lists only starred routines, and says so when there are none', () => {
     mount()
-    click(label('Starred'))
-    expect(label('Starred').getAttribute('aria-pressed')).toBe('true')
+    click(label('Favourites'))
+    expect(label('Favourites').getAttribute('aria-pressed')).toBe('true')
     expect(rowNames()).toEqual(['Pull A'])
     act(() => root.unmount()); root = createRoot(host)
     localStorage.removeItem('og_plan_starred') // the filter is remembered; start this half off
     useStore.setState(s => ({ S: { ...s.S, routines: s.S.routines.map(r => ({ ...r, fav: undefined })) } }))
     mount()
-    click(label('Starred'))
-    expect(host.textContent).toContain('No starred routines yet.')
+    click(label('Favourites'))
+    expect(host.textContent).toContain('No favourites yet.')
     click([...host.querySelectorAll('button')].find(b => b.textContent === 'Show all routines'))
     expect(host.textContent).toContain('Mobility')
   })

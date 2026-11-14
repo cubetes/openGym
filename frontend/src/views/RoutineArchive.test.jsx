@@ -78,6 +78,13 @@ describe('Archive screen', () => {
     expect(S().routines.find(r => r.id === 'a').archived).toBe(true)
   })
 
+  it('a Restore pill on the row puts that routine back without opening the menu', () => {
+    mount()
+    click(host.querySelector('[aria-label="Loose old: Restore"]'))
+    expect(S().routines.find(r => r.id === 'c').archived).toBeUndefined()
+    expect(host.textContent).toContain('They stay out of Plan until you restore them.')
+  })
+
   it('folder menu: Restore folder and Delete folder for good touch only its archived routines', () => {
     mount()
     click(more('Block 2'))

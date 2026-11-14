@@ -204,7 +204,8 @@ export function askAddDeviceData(extras) {
 // items: [{ icon, label, sub, onClick, danger, disabled, on }] — `on` draws a check for toggles.
 // sections: [{ title, items }] instead of `items` splits a longer menu into groups, each with an
 // optional small header; a group whose items are all falsy is left out, header and all.
-// `accent` tints a row's icon, for the one entry a menu leads with.
+// `accent` tints a row's icon, for the one entry a menu leads with. `cancel` puts a Cancel button
+// before the title (a sheet that asks for a choice); `labelStyle` styles one row's label.
 // A title is shown as written: most are sentences ("Convert to lb?", "Set 2"), which a default
 // title-casing turned into "Convert To Lb?". An exercise name passes exerciseNameClass as
 // titleClass, which title-cases the lower-case packs and leaves a cased one alone.
@@ -216,7 +217,7 @@ export function askAddDeviceData(extras) {
 const menuGroups = list => (list || [])
   .map(g => g.more ? g : { title: g.title, items: (g.items || []).filter(Boolean) })
   .filter(g => g.more || g.items.length)
-function MenuSheet({ title, titleClass = '', subtitle, items, sections, close }) {
+function MenuSheet({ title, titleClass = '', subtitle, items, sections, cancel, close }) {
   const [open, setOpen] = useState(false)
   const firstMore = useRef(null)
   useEffect(() => { if (open) firstMore.current?.focus() }, [open])
@@ -232,7 +233,9 @@ function MenuSheet({ title, titleClass = '', subtitle, items, sections, close })
       fold: true, expanded: false, onClick: () => setOpen(true) }] })
   }
   return <>
-    {title && <h3 className={titleClass || undefined} style={{ marginBottom: subtitle ? 2 : 10 }}>{title}</h3>}
+    {title && cancel
+      ? <div className="menu-head"><button type="button" className="plan-textbtn" onClick={() => close()}>{t('Cancel')}</button><h3 className={titleClass || undefined}>{title}</h3><span /></div>
+      : title && <h3 className={titleClass || undefined} style={{ marginBottom: subtitle ? 2 : 10 }}>{title}</h3>}
     {subtitle && <div className="muted small" style={{ marginBottom: 10 }}>{subtitle}</div>}
     {groups.map((g, gi) => <div key={gi} className={'menu-group' + (sections ? ' grouped' : '')}>
       {g.title && <div className="menu-sec">{g.title}</div>}
@@ -243,7 +246,7 @@ function MenuSheet({ title, titleClass = '', subtitle, items, sections, close })
           aria-expanded={it.fold ? false : undefined}
           {...tappable(it.disabled ? null : it.fold ? it.onClick : () => { close(); it.onClick && it.onClick() })}>
           {it.lead ? <span className="lrow-i" aria-hidden="true">{it.lead}</span> : it.icon && <span className="lrow-i" style={it.iconStyle}><Icon name={it.icon} /></span>}
-          <div className="grow"><div className="tt">{it.label}</div>{it.sub && <div className="ss">{it.sub}</div>}</div>
+          <div className="grow"><div className="tt" style={it.labelStyle}>{it.label}</div>{it.sub && <div className="ss">{it.sub}</div>}</div>
           {it.on != null && <span className={'menu-on' + (it.on ? ' is-on' : '')}><Icon name="check" /></span>}
           {it.chevron && <Icon name="chevronRight" className="menu-chev" />}
           {it.fold && <Icon name="chevronDown" className="menu-chev" />}

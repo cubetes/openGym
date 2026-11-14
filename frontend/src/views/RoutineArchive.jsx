@@ -1,18 +1,18 @@
 // Plan → Archive (docs/dev/ROUTINE_FOLDERS.md): archived folders as headers with their routines,
 // then the loose archived ones. Restore and Delete for good, each delete naming what it takes.
+import { Fragment } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store/useStore.js'
 import { useUI } from '../store/useUI.js'
 import { t } from '../lib/i18n.js'
 import { exCount, routineCount } from '../lib/format.js'
-import { said } from '../lib/a11y-name.js'
+import { nameIn, said } from '../lib/a11y-name.js'
 import { groupRoutines } from '../lib/routine-folders.js'
 import { deleteArchived, restoreFolder, restoreRoutines } from '../lib/routine-archive.js'
 import { confirmSheet, menuSheet } from '../sheets.jsx'
 import Icon from '../components/Icon.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 import RoutineTile from '../components/RoutineTile.jsx'
-import { Button } from '../components/ui.jsx'
 import { withUndo } from '../components/RoutineMenus.jsx'
 
 const update = fn => useStore.getState().update(fn)
@@ -46,12 +46,15 @@ function folderMenu(name, ids) {
 const MoreButton = ({ name, onClick }) => <button type="button" className="plan-more" aria-label={t('More for {0}', said(name))}
   onClick={e => { e.stopPropagation(); onClick() }}><Icon name="more" /></button>
 
-const list = rs => <div className="list routine-list plan-routines">{rs.map(r =>
+const restoreOne = r => { update(s => { restoreRoutines(s, [r.id]) }); restored(r.name) }
+
+const rows = rs => rs.map(r =>
   <div key={r.id} className="item plan-routine arch-routine">
     <RoutineTile r={r} />
     <div className="grow"><div className="tt">{r.name}</div><div className="ss">{exCount(r.ex.length)}</div></div>
+    <button type="button" className="arch-restore" aria-label={nameIn(r.name, t('Restore'))} onClick={() => restoreOne(r)}><Icon name="undo" />{t('Restore')}</button>
     <MoreButton name={r.name} onClick={() => routineMenu(r)} />
-  </div>)}</div>
+  </div>)
 
 export default function RoutineArchive() {
   const nav = useNavigate()
@@ -61,23 +64,29 @@ export default function RoutineArchive() {
   const [loose, ...folders] = groupRoutines(archived)
   const all = routineCount(archived.length)
 
-  return <div className="narrow">
+  return <div className="narrow plan">
+    <div className="row between plan-crumb">
+      <button type="button" className="plan-textbtn" data-back="/plan" onClick={() => nav('/plan')} aria-label={t('Plan')}><Icon name="chevronLeft" />{t('Plan')}</button>
+    </div>
     <div className="hdr">
-      <button className="iconbtn" data-back="/plan" onClick={() => nav('/plan')} aria-label={t('Plan')}><Icon name="chevronLeft" /></button>
-      <div style={{ flex: 1, margin: '0 12px', minWidth: 0 }}><h1>{t('Archive')}</h1></div>
+      <div style={{ minWidth: 0 }}>
+        <h1>{t('Archive')}</h1>
+        {archived.length > 0 && <div className="sub">{all}. {t('They stay out of Plan until you restore them.')}</div>}
+      </div>
     </div>
     {archived.length ? <>
-      {folders.map(g => <div key={g.folder} className="plan-folder-sect">
-        <div className="plan-folder-bar arch-folder">
-          <span className="plan-folder"><Icon name="folder" /><span className="grow">{g.folder}</span><span className="n">{g.routines.length}</span></span>
-          <MoreButton name={g.folder} onClick={() => folderMenu(g.folder, g.routines.map(r => r.id))} />
-        </div>
-        {list(g.routines)}
-      </div>)}
-      {loose.routines.length > 0 && list(loose.routines)}
-      <div style={{ height: 16 }} />
-      <Button variant="danger" icon="trash" onClick={() => deleteForGood(archived.map(r => r.id), all, t('{0} deleted.', all))}>
-        {t('Delete all {0} for good', archived.length)}</Button>
+      <div className="list plan-group routine-list plan-routines">
+        {folders.map(g => <Fragment key={g.folder}>
+          <div className="plan-folder-bar arch-folder">
+            <span className="plan-folder"><Icon name="folder" /><span className="grow">{g.folder}</span><span className="n">{g.routines.length}</span></span>
+            <MoreButton name={g.folder} onClick={() => folderMenu(g.folder, g.routines.map(r => r.id))} />
+          </div>
+          {rows(g.routines)}
+        </Fragment>)}
+        {rows(loose.routines)}
+      </div>
+      <button type="button" className="arch-delete-all" onClick={() => deleteForGood(archived.map(r => r.id), all, t('{0} deleted.', all))}>
+        {t('Delete all {0} for good', archived.length)}</button>
     </> : <EmptyState icon="archive" title={t('Nothing archived.')} />}
   </div>
 }

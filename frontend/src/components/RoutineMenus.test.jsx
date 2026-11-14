@@ -114,9 +114,15 @@ describe('folder menu', () => {
     expect(S().routineFolders.some(e => e.current)).toBe(false)
   })
 
+  it('keeps Delete folder and routines alone in its own group', () => {
+    folderMenu('Block 3')
+    expect(shown.menu.sections.map(s => s.items.map(i => i.label))).toEqual([
+      ['Not the current plan', 'Rename', 'New routine here', 'Archive folder and routines', 'Remove folder, keep routines'], ['Delete folder and routines']])
+  })
+
   it('removes the folder, keeps the routines loose, Undo puts the folder back', () => {
     folderMenu('Block 3')
-    pick('Remove folder').onClick()
+    pick('Remove folder, keep routines').onClick()
     expect(S().routines.filter(r => r.folder === 'Block 3')).toHaveLength(0)
     expect(S().routineFolders).toEqual([{ name: 'Travel' }])
     undo()
@@ -152,7 +158,7 @@ describe('folder menu', () => {
 describe('move to folder', () => {
   it('lists the current plan first with a check where the routine is, then No folder and New folder', () => {
     moveSheet(['d'])
-    const list = shown.menu.items
+    const list = shown.menu.sections[0].items
     expect(list.map(i => i.label)).toEqual(['Block 3', 'Travel', 'No folder', 'New folder'])
     expect(list.map(i => i.on)).toEqual([false, true, false, undefined])
     list[0].onClick()
@@ -160,9 +166,18 @@ describe('move to folder', () => {
     expect(S().routines.at(-1).id).toBe('d')
   })
 
+  it('has a Cancel, says where it is now, and No folder explains itself', () => {
+    moveSheet(['d'])
+    expect(shown.menu.cancel).toBe(true)
+    expect(shown.menu.title).toBe('Move Travel set')
+    const list = shown.menu.sections[0].items
+    expect(list[1].sub).toBe('Here now')
+    expect(list.find(i => i.label === 'No folder').sub).toBe('Takes it out of its folder')
+  })
+
   it('No folder makes it loose', () => {
     moveSheet(['a'])
-    shown.menu.items.find(i => i.label === 'No folder').onClick()
+    shown.menu.sections[0].items.find(i => i.label === 'No folder').onClick()
     expect(S().routines.find(r => r.id === 'a').folder).toBeUndefined()
   })
 })

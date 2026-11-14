@@ -20,6 +20,8 @@ import { deleteRoutineWithUndo, newRoutine } from '../views/Plan.jsx'
 import { folderNameSheet } from './RoutineFolder.jsx'
 
 const UNDO_MS = 8000
+// The current plan's tile: round, in the accent, so it never reads as a routine's colour square.
+const PIN = { borderRadius: '50%', background: 'var(--acc)', color: 'var(--on-acc)' }
 const same = (a, b) => cleanFolder(a).toLowerCase() === cleanFolder(b).toLowerCase()
 const S = () => useStore.getState().S
 const update = fn => useStore.getState().update(fn)
@@ -105,7 +107,7 @@ export function routineMenu(r) {
     sections: [{ items: [
       { icon: 'play', label: t('Start workout'), onClick: () => (S().active ? nav('/workout') : startOrPreview([r.id])) },
       { icon: 'pencil', label: t('Edit routine'), onClick: () => nav('/plan/r/' + r.id) },
-      { icon: isFavRoutine(r) ? 'starFill' : 'star', label: isFavRoutine(r) ? t('Remove from favourites') : t('Add to favourites'), onClick: () => update(s => { toggleFavRoutine(s, r.id) }) },
+      { icon: isFavRoutine(r) ? 'starFill' : 'star', iconStyle: isFavRoutine(r) ? { color: 'var(--acc-ink)' } : undefined, label: isFavRoutine(r) ? t('Remove from favourites') : t('Add to favourites'), onClick: () => update(s => { toggleFavRoutine(s, r.id) }) },
       { icon: 'palette', label: t('Colour and icon'), onClick: () => routineLookSheet(r.id) },
       { icon: 'copy', label: t('Duplicate'), onClick: () => duplicateRoutine(r) },
       { icon: 'folder', label: t('Move to folder'), onClick: () => moveSheet([r.id]) },
@@ -121,12 +123,12 @@ export function folderMenu(name, onRenamed) {
   menuSheet({
     title: name,
     sections: [{ items: [
-      { icon: 'mapPin', label: current ? t('Not the current plan') : t('Make current plan'), onClick: () => update(s => setCurrent(s, current ? null : name)) },
+      { icon: 'pushpin', iconStyle: PIN, label: current ? t('Not the current plan') : t('Make current plan'), onClick: () => update(s => setCurrent(s, current ? null : name)) },
       { icon: 'pencil', label: t('Rename'), onClick: () => folderNameSheet({ mode: 'rename', name, onDone: onRenamed }) },
       { icon: 'plus', label: t('New routine here'), onClick: () => newRoutine(update, nav, name) },
       { icon: 'archive', label: t('Archive folder and routines'), onClick: () => archiveFolderWithUndo(name) },
+      { icon: 'folderOff', label: t('Remove folder, keep routines'), onClick: () => removeFolderWithUndo(name) },
     ] }, { items: [
-      { icon: 'folder', label: t('Remove folder'), onClick: () => removeFolderWithUndo(name) },
       { icon: 'trash', label: t('Delete folder and routines'), danger: true, onClick: () => deleteFolderConfirm(name) },
     ] }],
   })
@@ -145,18 +147,22 @@ export function moveSheet(ids) {
   const where = picked.length && picked.every(r => same(folderOf(r), folderOf(picked[0]))) ? folderOf(picked[0]) : null
   const cur = currentFolder(S())
   const folders = folderList(S())
-  const item = f => ({
-    icon: same(f.name, cur) ? 'mapPin' : 'folder', label: f.name,
-    sub: same(f.name, cur) ? t('Current plan') + ' · ' + routineCount(f.live) : routineCount(f.live),
-    on: where != null && same(f.name, where), onClick: () => moveIds(ids, f.name),
-  })
+  const item = f => {
+    const here = where != null && same(f.name, where), now = same(f.name, cur)
+    return {
+      icon: now ? 'pushpin' : 'folder', iconStyle: now ? PIN : undefined, label: f.name,
+      sub: [now && t('Current plan'), here ? t('Here now') : !now && routineCount(f.live)].filter(Boolean).join(' · ') || routineCount(f.live),
+      on: here, onClick: () => moveIds(ids, f.name),
+    }
+  }
   menuSheet({
-    title: picked.length === 1 ? t('Move {0}', picked[0].name) : t('Move to folder'),
-    items: [
+    title: t('Move {0}', picked.length === 1 ? picked[0].name : routineCount(picked.length)), cancel: true,
+    sections: [{ items: [
       ...folders.filter(f => same(f.name, cur)).map(item),
       ...folders.filter(f => !same(f.name, cur)).map(item),
-      { icon: 'list', label: t('No folder'), sub: t('Loose, at the end of the list'), on: where === '', onClick: () => moveIds(ids, '') },
-      { icon: 'plus', label: t('New folder'), accent: true, onClick: () => folderNameSheet({ mode: 'new', onDone: n => moveIds(ids, n) }) },
-    ],
+      { icon: 'folderOff', label: t('No folder'), sub: t('Takes it out of its folder'), on: where === '', onClick: () => moveIds(ids, '') },
+      { icon: 'plus', iconStyle: { background: 'var(--acc-soft)', color: 'var(--acc-ink)' }, labelStyle: { color: 'var(--acc-ink)' }, label: t('New folder'),
+        onClick: () => folderNameSheet({ mode: 'new', onDone: n => moveIds(ids, n) }) },
+    ] }],
   })
 }

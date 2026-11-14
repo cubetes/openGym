@@ -123,7 +123,7 @@ the two do not compete. The list, top to bottom:
 3. **One row per other folder**: grey folder tile, name (wraps, never cut), "6 routines", "…",
    chevron. Tapping opens the folder's own screen.
 4. **Archive** row: "12 routines", chevron. Shown only when something is archived.
-5. A floating pill above the tab bar: **Starred** filter and **+ New**. Hidden while dragging.
+5. A floating pill above the tab bar: **Favourites** filter (the star) and **+ New**. Hidden while dragging.
    The list ends with enough space that no row hides under it.
 
 **Routine row**: colour tile with the glyph, name with a gold star when starred, "7 exercises ·
@@ -134,9 +134,8 @@ Tap opens the routine as today. 50 pt minimum height, grows with text.
 (or "Current plan"), "…" with the folder menu, the same rows, "New routine in this folder" at the
 end. Long press drags within the folder or up onto "Plan" to take a routine out.
 
-**Starred filter** on: one flat list of starred routines from every folder (their folder named in
-the subtitle), "Favourites only, 3 of 12 · Show all". Nothing starred: "No starred routines yet.
-Tap … on a routine, then Add to favourites." Remembered per device (localStorage). The pinned
+**Favourites filter** on: one flat list of starred routines from every folder (their folder named in
+the subtitle), "3 of 12 routines · Show all". Nothing starred: "No favourites yet. Open the menu on a routine and pick Add to favourites. It will show here." Remembered per device (localStorage). The pinned
 Favourites group goes away; the Start sheet keeps starred first.
 
 ## Menus

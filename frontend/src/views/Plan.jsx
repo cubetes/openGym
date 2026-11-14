@@ -187,19 +187,21 @@ export default function Plan() {
   // A running programme wrote the schedule below (lib/programmes.js); the strip says whose it is.
   const progChip = programmeChip(S)
 
+  const picking = view === 'routines' && editing
   return <div className="narrow plan">
-    <div className="hdr">
+    {!picking && <div className="hdr">
       <SeasonDeco spot="header-bats" />
       <div><h1>{t('Plan')}</h1><div className="sub">{mode === 'rotation' ? t('Your routines in a loop') : t('Your weekly routine')}</div></div>
       <div className="hdr-actions">
         {showCoach && <Button size="sm" variant="tinted" icon="sparkles" onClick={() => nav('/coach')}>{t('Coach')}</Button>}
-        {!(view === 'routines' && editing) && <button className="iconbtn" data-tour="plan-menu" onClick={openMenu} aria-label={t('Plan options')} title={t('Plan options')}><Icon name="share" /></button>}
+        {view === 'routines' && activeRoutines(S).length > 0 && <button className="plan-textbtn plan-edit" aria-pressed={false} onClick={() => setEditing(true)}>{t('Edit')}</button>}
+        <button className="iconbtn" data-tour="plan-menu" onClick={openMenu} aria-label={t('Plan options')} title={t('Plan options')}><Icon name="share" /></button>
       </div>
-    </div>
+    </div>}
     <input ref={fileRef} type="file" accept="application/json,.json" onChange={pickFile} hidden />
-    <Segmented className="plan-views" tour="plan-views" value={view} onChange={setView}
-      options={[{ value: 'schedule', label: t('Schedule') }, { value: 'routines', label: t('Routines') }]} />
-    {progChip && <button type="button" className="prog-strip" onClick={() => nav('/plan/programmes')}>
+    {!picking && <Segmented className="plan-views" tour="plan-views" value={view} onChange={setView}
+      options={[{ value: 'schedule', label: t('Schedule') }, { value: 'routines', label: t('Routines') }]} />}
+    {!picking && progChip && <button type="button" className="prog-strip" onClick={() => nav('/plan/programmes')}>
       <Icon name="calendar" /><span className="grow">{S.programmes?.[S.programme?.id]?.name || t('Programme')}</span><span className="tag acc">{progChip}</span>
     </button>}
     {view === 'routines'
@@ -530,32 +532,33 @@ function Routines({ S, update, nav, edit, setEdit }) {
   const starredRoutines = routines.filter(isFavRoutine)
 
   return <>
-    <div className="row between plan-sec-h plan-routines-bar">
-      {edit
-        ? <button className="plan-textbtn" onClick={() => setSel(allPicked ? [] : shown.map(r => r.id))}>{allPicked ? t('Select none') : t('Select all')}</button>
-        : <span />}
-      {routines.length > 0 || edit
-        ? <button className="plan-textbtn" aria-pressed={edit} onClick={() => (edit ? leave() : setEdit(true))}>{edit ? t('Done') : t('Edit')}</button>
-        : null}
-    </div>
-    {edit && ids.length > 0 && <h2 className="plan-selcount" role="status">{t('{0} selected', ids.length)}</h2>}
-    {routines.length || folders.length || archived ? <div className={edit ? 'plan-routes is-editing' : 'plan-routes'}>
+    {edit && <>
+      <div className="row between plan-routines-bar">
+        <button className="plan-textbtn" onClick={() => setSel(allPicked ? [] : shown.map(r => r.id))}>{allPicked ? t('Select none') : t('Select all')}</button>
+        <button className="plan-textbtn" aria-pressed onClick={leave}>{t('Done')}</button>
+      </div>
+      <h2 className="plan-selcount" role="status">{ids.length ? t('{0} selected', ids.length) : t('Select items')}</h2>
+    </>}
+    {routines.length || folders.length || archived ? <div className={'plan-routes' + (edit ? ' is-editing' : '') + (starred && !edit ? ' is-starred' : '')}>
       {!edit && starred
           ? (starredRoutines.length
             ? <>
-              <div className="row between plan-starred-bar">
-                <span className="ss">{t('Favourites only, {0} of {1}', starredRoutines.length, routines.length)}</span>
+              <div className="plan-starred-bar">
+                <span className="ss">{t('{0} of {1} routines', starredRoutines.length, routines.length)}</span>
                 <button className="plan-textbtn" onClick={() => setStarred(false)}>{t('Show all')}</button>
               </div>
               {group('starred', starredRoutines.map(r => rowOf(r, cur && at(cur)(r) ? t('Current plan') : folderOf(r))), 'routine-list plan-routines')}
             </>
-            : <EmptyState icon="star" title={t('No starred routines yet.')} text={t('Tap … on a routine, then Add to favourites.')}>
-              <Button variant="tinted" onClick={() => setStarred(false)}>{t('Show all routines')}</Button>
-            </EmptyState>)
+            : <div className="plan-fav-empty">
+              <span className="plan-fav-i"><Icon name="star" /></span>
+              <h3>{t('No favourites yet.')}</h3>
+              <p>{t('Open the menu on a routine and pick Add to favourites. It will show here.')}</p>
+              <button type="button" className="plan-textbtn" onClick={() => setStarred(false)}>{t('Show all routines')}</button>
+            </div>)
           : <>
             {cur && group('cur', [
               <div key="cur" className="item plan-current">
-                <span className="lrow-i"><Icon name="mapPin" /></span>
+                <span className="lrow-i plan-pin"><Icon name="pushpin" /></span>
                 <div className="grow"><div className="tt">{cur.name}</div><div className="ss"><b>{t('Current plan')}</b> · {routineCount(cur.live)}</div></div>
                 {!edit && <MoreButton name={cur.name} onClick={() => folderMenu(cur.name)} />}
               </div>, ...curRoutines.map(r => rowOf(r, undefined, reorderCur, curRoutines))], 'routine-list plan-routines', reorderCur.listRef)}
@@ -563,10 +566,11 @@ function Routines({ S, update, nav, edit, setEdit }) {
               {(cur || others.length > 0) && <h4 className="sec plan-hdr">{t('Not in a folder')}</h4>}
               {group('loose', loose.map(r => rowOf(r, undefined, reorderLoose, loose)), 'routine-list plan-routines', reorderLoose.listRef)}
             </>}
+            {others.length > 0 && loose.length > 0 && <h4 className="sec plan-hdr">{t('Folders')}</h4>}
             {others.length > 0 && group('folders', others.map((f, i) => folderRow('f' + f.name, <Icon name="folder" />, f.name, routineCount(f.live),
               () => nav('/plan/folder/' + encodeURIComponent(f.name)), () => folderMenu(f.name),
               edit && { handle: reorderFolder.handle(i), style: reorderFolder.rowStyle(i), grip: others.length > 1 })), '', reorderFolder.listRef)}
-            {archived > 0 && group('archive', folderRow('archive', <Icon name="archive" />, t('Archive'), routineCount(archived), () => nav('/plan/archive')))}
+            {archived > 0 && group('archive', folderRow('archive', <Icon name="archive" />, t('Archive'), routineCount(archived), () => nav('/plan/archive')), 'plan-archive')}
           </>}
     </div> : <EmptyState icon="clipboard" title={t('No routines yet.')} text={t('Make one, or grab the starter plan to get going.')}>
       <Button variant="tinted" icon="clipboard" onClick={starterPlanSheet}>{t('Load starter plan')}</Button>
@@ -577,8 +581,8 @@ function Routines({ S, update, nav, edit, setEdit }) {
       <button type="button" className="danger apart" disabled={!ids.length} onClick={deleteSel}><Icon name="trash" />{t('Delete')}</button>
     </div>}
     {!edit && <div className="plan-pill">
-      <button type="button" className="plan-pill-star" aria-label={t('Starred')} aria-pressed={starred} onClick={() => setStarred(!starred)}>
-        <Icon name={starred ? 'starFill' : 'star'} />{starred && <span>{t('Starred')}</span>}
+      <button type="button" className="plan-pill-star" aria-label={t('Favourites')} aria-pressed={starred} onClick={() => setStarred(!starred)}>
+        <Icon name={starred ? 'starFill' : 'star'} />{starred && <span>{t('Favourites')}</span>}
       </button>
       <button type="button" className="plan-pill-new" data-tour="plan-new" onClick={newMenu}><Icon name="plus" />{t('New')}</button>
     </div>}

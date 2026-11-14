@@ -94,12 +94,23 @@ describe('Edit with select', () => {
     expect(useStore.getState().S.week[1]).toEqual(['a'])
   })
 
+  it('Edit takes the header and tabs away: Select all and Done, then "Select items" until something is ticked', () => {
+    mount()
+    expect(host.querySelector('.hdr .plan-edit')).toBeTruthy()
+    edit()
+    expect(host.querySelector('.hdr')).toBeNull()
+    expect(host.querySelector('.plan-views')).toBeNull()
+    expect(host.querySelector('.plan-selcount').textContent).toBe('Select items')
+    pick('Core')
+    expect(host.querySelector('.plan-selcount').textContent).toBe('1 selected')
+  })
+
   it('Move to folder opens the sheet for the selection', () => {
     mount()
     edit()
     pick('Mobility', 'Core')
     click(button('Move to folder'))
-    expect(menuSheet.mock.lastCall[0].title).toBe('Move to folder')
+    expect(menuSheet.mock.lastCall[0].title).toBe('Move 2 routines')
   })
 
   it('Delete confirms with the count, then removes them with an Undo', () => {

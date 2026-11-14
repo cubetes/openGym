@@ -157,7 +157,7 @@ describe('the routines list', () => {
 
   it('Edit’s Delete bar deletes the ticked routine with an Undo that puts it back', () => {
     mount('routines')
-    click(host.querySelector('.plan-textbtn:last-child'))
+    click([...host.querySelectorAll('.plan-textbtn')].find(b => b.textContent === 'Edit'))
     click(host.querySelector('button[aria-label="Select Legs"]'))
     click([...host.querySelectorAll('.plan-editbar button')].find(b => b.textContent === 'Delete'))
     act(() => confirmSheet.mock.lastCall[0].onConfirm())

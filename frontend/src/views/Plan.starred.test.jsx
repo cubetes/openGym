@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 // The Starred filter on Plan → Routines (docs/dev/ROUTINE_FOLDERS.md): a flat list of starred
-// routines from every folder, a "Favourites only, 3 of 12" line with Show all, remembered per device.
+// routines from every folder, a "3 of 12 routines" line with Show all, remembered per device.
 import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -31,7 +31,7 @@ afterEach(() => { act(() => root.unmount()); host.remove() })
 
 const mount = () => act(() => root.render(<Plan />))
 const click = el => act(() => { el.dispatchEvent(new MouseEvent('click', { bubbles: true })) })
-const star = () => host.querySelector('[aria-label="Starred"]')
+const star = () => host.querySelector('[aria-label="Favourites"]')
 const names = () => [...host.querySelectorAll('.plan-routine .tt')].map(e => e.textContent)
 
 describe('Starred filter', () => {
@@ -42,7 +42,7 @@ describe('Starred filter', () => {
     const subs = [...host.querySelectorAll('.plan-routine .ss')].map(e => e.textContent)
     expect(subs[0]).toContain('Current plan')
     expect(subs[1]).toContain('Hyper')
-    expect(host.querySelector('.plan-starred-bar').textContent).toContain('Favourites only, 3 of 4')
+    expect(host.querySelector('.plan-starred-bar').textContent).toContain('3 of 4 routines')
     click([...host.querySelectorAll('.plan-starred-bar button')].find(b => b.textContent === 'Show all'))
     expect(host.querySelector('.plan-starred-bar')).toBeNull()
     expect(names()).toContain('Mobility')
@@ -52,8 +52,8 @@ describe('Starred filter', () => {
     useStore.setState(s => ({ S: { ...s.S, routines: s.S.routines.map(r => ({ ...r, fav: undefined })) } }))
     mount()
     click(star())
-    expect(host.textContent).toContain('No starred routines yet.')
-    expect(host.textContent).toContain('Tap … on a routine, then Add to favourites.')
+    expect(host.textContent).toContain('No favourites yet.')
+    expect(host.textContent).toContain('Open the menu on a routine and pick Add to favourites. It will show here.')
   })
 
   it('is remembered on this device', () => {
