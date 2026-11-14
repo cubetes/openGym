@@ -19,8 +19,8 @@ export function deviceRows(input, now) {
   const rows = []
   let checking = false
 
-  // the first look is still out: no answer yet is not an empty list
-  if (watchOn && !watch && looking) checking = true
+  // the first look is still out, or the link is still starting: no answer yet is not an empty list
+  if (watchOn && (watch ? watch.activated === false : looking)) checking = true
   else if (watchOn && watch && (watch.paired || watch.installed || seen)) {
     const kind = platform === 'android' ? 'wear' : 'apple'
     const fix = 'watchSettings'
@@ -28,14 +28,15 @@ export function deviceRows(input, now) {
     if (watch.reachable) {
       const speed = ping?.ok ? (ping.ms <= FAST_MS ? 'fast' : 'slow') : null
       rows.push(row('watch', kind, 'live', { speed }))
+    } else if (watch.paired && !watch.installed) {
+      // the app is gone: no recent word from it makes the link a delayed one
+      rows.push(row('watch', kind, 'notFound', { reason: 'notInstalled', warn: true, fix }))
     } else if (heardNow) {
       // Wear OS drops out at once when no node is left; the rest wait out the delay
       const gone = (platform === 'android' && !watch.paired) || now - heard.at > DELAYED_MS
       rows.push(gone ? down('watch', kind, { lastHeard: heard.at, fix }) : row('watch', kind, 'delayed'))
     } else if (!watch.paired) {
       rows.push(row('watch', kind, 'notFound', { reason: 'unpaired', warn: true, fix }))
-    } else if (!watch.installed) {
-      rows.push(row('watch', kind, 'notFound', { reason: 'notInstalled', warn: true, fix }))
     } else if (startedAt != null && now - startedAt < GRACE_MS) {
       checking = true
     } else {
@@ -54,7 +55,7 @@ export function deviceRows(input, now) {
   else if (server?.tone === 'off' || server?.tone === 'bad') rows.push(down('server', 'server', { fix: 'server', action: server.action, pending: server.pending }))
 
   const overall = rows.some(r => r.warn) ? 'warn' : checking ? 'checking' : rows.length ? 'ok' : 'none'
-  return { rows, overall }
+  return { rows, overall, checking }
 }
 
 // The top bar shows one symbol, not a row of them: the first device that is syncing, the watch
@@ -68,14 +69,14 @@ const EARBUDS = /airpods|beats/i
 const DEVICE = { server: 'cloud' }
 const deviceOf = row => row?.kind === 'hr' ? (EARBUDS.test(row.device || '') ? 'earbuds' : 'bluetooth') : DEVICE[row?.kind] || 'watch'
 const face = (row, state) => ({ device: deviceOf(row), state, kind: row?.kind ?? null, row })
-export function signFace({ rows, overall }) {
+export function signFace({ rows, checking }) {
   const watch = rows.find(r => WATCHES.includes(r.kind))
   if (watch && !watch.warn) return face(watch, watch.state === 'delayed' ? 'delayed' : 'live')
   const bt = rows.find(r => r.kind === 'hr')
   if (bt) return face(bt, 'live')
   if (watch) return face(watch, 'trouble')
   // still looking for the watch: the watch is the symbol
-  if (overall === 'checking') return face(null, 'checking')
+  if (checking) return face(null, 'checking')
   const bad = rows.find(r => r.warn)
   if (bad) return face(bad, 'trouble')
   const server = rows.find(r => r.kind === 'server')

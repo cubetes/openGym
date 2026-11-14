@@ -23,6 +23,13 @@ describe('deviceRows: watch', () => {
   it('is live without a speed when the ping fails', () => {
     expect(watchOf({ ping: { ok: false, at: NOW } })).toMatchObject({ state: 'live', speed: null })
   })
+  it('is not found, not delayed, when the app is gone even though it was heard a moment ago', () => {
+    expect(watchOf({ watch: { ...away, installed: false }, heard: { at: NOW - 30_000, wid: 'w1' } })).toMatchObject({ state: 'notFound', reason: 'notInstalled', warn: true })
+  })
+  it('is still checking while the link starts, not "not found"', () => {
+    const r = run({ watch: { supported: true, paired: false, installed: false, activated: false, reachable: false } })
+    expect(r).toMatchObject({ rows: [], overall: 'checking', checking: true })
+  })
   it('uses the wear kind on android', () => {
     expect(watchOf({ platform: 'android' }).kind).toBe('wear')
   })
@@ -108,6 +115,9 @@ describe('signFace: the one symbol in the top bar', () => {
     expect(face({ watch: null, looking: true })).toMatchObject({ device: 'watch', state: 'checking' })
     expect(face({ watch: away, startedAt: NOW - 1000 })).toMatchObject({ device: 'watch', state: 'checking' })
     expect(face({ watch: null, looking: true, server: { tone: 'ok' } })).toMatchObject({ device: 'watch', state: 'checking' })
+  })
+  it('a watch still being looked for beats a server in trouble', () => {
+    expect(face({ watch: null, looking: true, server: { tone: 'off' } })).toMatchObject({ device: 'watch', state: 'checking' })
   })
   it('a watch that does not answer is trouble on the watch', () => {
     expect(face({ watch: away })).toMatchObject({ device: 'watch', state: 'trouble', row: { state: 'notAnswering' } })
