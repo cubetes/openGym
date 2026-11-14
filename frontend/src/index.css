@@ -4184,6 +4184,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 /* Plan → Routines, direction C (docs/dev/ROUTINE_FOLDERS.md): groups are one card with hairlines
    between rows; folders stay grey; a folder's name wraps and is never cut. */
 .plan-routes{padding-bottom:calc(104px + var(--sab))}
+.plan-routes.is-editing{padding-bottom:calc(164px + var(--sab))} /* the edit bar sits 88px up and is ~60px tall */
 .plan-group{gap:0;margin-bottom:12px;background:var(--surface);border-radius:var(--r-card);overflow:hidden}
 .plan-group>*+*{border-top:var(--hair) solid var(--sep)}
 .plan-group .item{min-height:50px;border-radius:0;background:none}
@@ -4239,6 +4240,7 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 }
 .plan-editbar button{flex:1;min-width:0;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 6px;font-size:var(--fs-footnote);font-weight:500;color:var(--label);text-align:center}
 .plan-editbar button.danger{color:var(--red)}
+.plan-editbar button.apart{margin-inline-start:12px;border-inline-start:var(--hair) solid var(--sep)}
 .plan-editbar button:disabled{opacity:.4}
 
 

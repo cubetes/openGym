@@ -534,12 +534,12 @@ function Routines({ S, update, nav, edit, setEdit }) {
       {edit
         ? <button className="plan-textbtn" onClick={() => setSel(allPicked ? [] : shown.map(r => r.id))}>{allPicked ? t('Select none') : t('Select all')}</button>
         : <span />}
-      {routines.length > 0
+      {routines.length > 0 || edit
         ? <button className="plan-textbtn" aria-pressed={edit} onClick={() => (edit ? leave() : setEdit(true))}>{edit ? t('Done') : t('Edit')}</button>
         : null}
     </div>
     {edit && ids.length > 0 && <h2 className="plan-selcount" role="status">{t('{0} selected', ids.length)}</h2>}
-    {routines.length || folders.length || archived ? <div className="plan-routes">
+    {routines.length || folders.length || archived ? <div className={edit ? 'plan-routes is-editing' : 'plan-routes'}>
       {!edit && starred
           ? (starredRoutines.length
             ? <>
@@ -574,7 +574,7 @@ function Routines({ S, update, nav, edit, setEdit }) {
     {edit && <div className="plan-editbar">
       <button type="button" disabled={!ids.length} onClick={archiveSel}><Icon name="archive" />{t('Archive')}</button>
       <button type="button" disabled={!ids.length} onClick={() => moveSheet(ids)}><Icon name="folder" />{t('Move to folder')}</button>
-      <button type="button" className="danger" disabled={!ids.length} onClick={deleteSel}><Icon name="trash" />{t('Delete')}</button>
+      <button type="button" className="danger apart" disabled={!ids.length} onClick={deleteSel}><Icon name="trash" />{t('Delete')}</button>
     </div>}
     {!edit && <div className="plan-pill">
       <button type="button" className="plan-pill-star" aria-label={t('Starred')} aria-pressed={starred} onClick={() => setStarred(!starred)}>

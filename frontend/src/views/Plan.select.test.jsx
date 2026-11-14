@@ -116,6 +116,17 @@ describe('Edit with select', () => {
     expect(live()).toEqual(['Push A', 'Mobility', 'Old legs', 'Pull A', 'Core'])
   })
 
+  it('deleting every routine leaves Done on screen so Edit can be left', () => {
+    mount()
+    edit()
+    click(button('Select all'))
+    click(button('Delete'))
+    act(() => confirmSheet.mock.lastCall[0].onConfirm())
+    expect(button('Done')).toBeTruthy()
+    click(button('Done'))
+    expect(document.querySelector('.plan-editbar')).toBeNull()
+  })
+
   it('Delete is off with nothing selected', () => {
     mount()
     edit()
