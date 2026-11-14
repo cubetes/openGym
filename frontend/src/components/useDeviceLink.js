@@ -14,7 +14,8 @@ const POLL_MS = 15e3
 export function useDeviceLink({ live }) {
   const sync = useStore(s => s.sync)
   const online = useOnline()
-  const waited = usePendingWaited(sync?.status)
+  // a held sync waits for the user's answer, not for the network: nothing to give a grace to
+  const waited = usePendingWaited(sync?.status) || sync?.status === 'held'
   const pending = !!sync?.pending
   // No server ('local'): no server row, so its words (and the sign-in check behind them) aren't needed.
   const view = sync && sync.status !== 'local' ? connectionView(sync, { online }) : null

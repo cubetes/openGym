@@ -22,6 +22,12 @@ describe('useDeviceLink', () => {
     expect(got.overall).toBe('warn')
   })
 
+  it('warns at once on a held sync, which waits for the user and not for the network', async () => {
+    useStore.setState({ sync: { status: 'held' } })
+    await act(async () => { root.render(<Probe />) })
+    expect(got.rows.find(r => r.id === 'server')).toMatchObject({ state: 'wait', warn: true, action: 'retry' })
+  })
+
   it('passes a pending sync on to the server row', async () => {
     useStore.setState({ sync: { status: 'offline', pending: true } })
     await act(async () => { root.render(<Probe />) })
