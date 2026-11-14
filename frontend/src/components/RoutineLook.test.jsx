@@ -73,6 +73,27 @@ describe('RoutineLook', () => {
     expect(new Set(labels).size).toBe(GLYPHS.length)
   })
 
+  it('keeps a colour that synced in while the sheet was open when only the icon is picked', async () => {
+    m.S = { routines: [{ ...m.S.routines[0], color: 'red' }] }
+    await click(byLabel('Push day'))
+    await click(byText('Done'))
+    expect(m.S.routines[0]).toMatchObject({ color: 'red', emoji: 'splitPush' })
+  })
+
+  it('keeps an icon that synced in while the sheet was open when only the colour is picked', async () => {
+    m.S = { routines: [{ ...m.S.routines[0], emoji: 'arm' }] }
+    await click(byLabel('Orange'))
+    await click(byText('Done'))
+    expect(m.S.routines[0]).toMatchObject({ color: 'orange', emoji: 'arm' })
+  })
+
+  it('writes nothing when Done is tapped with no pick, so a legacy icon value stays as stored', async () => {
+    m.S = { routines: [{ ...m.S.routines[0], emoji: '💪' }] }
+    const before = structuredClone(m.S.routines[0])
+    await click(byText('Done'))
+    expect(m.S.routines[0]).toEqual(before)
+  })
+
   it('writes nothing on Cancel', async () => {
     await click(byLabel('Orange'))
     await click(byLabel('Push day'))
