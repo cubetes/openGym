@@ -80,7 +80,7 @@ export function restoreFolder(s, name) {
 /** Deletes the folder and all its routines the way deleteRoutine does, so tombstones follow. */
 export function deleteFolderWithRoutines(s, name) {
   const snap = { archived: [], seq: [], deleted: [], entry: takeEntry(s, name) }
-  for (const r of (s.routines || []).filter(x => same(folderOf(x), name))) {
+  for (const r of (s.routines || []).filter(x => isLive(x) && same(folderOf(x), name))) {
     snap.deleted.push(routineSnapshot(s, r.id))
     deleteRoutine(s, r.id)
   }

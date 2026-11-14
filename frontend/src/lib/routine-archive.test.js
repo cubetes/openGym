@@ -81,6 +81,14 @@ describe('routine archive', () => {
     expect(s.routines).toEqual(prev.routines)
   })
 
+  it('deleting a folder leaves its archived routines alone', () => {
+    const s = state()
+    s.routines.push(r('z', 'Block', { archived: true }))
+    deleteFolderWithRoutines(s, 'Block')
+    expect(s.routines.map(x => x.id)).toEqual(['c', 'z'])
+    expect(s.routines[1].folder).toBe('Block')
+  })
+
   it('deletes a folder with its routines, writes tombstones, and undo restores them', () => {
     const s = state()
     const prev = structuredClone(s)

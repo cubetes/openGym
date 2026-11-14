@@ -78,7 +78,7 @@ function removeFolderWithUndo(name) {
 }
 
 function deleteFolderConfirm(name) {
-  const n = S().routines.filter(r => same(folderOf(r), name)).length
+  const n = S().routines.filter(r => isLive(r) && same(folderOf(r), name)).length
   confirmSheet({
     title: t('Delete folder and routines'), danger: true, confirmText: t('Delete'),
     message: t('Delete {0} and its {1}? Your past workouts stay in History.', name, routineCount(n)),
