@@ -116,6 +116,7 @@ describe('The pill', () => {
     mount()
     const pill = host.querySelector('.plan-pill')
     expect(label('Favourites').getAttribute('aria-pressed')).toBe('false')
+    expect(pill.querySelector('[data-tour="plan-new"]')).toBeTruthy()   // the tour's "Build your first plan" points here
     click([...pill.querySelectorAll('button')].find(b => b.textContent.includes('New')))
     const items = menuSheet.mock.lastCall[0].items
     expect(items.map(i => i.label)).toEqual(['New routine', 'New folder'])
