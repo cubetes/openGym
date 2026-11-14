@@ -379,7 +379,8 @@ final class PhoneWorkoutSession: NSObject, HKWorkoutSessionDelegate, HKLiveWorko
             let earbuds = { (s: String?) in s?.range(of: "airpods|beats", options: [.regularExpression, .caseInsensitive]) != nil }
             let name = earbuds(device?.model) && !earbuds(device?.name) ? device?.model : device?.name ?? device?.model
             DispatchQueue.main.async {
-                if let name = name, !name.isEmpty { self.deviceName = name }
+                // an unnamed source after a named one must not keep the old name
+                self.deviceName = (name?.isEmpty ?? true) ? nil : name
                 self.add(fresh)
             }
         }
