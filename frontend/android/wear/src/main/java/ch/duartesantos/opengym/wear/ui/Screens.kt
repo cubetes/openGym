@@ -222,6 +222,9 @@ fun StartScreen(s: ch.duartesantos.opengym.wear.SessionState) {
     // The first snapshot swaps "Not synced yet" for the routines: start at the top, not mid-list.
     val empty = today == null && others.isEmpty()
     LaunchedEffect(empty) { if (!empty) list.scrollToItem(0) }
+    val ctx = LocalContext.current
+    // Idle, nothing else looks at the link: check it every 30 s while this screen is up (stops when it leaves).
+    LaunchedEffect(Unit) { while (true) { kotlinx.coroutines.delay(30_000); PhoneLink.refreshNear(ctx) } }
     val near by WearStore.phoneNear.collectAsState()
     Box(Modifier.fillMaxSize()) {
     TransformingLazyColumn(
