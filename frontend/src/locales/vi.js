@@ -5903,4 +5903,13 @@ export default {
   "“{0}” and its routines gone.": "Đã xóa “{0}” và các lịch tập của nó.",
   "“{0}” archived.": "Đã lưu trữ “{0}”.",
   "“{0}” removed. Its routines are loose now.": "Đã gỡ “{0}”. Các lịch tập của nó giờ không thuộc thư mục nào.",
+  "Restore": "Khôi phục",
+  "Restore folder": "Khôi phục thư mục",
+  "Delete for good": "Xóa vĩnh viễn",
+  "Delete folder for good": "Xóa thư mục vĩnh viễn",
+  "Delete all {0} for good": "Xóa vĩnh viễn cả {0}",
+  "Delete {0} for good? Your past workouts stay in History.": "Xóa vĩnh viễn {0}? Các buổi tập cũ vẫn còn trong Lịch sử.",
+  "“{0}” restored.": "Đã khôi phục “{0}”.",
+  "{0} deleted.": "Đã xóa {0}.",
+  "Nothing archived.": "Chưa có gì trong kho lưu trữ.",
 };

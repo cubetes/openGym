@@ -26,7 +26,7 @@ const update = fn => useStore.getState().update(fn)
 
 /** Runs `change(s)` and offers an Undo. `change` returns a snapshot for undoSnapshot, or
  *  `{ undo(s) }` of its own. The Undo marks what it put back, so another device's later edit wins. */
-function withUndo(message, change) {
+export function withUndo(message, change) {
   const before = S()
   let snap
   update(s => { snap = change(s) })

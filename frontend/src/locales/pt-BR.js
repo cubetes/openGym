@@ -4329,6 +4329,12 @@ export const PT_BR_OVERRIDES = {
   "“{0}” and its routines gone.": "“{0}” e as rotinas dela foram excluídas.",
   "“{0}” archived.": "“{0}” arquivada.",
   "“{0}” removed. Its routines are loose now.": "“{0}” removida. As rotinas dela ficam sem pasta.",
+  "Delete for good": "Excluir para sempre",
+  "Delete folder for good": "Excluir pasta para sempre",
+  "Delete all {0} for good": "Excluir todas as {0} para sempre",
+  "Delete {0} for good? Your past workouts stay in History.": "Excluir {0} para sempre? Seus treinos anteriores ficam no Histórico.",
+  "{0} deleted.": "{0} excluídas.",
+  "“{0}” restored.": "“{0}” restaurada.",
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

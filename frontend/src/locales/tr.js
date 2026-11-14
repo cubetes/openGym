@@ -5937,4 +5937,13 @@ export default {
   "“{0}” and its routines gone.": "“{0}” ve rutinleri silindi.",
   "“{0}” archived.": "“{0}” arşivlendi.",
   "“{0}” removed. Its routines are loose now.": "“{0}” kaldırıldı. Rutinleri artık klasörsüz.",
+  "Restore": "Geri yükle",
+  "Restore folder": "Klasörü geri yükle",
+  "Delete for good": "Kalıcı olarak sil",
+  "Delete folder for good": "Klasörü kalıcı olarak sil",
+  "Delete all {0} for good": "{0} öğenin hepsini kalıcı olarak sil",
+  "Delete {0} for good? Your past workouts stay in History.": "{0} kalıcı olarak silinsin mi? Geçmiş antrenmanların Geçmiş’te kalır.",
+  "“{0}” restored.": "“{0}” geri yüklendi.",
+  "{0} deleted.": "{0} silindi.",
+  "Nothing archived.": "Arşivde bir şey yok.",
 }

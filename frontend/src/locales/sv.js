@@ -5984,4 +5984,13 @@ export default {
   "“{0}” and its routines gone.": "“{0}” och dess rutiner är borttagna.",
   "“{0}” archived.": "“{0}” arkiverad.",
   "“{0}” removed. Its routines are loose now.": "“{0}” borttagen. Dess rutiner ligger nu utan mapp.",
+  "Restore": "Återställ",
+  "Restore folder": "Återställ mapp",
+  "Delete for good": "Radera för alltid",
+  "Delete folder for good": "Radera mapp för alltid",
+  "Delete all {0} for good": "Radera alla {0} för alltid",
+  "Delete {0} for good? Your past workouts stay in History.": "Radera {0} för alltid? Dina tidigare pass finns kvar i Historik.",
+  "“{0}” restored.": "“{0}” återställd.",
+  "{0} deleted.": "{0} raderade.",
+  "Nothing archived.": "Inget i arkivet.",
 }

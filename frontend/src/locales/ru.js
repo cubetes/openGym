@@ -5941,4 +5941,13 @@ export default {
   "“{0}” and its routines gone.": "«{0}» и её программы удалены.",
   "“{0}” archived.": "«{0}» в архиве.",
   "“{0}” removed. Its routines are loose now.": "Папка «{0}» убрана. Её программы теперь без папки.",
+  "Restore": "Восстановить",
+  "Restore folder": "Восстановить папку",
+  "Delete for good": "Удалить навсегда",
+  "Delete folder for good": "Удалить папку навсегда",
+  "Delete all {0} for good": "Удалить все ({0}) навсегда",
+  "Delete {0} for good? Your past workouts stay in History.": "Удалить {0} навсегда? Прошлые тренировки останутся в Истории.",
+  "“{0}” restored.": "«{0}» восстановлена.",
+  "{0} deleted.": "Удалено: {0}.",
+  "Nothing archived.": "В архиве ничего нет.",
 }

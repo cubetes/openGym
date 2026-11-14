@@ -5877,4 +5877,13 @@ export default {
   "“{0}” and its routines gone.": "“{0}” og dens rutiner er slettet.",
   "“{0}” archived.": "“{0}” er arkiveret.",
   "“{0}” removed. Its routines are loose now.": "“{0}” er fjernet. Dens rutiner er nu uden mappe.",
+  "Restore": "Gendan",
+  "Restore folder": "Gendan mappe",
+  "Delete for good": "Slet for altid",
+  "Delete folder for good": "Slet mappe for altid",
+  "Delete all {0} for good": "Slet alle {0} for altid",
+  "Delete {0} for good? Your past workouts stay in History.": "Slet {0} for altid? Dine tidligere træninger bliver i Historik.",
+  "“{0}” restored.": "“{0}” gendannet.",
+  "{0} deleted.": "{0} slettet.",
+  "Nothing archived.": "Intet i arkivet.",
 }

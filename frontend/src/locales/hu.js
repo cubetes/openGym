@@ -5940,4 +5940,13 @@ export default {
   "“{0}” and its routines gone.": "„{0}” és a rutinjai törölve.",
   "“{0}” archived.": "„{0}” archiválva.",
   "“{0}” removed. Its routines are loose now.": "„{0}” eltávolítva. A rutinjai most mappa nélkül vannak.",
+  "Restore": "Visszaállítás",
+  "Restore folder": "Mappa visszaállítása",
+  "Delete for good": "Végleges törlés",
+  "Delete folder for good": "Mappa végleges törlése",
+  "Delete all {0} for good": "Mind a(z) {0} végleges törlése",
+  "Delete {0} for good? Your past workouts stay in History.": "Véglegesen törlöd: {0}? A korábbi edzéseid megmaradnak az Előzményekben.",
+  "“{0}” restored.": "„{0}” visszaállítva.",
+  "{0} deleted.": "{0} törölve.",
+  "Nothing archived.": "Nincs semmi az archívumban.",
 }

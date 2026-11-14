@@ -5902,4 +5902,13 @@ export default {
   "“{0}” and its routines gone.": "“{0}” dan rutinitasnya dihapus.",
   "“{0}” archived.": "“{0}” diarsipkan.",
   "“{0}” removed. Its routines are loose now.": "“{0}” dihapus. Rutinitasnya kini tanpa folder.",
+  "Restore": "Pulihkan",
+  "Restore folder": "Pulihkan folder",
+  "Delete for good": "Hapus permanen",
+  "Delete folder for good": "Hapus folder permanen",
+  "Delete all {0} for good": "Hapus semua {0} permanen",
+  "Delete {0} for good? Your past workouts stay in History.": "Hapus {0} secara permanen? Latihan sebelumnya tetap ada di Riwayat.",
+  "“{0}” restored.": "“{0}” dipulihkan.",
+  "{0} deleted.": "{0} dihapus.",
+  "Nothing archived.": "Tidak ada yang diarsipkan.",
 };

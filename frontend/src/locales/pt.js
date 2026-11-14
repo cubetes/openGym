@@ -5937,4 +5937,13 @@ export default {
   "“{0}” and its routines gone.": "«{0}» e as suas rotinas eliminadas.",
   "“{0}” archived.": "«{0}» arquivada.",
   "“{0}” removed. Its routines are loose now.": "«{0}» removida. As suas rotinas ficam agora sem pasta.",
+  "Restore": "Restaurar",
+  "Restore folder": "Restaurar pasta",
+  "Delete for good": "Eliminar para sempre",
+  "Delete folder for good": "Eliminar pasta para sempre",
+  "Delete all {0} for good": "Eliminar todas as {0} para sempre",
+  "Delete {0} for good? Your past workouts stay in History.": "Eliminar {0} para sempre? Os teus treinos passados ficam no Histórico.",
+  "“{0}” restored.": "«{0}» restaurada.",
+  "{0} deleted.": "{0} eliminadas.",
+  "Nothing archived.": "Nada arquivado.",
 }

@@ -5903,4 +5903,13 @@ export default {
   "“{0}” and its routines gone.": "«{0}» و روتین‌هایش حذف شد.",
   "“{0}” archived.": "«{0}» بایگانی شد.",
   "“{0}” removed. Its routines are loose now.": "«{0}» برداشته شد. روتین‌هایش اکنون بدون پوشه‌اند.",
+  "Restore": "بازیابی",
+  "Restore folder": "بازیابی پوشه",
+  "Delete for good": "حذف همیشگی",
+  "Delete folder for good": "حذف همیشگی پوشه",
+  "Delete all {0} for good": "حذف همیشگی همه ({0})",
+  "Delete {0} for good? Your past workouts stay in History.": "{0} برای همیشه حذف شود؟ تمرین‌های قبلی شما در تاریخچه می‌مانند.",
+  "“{0}” restored.": "«{0}» بازیابی شد.",
+  "{0} deleted.": "{0} حذف شد.",
+  "Nothing archived.": "چیزی بایگانی نشده است.",
 }

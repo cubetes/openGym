@@ -6016,4 +6016,13 @@ export default {
   "“{0}” and its routines gone.": "“{0}” ও তার রুটিন মুছে গেছে।",
   "“{0}” archived.": "“{0}” আর্কাইভ হয়েছে।",
   "“{0}” removed. Its routines are loose now.": "“{0}” সরানো হয়েছে। এর রুটিনগুলো এখন ফোল্ডার ছাড়া।",
+  "Restore": "পুনরুদ্ধার",
+  "Restore folder": "ফোল্ডার পুনরুদ্ধার",
+  "Delete for good": "চিরতরে মুছুন",
+  "Delete folder for good": "ফোল্ডার চিরতরে মুছুন",
+  "Delete all {0} for good": "সব {0} চিরতরে মুছুন",
+  "Delete {0} for good? Your past workouts stay in History.": "{0} চিরতরে মুছবেন? আপনার আগের ওয়ার্কআউট ইতিহাসে থাকবে।",
+  "“{0}” restored.": "“{0}” পুনরুদ্ধার হয়েছে।",
+  "{0} deleted.": "{0} মুছে ফেলা হয়েছে।",
+  "Nothing archived.": "আর্কাইভে কিছু নেই।",
 }

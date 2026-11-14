@@ -7,7 +7,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useStore } from '../store/useStore.js'
 import Plan from './Plan.jsx'
 
-vi.mock('react-router-dom', () => ({ useNavigate: () => vi.fn() }))
+const nav = vi.hoisted(() => vi.fn())
+vi.mock('react-router-dom', () => ({ useNavigate: () => nav }))
 vi.mock('../sheets.jsx', () => ({
   dayAssignSheet: vi.fn(), starterPlanSheet: vi.fn(), confirmSheet: vi.fn(), menuSheet: vi.fn(),
   planHasRoutines: () => true, exportPlanFile: vi.fn(), printWholePlan: vi.fn(), importPlanFile: vi.fn(),
@@ -64,5 +65,18 @@ describe('routine folders in Plan', () => {
     useStore.setState(st => ({ S: { ...st.S, routines: st.S.routines.map(r => (r.id === 'b' ? { ...r, archived: true } : r)) } }))
     mount()
     expect(names()).toEqual(['Push A', 'Pull A'])
+  })
+
+  it('ends with an Archive row that counts what is archived and opens the Archive screen', () => {
+    const archiveRow = () => [...host.querySelectorAll('.lrow')].find(e => e.textContent.includes('Archive'))
+    mount()
+    expect(archiveRow()).toBeUndefined()
+    act(() => root.unmount()); root = createRoot(host)
+    useStore.setState(st => ({ S: { ...st.S, routines: st.S.routines.map(r => (r.id === 'b' ? { ...r, archived: true } : r)) } }))
+    mount()
+    const row = archiveRow()
+    expect(row.textContent).toContain('1 routine')
+    click(row)
+    expect(nav).toHaveBeenCalledWith('/plan/archive')
   })
 })

@@ -5903,4 +5903,13 @@ export default {
   "“{0}” and its routines gone.": "„{0}“ a její sestavy jsou pryč.",
   "“{0}” archived.": "„{0}“ je archivováno.",
   "“{0}” removed. Its routines are loose now.": "Složka „{0}“ je odebrána. Její sestavy jsou teď bez složky.",
+  "Restore": "Obnovit",
+  "Restore folder": "Obnovit složku",
+  "Delete for good": "Smazat nadobro",
+  "Delete folder for good": "Smazat složku nadobro",
+  "Delete all {0} for good": "Smazat všech {0} nadobro",
+  "Delete {0} for good? Your past workouts stay in History.": "Smazat {0} nadobro? Tvé dřívější tréninky zůstanou v Historii.",
+  "“{0}” restored.": "„{0}“ obnoveno.",
+  "{0} deleted.": "{0} smazáno.",
+  "Nothing archived.": "Nic není v archivu.",
 }

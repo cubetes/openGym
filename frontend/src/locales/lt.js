@@ -5933,4 +5933,13 @@ export default {
   "“{0}” and its routines gone.": "„{0}“ ir jo programos ištrintos.",
   "“{0}” archived.": "„{0}“ suarchyvuota.",
   "“{0}” removed. Its routines are loose now.": "„{0}“ pašalintas. Jo programos dabar be aplanko.",
+  "Restore": "Atkurti",
+  "Restore folder": "Atkurti aplanką",
+  "Delete for good": "Ištrinti visam laikui",
+  "Delete folder for good": "Ištrinti aplanką visam laikui",
+  "Delete all {0} for good": "Ištrinti visus {0} visam laikui",
+  "Delete {0} for good? Your past workouts stay in History.": "Ištrinti {0} visam laikui? Ankstesnės treniruotės liks Istorijoje.",
+  "“{0}” restored.": "„{0}“ atkurta.",
+  "{0} deleted.": "{0} ištrinta.",
+  "Nothing archived.": "Archyve nieko nėra.",
 }

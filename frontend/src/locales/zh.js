@@ -5937,4 +5937,13 @@ export default {
   "“{0}” and its routines gone.": "已删除“{0}”及其训练日。",
   "“{0}” archived.": "已归档“{0}”。",
   "“{0}” removed. Its routines are loose now.": "已移除“{0}”。它的训练日现在不在任何文件夹中。",
+  "Restore": "恢复",
+  "Restore folder": "恢复文件夹",
+  "Delete for good": "永久删除",
+  "Delete folder for good": "永久删除文件夹",
+  "Delete all {0} for good": "永久删除全部 {0}",
+  "Delete {0} for good? Your past workouts stay in History.": "永久删除{0}？你过去的训练仍保留在历史记录中。",
+  "“{0}” restored.": "已恢复“{0}”。",
+  "{0} deleted.": "已删除{0}。",
+  "Nothing archived.": "归档里没有内容。",
 }

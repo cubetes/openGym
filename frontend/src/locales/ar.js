@@ -5992,4 +5992,13 @@ export default {
   "“{0}” and its routines gone.": "تم حذف «{0}» وروتيناته.",
   "“{0}” archived.": "تمت أرشفة «{0}».",
   "“{0}” removed. Its routines are loose now.": "تمت إزالة «{0}». روتيناته الآن بلا مجلد.",
+  "Restore": "استعادة",
+  "Restore folder": "استعادة المجلد",
+  "Delete for good": "حذف نهائي",
+  "Delete folder for good": "حذف المجلد نهائيًا",
+  "Delete all {0} for good": "حذف الكل ({0}) نهائيًا",
+  "Delete {0} for good? Your past workouts stay in History.": "حذف {0} نهائيًا؟ تمارينك السابقة تبقى في السجل.",
+  "“{0}” restored.": "تمت استعادة «{0}».",
+  "{0} deleted.": "تم حذف {0}.",
+  "Nothing archived.": "لا شيء في الأرشيف.",
 }

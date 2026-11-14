@@ -5,7 +5,7 @@ import { stampDeletions } from './sync-merge.js'
 import { folderList } from './routine-folders.js'
 import {
   scheduledDays, archiveRoutines, restoreRoutines, archiveFolder, restoreFolder,
-  deleteFolderWithRoutines, undoSnapshot, migrateArchiveFolder,
+  deleteFolderWithRoutines, deleteArchived, undoSnapshot, migrateArchiveFolder,
 } from './routine-archive.js'
 
 const r = (id, folder, extra) => ({ id, name: id, ex: [], ...(folder ? { folder } : {}), ...extra })
@@ -69,6 +69,16 @@ describe('routine archive', () => {
     expect(undoSnapshot(s, snap)).toBe(true)
     expect(s.routineFolders[0]).toEqual({ name: 'Block', current: true })
     expect(s.routines.some(x => x.archived)).toBe(false)
+  })
+
+  it('deletes only the archived routines among the ids, and undo puts them back archived', () => {
+    const s = state()
+    archiveRoutines(s, ['a'])
+    const prev = structuredClone(s)
+    const snap = deleteArchived(s, ['a', 'b'])
+    expect(s.routines.map(x => x.id)).toEqual(['b', 'c'])
+    expect(undoSnapshot(s, snap)).toBe(true)
+    expect(s.routines).toEqual(prev.routines)
   })
 
   it('deletes a folder with its routines, writes tombstones, and undo restores them', () => {

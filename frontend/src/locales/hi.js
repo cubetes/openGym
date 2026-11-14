@@ -5937,4 +5937,13 @@ export default {
   "“{0}” and its routines gone.": "“{0}” और उसके रूटीन हट गए।",
   "“{0}” archived.": "“{0}” आर्काइव हो गया।",
   "“{0}” removed. Its routines are loose now.": "“{0}” हटाया गया। उसके रूटीन अब बिना फ़ोल्डर के हैं।",
+  "Restore": "पुनर्स्थापित करें",
+  "Restore folder": "फ़ोल्डर पुनर्स्थापित करें",
+  "Delete for good": "हमेशा के लिए हटाएँ",
+  "Delete folder for good": "फ़ोल्डर हमेशा के लिए हटाएँ",
+  "Delete all {0} for good": "सभी {0} हमेशा के लिए हटाएँ",
+  "Delete {0} for good? Your past workouts stay in History.": "{0} हमेशा के लिए हटाएँ? आपकी पिछली वर्कआउट इतिहास में रहेंगी।",
+  "“{0}” restored.": "“{0}” पुनर्स्थापित हुई।",
+  "{0} deleted.": "{0} हटा दिए गए।",
+  "Nothing archived.": "आर्काइव में कुछ नहीं है।",
 }

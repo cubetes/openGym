@@ -126,3 +126,13 @@ export function migrateArchiveFolder(s) {
   s.archiveMoved = true
   return true
 }
+
+/** Deletes the archived routines among `ids` for good (live ones stay); undoSnapshot restores them. */
+export function deleteArchived(s, ids) {
+  const snap = { archived: [], seq: [], deleted: [], entry: null }
+  for (const r of (s.routines || []).filter(x => ids.includes(x.id) && x.archived === true)) {
+    snap.deleted.push(routineSnapshot(s, r.id))
+    deleteRoutine(s, r.id)
+  }
+  return snap
+}

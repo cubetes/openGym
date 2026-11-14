@@ -5937,4 +5937,13 @@ export default {
   "“{0}” and its routines gone.": "“{0}”와 그 루틴을 삭제했어요.",
   "“{0}” archived.": "“{0}”을(를) 보관했어요.",
   "“{0}” removed. Its routines are loose now.": "“{0}”을(를) 제거했어요. 루틴은 이제 폴더 없이 있어요.",
+  "Restore": "복원",
+  "Restore folder": "폴더 복원",
+  "Delete for good": "영구 삭제",
+  "Delete folder for good": "폴더 영구 삭제",
+  "Delete all {0} for good": "{0} 모두 영구 삭제",
+  "Delete {0} for good? Your past workouts stay in History.": "{0}을(를) 영구 삭제할까요? 지난 운동은 기록에 남습니다.",
+  "“{0}” restored.": "“{0}” 복원했어요.",
+  "{0} deleted.": "{0} 삭제했어요.",
+  "Nothing archived.": "보관된 항목이 없어요.",
 }

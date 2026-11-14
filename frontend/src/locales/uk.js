@@ -5934,4 +5934,13 @@ export default {
   "“{0}” and its routines gone.": "«{0}» та її програми видалено.",
   "“{0}” archived.": "«{0}» в архіві.",
   "“{0}” removed. Its routines are loose now.": "Папку «{0}» прибрано. Її програми тепер без папки.",
+  "Restore": "Відновити",
+  "Restore folder": "Відновити папку",
+  "Delete for good": "Видалити назавжди",
+  "Delete folder for good": "Видалити папку назавжди",
+  "Delete all {0} for good": "Видалити всі ({0}) назавжди",
+  "Delete {0} for good? Your past workouts stay in History.": "Видалити {0} назавжди? Минулі тренування залишаться в Історії.",
+  "“{0}” restored.": "«{0}» відновлено.",
+  "{0} deleted.": "Видалено: {0}.",
+  "Nothing archived.": "В архіві нічого немає.",
 }

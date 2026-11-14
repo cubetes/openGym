@@ -5930,4 +5930,13 @@ export default {
   "“{0}” and its routines gone.": "已刪除「{0}」與它的課表。",
   "“{0}” archived.": "已封存「{0}」。",
   "“{0}” removed. Its routines are loose now.": "已移除「{0}」。它的課表現在不在任何資料夾中。",
+  "Restore": "還原",
+  "Restore folder": "還原資料夾",
+  "Delete for good": "永久刪除",
+  "Delete folder for good": "永久刪除資料夾",
+  "Delete all {0} for good": "永久刪除全部 {0}",
+  "Delete {0} for good? Your past workouts stay in History.": "永久刪除{0}？你過去的訓練仍保留在歷史紀錄中。",
+  "“{0}” restored.": "已還原「{0}」。",
+  "{0} deleted.": "已刪除{0}。",
+  "Nothing archived.": "封存裡沒有內容。",
 }

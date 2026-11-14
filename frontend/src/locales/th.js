@@ -5948,4 +5948,13 @@ export default {
   "“{0}” and its routines gone.": "ลบ “{0}” และรูทีนแล้ว",
   "“{0}” archived.": "เก็บ “{0}” เข้าคลังแล้ว",
   "“{0}” removed. Its routines are loose now.": "เอา “{0}” ออกแล้ว รูทีนของมันไม่มีโฟลเดอร์แล้ว",
+  "Restore": "กู้คืน",
+  "Restore folder": "กู้คืนโฟลเดอร์",
+  "Delete for good": "ลบถาวร",
+  "Delete folder for good": "ลบโฟลเดอร์ถาวร",
+  "Delete all {0} for good": "ลบทั้งหมด {0} ถาวร",
+  "Delete {0} for good? Your past workouts stay in History.": "ลบ {0} ถาวรไหม? ประวัติการออกกำลังกายเดิมของคุณจะยังอยู่ในประวัติ",
+  "“{0}” restored.": "กู้คืน “{0}” แล้ว",
+  "{0} deleted.": "ลบ {0} แล้ว",
+  "Nothing archived.": "ไม่มีอะไรในที่เก็บถาวร",
 }

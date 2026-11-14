@@ -455,6 +455,9 @@ function Routines({ S, update, nav }) {
   const swipe = workoutControls(S).swipeSets
   // Archived routines are not listed here (they have their own screen); they keep their place in S.routines.
   const routines = activeRoutines(S)
+  // The way into the Archive, at the end of the list (also when everything is archived).
+  const archiveRow = (S.routines || []).length > routines.length && !edit
+    && <Row icon="download" title={t('Archive')} subtitle={routineCount((S.routines || []).length - routines.length)} accessory="chevron" onClick={() => nav('/plan/archive')} />
   // The order of this list is the order of `S.routines`, and every other screen reads the same
   // array (the Start screen, the day sheets, the routine pickers), so moving a routine here moves
   // it everywhere (#142). Reordering lives behind Edit, like on an iPhone.
@@ -535,11 +538,13 @@ function Routines({ S, update, nav }) {
             {list}
           </div>
         })}
+      {archiveRow}
       <p className="sect-f">{edit ? t('Drag to reorder. Tap the minus to delete.') : t('Tap a routine to edit it. Reorder and delete are behind Edit.')}</p>
     </> : <>
       <EmptyState icon="clipboard" title={t('No routines yet.')} text={t('Make one, or grab the starter plan to get going.')}>
         <Button variant="tinted" icon="clipboard" onClick={starterPlanSheet}>{t('Load starter plan')}</Button>
       </EmptyState>
+      {archiveRow}
     </>}
   </>
 }
