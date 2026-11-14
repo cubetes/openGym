@@ -104,9 +104,10 @@ One shared selector, `activeRoutines(S)` in `lib/routine-folders.js`, is what ev
 call sites that train or plan switch to it, readers of the past keep `S.routines`. A schedule
 entry that still points at an archived routine (another device scheduled it before the archive
 synced) is treated like one pointing at a deleted routine: skipped, the day reads as rest.
-- The Coach's context of "your routines" and `coach-adapt` use active routines only.
+- The Coach's context of "your routines" and its weekday pointers use active routines only.
+  `coach-adapt` is left alone: it adapts a workout already running.
 - MCP and the API token routes: `list_routines` includes archived ones with `archived: true`, so
-  an assistant can see and restore them; get and edit work on any routine, as today.
+  an assistant can see them (no tool restores them); get and edit work on any routine, as today.
 - Every watch snapshot (Apple, Wear, Garmin) is built from active routines.
 
 ## The Routines tab (direction C)
@@ -150,7 +151,7 @@ folder and routines · Remove folder (keep routines) · (gap) Delete folder and 
 - Delete folder and routines: a confirm that names the count ("Delete Travel and its 3 routines?
   Your past workouts stay in History."), then an Undo toast (the deleteRoutineWithUndo pattern,
   kept while VoiceOver focus is on it).
-- Archive folder: its routines get `archived`, the entry gets `archived: true`; Undo toast.
+- Archive folder: its routines get `archived`, the folder entry is removed; Undo toast.
 
 **Move to folder** sheet (from the routine menu and Edit): current plan first, then folders,
 No folder, and New folder at the bottom (graft from B).
