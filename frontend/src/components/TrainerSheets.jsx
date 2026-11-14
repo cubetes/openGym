@@ -1,6 +1,7 @@
 // The trainer dashboard's sheets: inviting a member (code + QR), assigning a routine to one or many,
 // a comment on a workout, a weigh-in, a check-in, a workout logged or corrected. Each one says
 // before sending what will happen per member.
+import { activeRoutines } from '../lib/routine-folders.js'
 import { useEffect, useRef, useState } from 'react'
 import { useStore } from '../store/useStore.js'
 import { useUI } from '../store/useUI.js'
@@ -86,7 +87,7 @@ export function GymCodeSheet({ gym, close }) {
 export function AssignSheet({ members, close, done }) {
   const toast = useUI(s => s.toast)
   const S = useStore(s => s.S)
-  const routines = (S.routines || []).filter(r => r && r.ex?.length)
+  const routines = activeRoutines(S).filter(r => r.ex?.length)
   const [rid, setRid] = useState(routines[0]?.id ?? null)
   const [day, setDay] = useState('')
   const [msg, setMsg] = useState('')

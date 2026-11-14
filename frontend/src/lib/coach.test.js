@@ -809,3 +809,13 @@ describe('defaultTrainingDays (the intake pre-selection, #620)', () => {
     expect(defaultTrainingDays(3)).toEqual([1, 3, 5])
   })
 })
+
+describe('an archived routine is not part of the Coach plan', () => {
+  it('both sides drop it and still agree', () => {
+    const S = state()
+    S.routines[1].archived = true
+    expect(canonicalPlan(S).routines.map(r => r.id)).toEqual(['r1'])
+    expect(serverPayload.cleanPlan(S).routines.map(r => r.id)).toEqual(['r1'])
+    expect(canonicalPlan(S)).toEqual(serverPayload.canonicalPlan(S))
+  })
+})

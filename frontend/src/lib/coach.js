@@ -101,7 +101,7 @@ export const hasConsent = S => !!S?.coach?.consent?.agreedAt && S.coach.consent.
  */
 export function canonicalPlan(S) {
   return {
-    routines: (S.routines || []).map(r => ({
+    routines: (S.routines || []).filter(r => r.archived !== true).map(r => ({
       id: r.id, name: r.name || '', prog: r.prog || '',
       ex: (r.ex || []).map(e => {
         const mode = modeOf(e)

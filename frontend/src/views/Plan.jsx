@@ -34,7 +34,7 @@ import {
   chooseRotation, chooseFixedWeek, sequenceOf, isSimpleSequence, segmentAt, REST,
 } from '../lib/rotation.js'
 import { isOn } from '../lib/modules.js'
-import { groupRoutines, folderOpen, setFolderOpen, folderOf } from '../lib/routine-folders.js'
+import { activeRoutines, groupRoutines, folderOpen, setFolderOpen, folderOf } from '../lib/routine-folders.js'
 import { isFavRoutine } from '../lib/routine-favs.js'
 import { routineFromWorkoutSheet } from '../components/RoutineFromWorkout.jsx'
 import { routineSources } from '../lib/session-routines.js'
@@ -277,7 +277,7 @@ function Schedule({ S, update, nav, mode }) {
     title: t('Add to the rotation'),
     items: [
       ...(seq.length ? [{ icon: 'moon', label: t('Rest day'), sub: t('A day off before the next one'), onClick: () => setSeq([...seq, REST]) }] : []),
-      ...S.routines.map(r => ({
+      ...activeRoutines(S).map(r => ({
         icon: glyphOf(r.emoji), iconStyle: tileStyle(r), label: r.name, sub: seq.includes(r.id) ? t('Already in the loop: adds it again') : undefined, onClick: () => setSeq([...seq, r.id]),
       })),
     ],
@@ -300,7 +300,7 @@ function Schedule({ S, update, nav, mode }) {
 
   const ws = weekStartOf(S)
   const todayDow = new Date().getDay()
-  const routineOf = id => S.routines.find(x => x.id === id)
+  const routineOf = id => activeRoutines(S).find(x => x.id === id)
   const dayRoutines = d => [].concat(S.week[d] || []).map(routineOf).filter(Boolean)
   // One weekday: what is on it at a glance, and a tap to change it (dayAssignSheet picks one
   // routine, several for a combined day, or a rest day).
@@ -368,7 +368,7 @@ function Schedule({ S, update, nav, mode }) {
         {!external && <div className="row plan-sec-acts" style={{ gap: 6 }}>
           {seq.length > 0 && <button className="plan-textbtn" aria-pressed={editLoop} onClick={() => setEditLoop(e => !e)}>{editLoop ? t('Done') : t('Edit')}</button>}
           <Button size="sm" variant="tinted" icon="plus" data-tour="plan-loop-add" aria-label={t('Add routine to the rotation')}
-            disabled={!S.routines.length} onClick={addToSeq}>{t('Add')}</Button>
+            disabled={!activeRoutines(S).length} onClick={addToSeq}>{t('Add')}</Button>
         </div>}
       </div>
       {seq.length ? <div className="list plan-loop" ref={loopReorder.listRef}>

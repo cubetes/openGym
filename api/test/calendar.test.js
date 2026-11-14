@@ -68,3 +68,10 @@ test('text and folding by the rules', () => {
   assert.ok(f.every(l => Buffer.byteLength(l) <= 75));
   assert.equal(f.map((l, i) => (i ? l.slice(1) : l)).join(''), long);
 });
+
+test('an archived routine is not in the feed', () => {
+  const arch = { ...S, routines: S.routines.map(r => r.id === 'c' ? { ...r, archived: true } : r) };
+  assert.deepEqual(dayRoutines(arch, '2026-11-13', NOW), []);
+  assert.equal(buildIcs(arch, { now: NOW }).includes('Legs'), false);
+  assert.equal(buildIcs(S, { now: NOW }).includes('Legs'), true);
+});

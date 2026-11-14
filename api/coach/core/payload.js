@@ -314,7 +314,7 @@ export function canonicalPlan(S) {
   const custom = new Map((S.customEx || []).map(c => [c.id, c]));
   const exOf = id => LIB_BY_ID.get(id) || custom.get(id);
   return {
-    routines: (S.routines || []).map(r => ({
+    routines: (S.routines || []).filter(r => r.archived !== true).map(r => ({
       id: r.id, name: r.name || '', prog: r.prog || '',
       ex: (r.ex || []).map(e => {
         const mode = modeOf(e, exOf(e.id));
@@ -346,7 +346,7 @@ export function cleanPlan(S, now) {
   // Names are typed by the person, so they are cut like the profile's text. The icon is held to
   // what the validator lets a plan carry (an icon key or a legacy emoji, core/glyphs.js): it is
   // the client's state, and free text in it would ride into every prompt.
-  const routines = list(S.routines).filter(r => r && typeof r === 'object').map(r => ({
+  const routines = list(S.routines).filter(r => r && typeof r === 'object' && r.archived !== true).map(r => ({
     id: ident(r.id), name: r.name == null ? r.name : text(String(r.name), NAME_MAX),
     emoji: r.emoji == null ? r.emoji : glyphStr(String(r.emoji)),
     ...(policy(r.prog) ? { prog: r.prog } : {}),

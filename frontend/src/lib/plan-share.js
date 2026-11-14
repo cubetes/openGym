@@ -8,6 +8,7 @@
 //  2. A clean, printable page (Save as PDF) where a single exercise never splits across
 //     a page break — each exercise, and each routine that fits, stays in one place.
 
+import { isLive } from './routine-folders.js'
 import { cleanCircuit } from './circuit.js'
 import { normalizeTempo } from './tempo.js'
 import { warmupModeOf, ownRowsOf } from './warmup-ramp.js'
@@ -698,7 +699,7 @@ export function planPrintHTML(S, owner, { routineId, probe = false, pictures = n
   const unit = S.unit || 'kg'
   const speedUnit = speedUnitOf(S)
   const single = routineId ? (S.routines || []).find(r => r.id === routineId) || null : null
-  const routines = routineId ? [single].filter(Boolean) : (S.routines || []).filter(r => r.ex && r.ex.length)
+  const routines = routineId ? [single].filter(Boolean) : (S.routines || []).filter(r => isLive(r) && r.ex && r.ex.length)
   const pics = {}
   if (pictures && typeof pictures === 'object') {
     for (const r of routines) for (const e of r.ex || []) if (isPrintPicture(pictures[e.id])) pics[e.id] = pictures[e.id]
