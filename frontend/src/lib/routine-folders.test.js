@@ -63,6 +63,11 @@ describe('routine folders', () => {
       setCurrent(s, null)
       expect(currentFolder(s)).toBe(null)
     })
+    it('makes a folder current that only routines name, listing it', () => {
+      const s = draft()
+      setCurrent(s, 'C')
+      expect(s.routineFolders).toEqual([{ name: 'A' }, { name: 'B' }, { name: 'C', current: true }])
+    })
     it('creates, refusing empty, reserved and taken names', () => {
       const s = draft()
       expect(createFolder(s, ' New  one ')).toEqual({ ok: true, name: 'New one' })

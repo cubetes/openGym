@@ -73,7 +73,9 @@ export function folderList(S) {
 }
 export const currentFolder = S => (S?.routineFolders || []).find(e => e?.current)?.name || null
 
+/** A folder only named on routines gets its entry first, so the mark has somewhere to go. */
 export function setCurrent(s, name) {
+  if (name != null && !(s.routineFolders || []).some(e => same(e.name, name))) s.routineFolders = folderList(s).map(f => ({ name: f.name }))
   for (const e of s.routineFolders || []) { if (name != null && same(e.name, name)) e.current = true; else delete e.current }
 }
 
