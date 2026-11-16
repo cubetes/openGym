@@ -5888,4 +5888,10 @@ export default {
   "Hide": "Sembunyikan",
   "Totals": "Total",
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "Tampilkan yang kamu pakai, ciutkan yang jarang kamu buka, dan sembunyikan sisanya. Panah mengubah urutannya.",
+  "Workout in progress": "Latihan berlangsung",
+  "Opens the workout": "Membuka latihan",
+  "{0} of {1} sets done": "{0} dari {1} set selesai",
+  "Watch connected": "Jam tangan terhubung",
+  "Watch reconnecting": "Jam tangan menyambung ulang",
+  "No watch linked": "Tidak ada jam tangan terhubung",
 };

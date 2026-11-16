@@ -5920,4 +5920,10 @@ export default {
   "Hide": "Сховати",
   "Totals": "Підсумки",
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "Покажіть те, чим користуєтеся, згорніть те, що відкриваєте рідко, і сховайте решту. Стрілки змінюють порядок.",
+  "Workout in progress": "Тренування триває",
+  "Opens the workout": "Відкриває тренування",
+  "{0} of {1} sets done": "Виконано підходів: {0} з {1}",
+  "Watch connected": "Годинник підключено",
+  "Watch reconnecting": "Годинник перепідключається",
+  "No watch linked": "Годинник не підключено",
 }

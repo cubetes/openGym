@@ -5919,4 +5919,10 @@ export default {
   "Hide": "Slėpti",
   "Totals": "Sumos",
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "Rodyk, ką naudoji, suskleisk, ką atidarai retai, o kitką paslėpk. Rodyklės keičia tvarką.",
+  "Workout in progress": "Treniruotė vyksta",
+  "Opens the workout": "Atidaro treniruotę",
+  "{0} of {1} sets done": "Atlikta {0} iš {1} serijų",
+  "Watch connected": "Laikrodis prijungtas",
+  "Watch reconnecting": "Laikrodis jungiasi iš naujo",
+  "No watch linked": "Nėra prijungto laikrodžio",
 }

@@ -4344,6 +4344,12 @@ export const PT_BR_OVERRIDES = {
 
   // Arrange your own Home and Stats (#1119)
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "Mostre o que você usa, recolha o que abre raramente e oculte o resto. As setas mudam a ordem.",
+  "Workout in progress": "Treino em andamento",
+  "Opens the workout": "Abre o treino",
+  "{0} of {1} sets done": "{0} de {1} séries feitas",
+  "Watch connected": "Relógio conectado",
+  "Watch reconnecting": "Reconectando o relógio",
+  "No watch linked": "Nenhum relógio conectado",
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

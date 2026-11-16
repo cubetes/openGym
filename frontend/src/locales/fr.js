@@ -5923,4 +5923,10 @@ export default {
   "Hide": "Masquer",
   "Totals": "Totaux",
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "Affiche ce que tu utilises, replie ce que tu ouvres rarement et masque le reste. Les flèches changent l’ordre.",
+  "Workout in progress": "Séance en cours",
+  "Opens the workout": "Ouvre la séance",
+  "{0} of {1} sets done": "{0} séries sur {1} terminées",
+  "Watch connected": "Montre connectée",
+  "Watch reconnecting": "Montre en reconnexion",
+  "No watch linked": "Aucune montre connectée",
 }

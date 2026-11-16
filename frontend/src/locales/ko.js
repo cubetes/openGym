@@ -5923,4 +5923,10 @@ export default {
   "Hide": "숨기기",
   "Totals": "합계",
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "자주 쓰는 것은 보이고, 가끔 여는 것은 접고, 나머지는 숨기세요. 화살표로 순서를 바꿉니다.",
+  "Workout in progress": "운동 진행 중",
+  "Opens the workout": "운동 열기",
+  "{0} of {1} sets done": "{1}세트 중 {0}세트 완료",
+  "Watch connected": "워치 연결됨",
+  "Watch reconnecting": "워치 다시 연결 중",
+  "No watch linked": "연결된 워치 없음",
 }

@@ -5889,4 +5889,10 @@ export default {
   "Hide": "Ẩn",
   "Totals": "Tổng",
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "Hiện những gì bạn dùng, thu gọn những gì ít mở và ẩn phần còn lại. Các mũi tên đổi thứ tự.",
+  "Workout in progress": "Buổi tập đang diễn ra",
+  "Opens the workout": "Mở buổi tập",
+  "{0} of {1} sets done": "Đã xong {0}/{1} hiệp",
+  "Watch connected": "Đã kết nối đồng hồ",
+  "Watch reconnecting": "Đang kết nối lại đồng hồ",
+  "No watch linked": "Chưa kết nối đồng hồ",
 };

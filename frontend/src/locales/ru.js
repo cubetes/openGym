@@ -5927,4 +5927,10 @@ export default {
   "Hide": "Скрыть",
   "Totals": "Итоги",
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "Покажите то, чем пользуетесь, сверните то, что открываете редко, и скройте остальное. Стрелки меняют порядок.",
+  "Workout in progress": "Тренировка идёт",
+  "Opens the workout": "Открывает тренировку",
+  "{0} of {1} sets done": "Выполнено подходов: {0} из {1}",
+  "Watch connected": "Часы подключены",
+  "Watch reconnecting": "Часы переподключаются",
+  "No watch linked": "Часы не подключены",
 }

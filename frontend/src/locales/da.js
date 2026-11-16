@@ -5863,4 +5863,10 @@ export default {
   "Hide": "Skjul",
   "Totals": "Totaler",
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "Vis det, du bruger, fold det sammen, du sjældent åbner, og skjul resten. Pilene ændrer rækkefølgen.",
+  "Workout in progress": "Træning i gang",
+  "Opens the workout": "Åbner træningen",
+  "{0} of {1} sets done": "{0} af {1} sæt færdige",
+  "Watch connected": "Ur forbundet",
+  "Watch reconnecting": "Ur forbinder igen",
+  "No watch linked": "Intet ur forbundet",
 }

@@ -5889,4 +5889,10 @@ export default {
   "Hide": "Skrýt",
   "Totals": "Součty",
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "Zobraz, co používáš, sbal, co otevíráš málokdy, a zbytek skryj. Šipky mění pořadí.",
+  "Workout in progress": "Trénink probíhá",
+  "Opens the workout": "Otevře trénink",
+  "{0} of {1} sets done": "{0} z {1} sérií hotovo",
+  "Watch connected": "Hodinky připojeny",
+  "Watch reconnecting": "Hodinky se znovu připojují",
+  "No watch linked": "Žádné připojené hodinky",
 }

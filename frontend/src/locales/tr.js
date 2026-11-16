@@ -5923,4 +5923,10 @@ export default {
   "Hide": "Gizle",
   "Totals": "Toplamlar",
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "Kullandığını göster, nadiren açtığını daralt, gerisini gizle. Oklar sırayı değiştirir.",
+  "Workout in progress": "Antrenman sürüyor",
+  "Opens the workout": "Antrenmanı açar",
+  "{0} of {1} sets done": "{1} setin {0} tanesi bitti",
+  "Watch connected": "Saat bağlı",
+  "Watch reconnecting": "Saat yeniden bağlanıyor",
+  "No watch linked": "Bağlı saat yok",
 }

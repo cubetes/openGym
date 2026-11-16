@@ -5978,4 +5978,10 @@ export default {
   "Hide": "إخفاء",
   "Totals": "الإجماليات",
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "أظهر ما تستخدمه، واطوِ ما تفتحه نادراً، وأخفِ الباقي. الأسهم تغيّر الترتيب.",
+  "Workout in progress": "التمرين جارٍ",
+  "Opens the workout": "يفتح التمرين",
+  "{0} of {1} sets done": "{0} من {1} مجموعات مكتملة",
+  "Watch connected": "الساعة متصلة",
+  "Watch reconnecting": "إعادة الاتصال بالساعة",
+  "No watch linked": "لا توجد ساعة متصلة",
 }

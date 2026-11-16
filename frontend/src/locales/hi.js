@@ -5923,4 +5923,10 @@ export default {
   "Hide": "छिपाएँ",
   "Totals": "कुल",
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "जो इस्तेमाल करते हैं उसे दिखाएँ, जो कम खोलते हैं उसे समेटें और बाकी छिपाएँ। तीर क्रम बदलते हैं।",
+  "Workout in progress": "वर्कआउट जारी है",
+  "Opens the workout": "वर्कआउट खोलता है",
+  "{0} of {1} sets done": "{1} में से {0} सेट पूरे",
+  "Watch connected": "घड़ी जुड़ी है",
+  "Watch reconnecting": "घड़ी फिर से जुड़ रही है",
+  "No watch linked": "कोई घड़ी नहीं जुड़ी",
 }

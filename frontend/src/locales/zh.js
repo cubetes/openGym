@@ -5923,4 +5923,10 @@ export default {
   "Hide": "隐藏",
   "Totals": "总计",
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "显示常用的，折叠很少打开的，隐藏其余的。箭头用于调整顺序。",
+  "Workout in progress": "训练进行中",
+  "Opens the workout": "打开训练",
+  "{0} of {1} sets done": "已完成 {0}/{1} 组",
+  "Watch connected": "手表已连接",
+  "Watch reconnecting": "手表正在重新连接",
+  "No watch linked": "未连接手表",
 }

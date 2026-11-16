@@ -6002,4 +6002,10 @@ export default {
   "Hide": "লুকান",
   "Totals": "মোট",
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "যা ব্যবহার করেন তা দেখান, যা কম খোলেন তা গুটিয়ে রাখুন, বাকিটা লুকান। তীরগুলো ক্রম বদলায়।",
+  "Workout in progress": "ওয়ার্কআউট চলছে",
+  "Opens the workout": "ওয়ার্কআউট খোলে",
+  "{0} of {1} sets done": "{1}-এর মধ্যে {0} সেট শেষ",
+  "Watch connected": "ঘড়ি সংযুক্ত",
+  "Watch reconnecting": "ঘড়ি আবার সংযুক্ত হচ্ছে",
+  "No watch linked": "কোনো ঘড়ি সংযুক্ত নেই",
 }

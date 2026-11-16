@@ -5934,4 +5934,10 @@ export default {
   "Hide": "ซ่อน",
   "Totals": "ยอดรวม",
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "แสดงสิ่งที่คุณใช้ ย่อสิ่งที่ไม่ค่อยเปิด และซ่อนที่เหลือ ลูกศรใช้เปลี่ยนลำดับ",
+  "Workout in progress": "กำลังออกกำลังกาย",
+  "Opens the workout": "เปิดการออกกำลังกาย",
+  "{0} of {1} sets done": "เสร็จแล้ว {0} จาก {1} เซ็ต",
+  "Watch connected": "เชื่อมต่อนาฬิกาแล้ว",
+  "Watch reconnecting": "กำลังเชื่อมต่อนาฬิกาอีกครั้ง",
+  "No watch linked": "ไม่มีนาฬิกาเชื่อมต่อ",
 }

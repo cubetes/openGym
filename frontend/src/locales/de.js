@@ -5943,4 +5943,10 @@ export default {
   "Hide": "Ausblenden",
   "Totals": "Summen",
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "Zeig, was du nutzt, klapp ein, was du selten öffnest, und blende den Rest aus. Die Pfeile ändern die Reihenfolge.",
+  "Workout in progress": "Training läuft",
+  "Opens the workout": "Öffnet das Training",
+  "{0} of {1} sets done": "{0} von {1} Sätzen erledigt",
+  "Watch connected": "Uhr verbunden",
+  "Watch reconnecting": "Uhr verbindet sich neu",
+  "No watch linked": "Keine Uhr verbunden",
 }
