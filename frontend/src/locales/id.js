@@ -5882,6 +5882,8 @@ export default {
   "No devices connected": "Tidak ada perangkat terhubung",
   "Add a watch or connect a server in Settings": "Tambahkan jam tangan atau hubungkan server di Pengaturan",
   "Open Settings": "Buka Pengaturan",
+  // --- routines on the watch, in Settings → Apple Watch ---
+  "Keep openGym open on the watch for a moment.": "Biarkan openGym terbuka di jam tangan sebentar.",
   // Arrange your own Home and Stats (#1119)
   "Customize": "Sesuaikan",
   "Collapsed": "Diciutkan",
@@ -5894,4 +5896,18 @@ export default {
   "Watch connected": "Jam tangan terhubung",
   "Watch reconnecting": "Jam tangan menyambung ulang",
   "No watch linked": "Tidak ada jam tangan terhubung",
+  // --- Settings → watch status pill (#1329) ---
+  "Still connecting. Try again in a moment.": "Sedang menghubungkan. Coba lagi sebentar lagi.",
+  "Pair a watch in the Watch app.": "Pasangkan jam di app Watch.",
+  "Install openGym from the Watch app.": "Pasang openGym dari app Watch.",
+  "Open openGym on the watch once.": "Buka openGym di jam sekali.",
+  "Open openGym on the watch, or bring it closer.": "Buka openGym di jam, atau dekatkan jamnya.",
+  "Update openGym on the watch.": "Perbarui openGym di jam.",
+  "This version can’t reach a watch. Get openGym from Google Play or opengym.ch.": "Versi ini tidak bisa menjangkau jam. Ambil openGym dari Google Play atau opengym.ch.",
+  "Pair your watch in its own app, like Galaxy Wearable.": "Pasangkan jam di app-nya sendiri, misalnya Galaxy Wearable.",
+  "On the watch, install openGym from the Play Store.": "Di jam, pasang openGym dari Play Store.",
+  "Install the Wear OS APK of this release. The Play Store one won’t pair.": "Pasang APK Wear OS dari rilis ini. Yang dari Play Store tidak akan tersambung.",
+  "Syncing": "Menyinkronkan",
+  "Not set up": "Belum disiapkan",
+  "Update watch app": "Perbarui aplikasi jam",
 };

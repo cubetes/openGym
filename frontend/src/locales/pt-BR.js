@@ -4,6 +4,20 @@
 import pt from './pt.js'
 
 export const PT_BR_OVERRIDES = {
+  // --- Settings → watch status pill (#1329) ---
+  "Still connecting. Try again in a moment.": "Conectando. Tente de novo em instantes.",
+  "Pair a watch in the Watch app.": "Pareie um relógio no app Watch.",
+  "Install openGym from the Watch app.": "Instale o openGym pelo app Watch.",
+  "Open openGym on the watch once.": "Abra o openGym no relógio uma vez.",
+  "Open openGym on the watch, or bring it closer.": "Abra o openGym no relógio ou aproxime-o.",
+  "Update openGym on the watch.": "Atualize o openGym no relógio.",
+  "This version can’t reach a watch. Get openGym from Google Play or opengym.ch.": "Esta versão não alcança nenhum relógio. Baixe o openGym no Google Play ou em opengym.ch.",
+  "Pair your watch in its own app, like Galaxy Wearable.": "Pareie seu relógio no app dele, como o Galaxy Wearable.",
+  "On the watch, install openGym from the Play Store.": "No relógio, instale o openGym pela Play Store.",
+  "Install the Wear OS APK of this release. The Play Store one won’t pair.": "Instale o APK Wear OS desta versão. O da Play Store não vai parear.",
+  "Syncing": "Sincronizando",
+  "Update watch app": "Atualize o app do relógio",
+  "Last heard {0}": "Último contato: {0}",
   // --- Settings first screen in groups (#1105); "Watches" (Relógios) is inherited ---
   "Set once": "Configurar uma vez",
   "Connections": "Conexões",
@@ -4332,7 +4346,6 @@ export const PT_BR_OVERRIDES = {
   "Offline": "Offline",
   "Sync server": "Servidor de sincronização",
   "Sets, rest timer, heart rate per set": "Séries, timer de descanso, batimentos por série",
-  "Last heard {0}": "Último sinal {0}",
   "Open openGym on your watch": "Abra o openGym no seu relógio",
   "Pair your watch": "Pareie seu relógio",
   "Install openGym on your watch": "Instale o openGym no seu relógio",
@@ -4342,6 +4355,8 @@ export const PT_BR_OVERRIDES = {
   "Add a watch or connect a server in Settings": "Adicione um relógio ou conecte um servidor em Configurações",
   "Open Settings": "Abrir Configurações",
 
+  // --- routines on the watch, in Settings → Apple Watch ---
+  "Keep openGym open on the watch for a moment.": "Deixe o openGym aberto no relógio por um momento.",
   // Arrange your own Home and Stats (#1119)
   "Show what you use, collapse what you rarely open and hide the rest. The arrows change the order.": "Mostre o que você usa, recolha o que abre raramente e oculte o resto. As setas mudam a ordem.",
   "Workout in progress": "Treino em andamento",

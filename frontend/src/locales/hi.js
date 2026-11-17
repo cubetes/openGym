@@ -5917,6 +5917,8 @@ export default {
   "Add a watch or connect a server in Settings": "सेटिंग में घड़ी जोड़ें या सर्वर कनेक्ट करें",
   "Open Settings": "सेटिंग खोलें",
 
+  // --- routines on the watch, in Settings → Apple Watch ---
+  "Keep openGym open on the watch for a moment.": "कुछ देर के लिए घड़ी पर openGym खुला रखें।",
   // Arrange your own Home and Stats (#1119)
   "Customize": "अनुकूलित करें",
   "Collapsed": "समेटा हुआ",
@@ -5929,4 +5931,18 @@ export default {
   "Watch connected": "घड़ी जुड़ी है",
   "Watch reconnecting": "घड़ी फिर से जुड़ रही है",
   "No watch linked": "कोई घड़ी नहीं जुड़ी",
+  // --- Settings → watch status pill (#1329) ---
+  "Still connecting. Try again in a moment.": "कनेक्ट हो रहा है। थोड़ी देर में फिर कोशिश करें।",
+  "Pair a watch in the Watch app.": "Watch ऐप में घड़ी पेयर करें।",
+  "Install openGym from the Watch app.": "Watch ऐप से openGym इंस्टॉल करें।",
+  "Open openGym on the watch once.": "घड़ी पर एक बार openGym खोलें।",
+  "Open openGym on the watch, or bring it closer.": "घड़ी पर openGym खोलें या घड़ी पास लाएँ।",
+  "Update openGym on the watch.": "घड़ी पर openGym अपडेट करें।",
+  "This version can’t reach a watch. Get openGym from Google Play or opengym.ch.": "यह वर्ज़न घड़ी तक नहीं पहुँचता। openGym को Google Play या opengym.ch से लें।",
+  "Pair your watch in its own app, like Galaxy Wearable.": "अपनी घड़ी को उसके अपने ऐप में पेयर करें, जैसे Galaxy Wearable।",
+  "On the watch, install openGym from the Play Store.": "घड़ी पर Play Store से openGym इंस्टॉल करें।",
+  "Install the Wear OS APK of this release. The Play Store one won’t pair.": "इसी रिलीज़ का Wear OS APK इंस्टॉल करें। Play Store वाला पेयर नहीं होगा।",
+  "Syncing": "सिंक हो रहा है",
+  "Not set up": "सेट अप नहीं है",
+  "Update watch app": "घड़ी का ऐप अपडेट करें",
 }

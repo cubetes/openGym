@@ -5972,6 +5972,8 @@ export default {
   "Add a watch or connect a server in Settings": "أضف ساعة أو اربط خادمًا من الإعدادات",
   "Open Settings": "فتح الإعدادات",
 
+  // --- routines on the watch, in Settings → Apple Watch ---
+  "Keep openGym open on the watch for a moment.": "أبقِ openGym مفتوحًا على الساعة للحظة.",
   // Arrange your own Home and Stats (#1119)
   "Customize": "تخصيص",
   "Collapsed": "مطوية",
@@ -5984,4 +5986,18 @@ export default {
   "Watch connected": "الساعة متصلة",
   "Watch reconnecting": "إعادة الاتصال بالساعة",
   "No watch linked": "لا توجد ساعة متصلة",
+  // --- Settings → watch status pill (#1329) ---
+  "Still connecting. Try again in a moment.": "جارٍ الاتصال. حاول مرة أخرى بعد لحظة.",
+  "Pair a watch in the Watch app.": "اقرن ساعة في تطبيق Watch.",
+  "Install openGym from the Watch app.": "ثبّت openGym من تطبيق Watch.",
+  "Open openGym on the watch once.": "افتح openGym على الساعة مرة واحدة.",
+  "Open openGym on the watch, or bring it closer.": "افتح openGym على الساعة أو قرّبها.",
+  "Update openGym on the watch.": "حدّث openGym على الساعة.",
+  "This version can’t reach a watch. Get openGym from Google Play or opengym.ch.": "هذا الإصدار لا يصل إلى الساعة. احصل على openGym من Google Play أو opengym.ch.",
+  "Pair your watch in its own app, like Galaxy Wearable.": "اقرن ساعتك في تطبيقها الخاص، مثل Galaxy Wearable.",
+  "On the watch, install openGym from the Play Store.": "على الساعة، ثبّت openGym من Play Store.",
+  "Install the Wear OS APK of this release. The Play Store one won’t pair.": "ثبّت ملف APK الخاص بـ Wear OS من هذا الإصدار. نسخة Play Store لن تقترن.",
+  "Syncing": "مزامنة جارية",
+  "Not set up": "غير مُعدّة",
+  "Update watch app": "حدّث تطبيق الساعة",
 }

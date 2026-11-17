@@ -5883,6 +5883,8 @@ export default {
   "No devices connected": "Chưa kết nối thiết bị nào",
   "Add a watch or connect a server in Settings": "Thêm đồng hồ hoặc kết nối máy chủ trong Cài đặt",
   "Open Settings": "Mở Cài đặt",
+  // --- routines on the watch, in Settings → Apple Watch ---
+  "Keep openGym open on the watch for a moment.": "Hãy để openGym mở trên đồng hồ một lúc.",
   // Arrange your own Home and Stats (#1119)
   "Customize": "Tùy chỉnh",
   "Collapsed": "Thu gọn",
@@ -5895,4 +5897,18 @@ export default {
   "Watch connected": "Đã kết nối đồng hồ",
   "Watch reconnecting": "Đang kết nối lại đồng hồ",
   "No watch linked": "Chưa kết nối đồng hồ",
+  // --- Settings → watch status pill (#1329) ---
+  "Still connecting. Try again in a moment.": "Đang kết nối. Thử lại sau giây lát.",
+  "Pair a watch in the Watch app.": "Ghép nối đồng hồ trong ứng dụng Watch.",
+  "Install openGym from the Watch app.": "Cài openGym từ ứng dụng Watch.",
+  "Open openGym on the watch once.": "Mở openGym trên đồng hồ một lần.",
+  "Open openGym on the watch, or bring it closer.": "Mở openGym trên đồng hồ hoặc đưa đồng hồ lại gần.",
+  "Update openGym on the watch.": "Cập nhật openGym trên đồng hồ.",
+  "This version can’t reach a watch. Get openGym from Google Play or opengym.ch.": "Phiên bản này không kết nối được với đồng hồ. Tải openGym từ Google Play hoặc opengym.ch.",
+  "Pair your watch in its own app, like Galaxy Wearable.": "Ghép nối đồng hồ trong ứng dụng riêng của nó, như Galaxy Wearable.",
+  "On the watch, install openGym from the Play Store.": "Trên đồng hồ, cài openGym từ Play Store.",
+  "Install the Wear OS APK of this release. The Play Store one won’t pair.": "Cài APK Wear OS của bản phát hành này. Bản từ Play Store sẽ không ghép nối được.",
+  "Syncing": "Đang đồng bộ",
+  "Not set up": "Chưa thiết lập",
+  "Update watch app": "Cập nhật ứng dụng đồng hồ",
 };

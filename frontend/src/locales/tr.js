@@ -5917,6 +5917,8 @@ export default {
   "Add a watch or connect a server in Settings": "Ayarlar’dan bir saat ekle veya bir sunucuya bağlan",
   "Open Settings": "Ayarlar’ı aç",
 
+  // --- routines on the watch, in Settings → Apple Watch ---
+  "Keep openGym open on the watch for a moment.": "openGym'i saatte bir süre açık tut.",
   // Arrange your own Home and Stats (#1119)
   "Customize": "Özelleştir",
   "Collapsed": "Daraltılmış",
@@ -5929,4 +5931,18 @@ export default {
   "Watch connected": "Saat bağlı",
   "Watch reconnecting": "Saat yeniden bağlanıyor",
   "No watch linked": "Bağlı saat yok",
+  // --- Settings → watch status pill (#1329) ---
+  "Still connecting. Try again in a moment.": "Bağlanıyor. Birazdan tekrar dene.",
+  "Pair a watch in the Watch app.": "Watch uygulamasında bir saat eşle.",
+  "Install openGym from the Watch app.": "openGym’i Watch uygulamasından yükle.",
+  "Open openGym on the watch once.": "openGym’i saatte bir kez aç.",
+  "Open openGym on the watch, or bring it closer.": "openGym’i saatte aç ya da saati yaklaştır.",
+  "Update openGym on the watch.": "openGym’i saatte güncelle.",
+  "This version can’t reach a watch. Get openGym from Google Play or opengym.ch.": "Bu sürüm saate ulaşamaz. openGym’i Google Play’den veya opengym.ch’den al.",
+  "Pair your watch in its own app, like Galaxy Wearable.": "Saatini kendi uygulamasında eşle, örneğin Galaxy Wearable.",
+  "On the watch, install openGym from the Play Store.": "Saatte openGym’i Play Store’dan yükle.",
+  "Install the Wear OS APK of this release. The Play Store one won’t pair.": "Bu sürümün Wear OS APK’sını yükle. Play Store’daki eşleşmez.",
+  "Syncing": "Eşitleniyor",
+  "Not set up": "Kurulmadı",
+  "Update watch app": "Saat uygulamasını güncelle",
 }

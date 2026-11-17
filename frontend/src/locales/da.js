@@ -5857,6 +5857,8 @@ export default {
   "No devices connected": "Ingen enheder forbundet",
   "Add a watch or connect a server in Settings": "Tilføj et ur eller forbind en server i Indstillinger",
   "Open Settings": "Åbn Indstillinger",
+  // --- routines on the watch, in Settings → Apple Watch ---
+  "Keep openGym open on the watch for a moment.": "Lad openGym være åben på uret et øjeblik.",
   // Arrange your own Home and Stats (#1119)
   "Customize": "Tilpas",
   "Collapsed": "Foldet sammen",
@@ -5869,4 +5871,18 @@ export default {
   "Watch connected": "Ur forbundet",
   "Watch reconnecting": "Ur forbinder igen",
   "No watch linked": "Intet ur forbundet",
+  // --- Settings → watch status pill (#1329) ---
+  "Still connecting. Try again in a moment.": "Forbinder. Prøv igen om lidt.",
+  "Pair a watch in the Watch app.": "Par et ur i Watch-appen.",
+  "Install openGym from the Watch app.": "Installer openGym fra Watch-appen.",
+  "Open openGym on the watch once.": "Åbn openGym på uret én gang.",
+  "Open openGym on the watch, or bring it closer.": "Åbn openGym på uret, eller hold det tættere på.",
+  "Update openGym on the watch.": "Opdater openGym på uret.",
+  "This version can’t reach a watch. Get openGym from Google Play or opengym.ch.": "Denne version kan ikke nå et ur. Hent openGym fra Google Play eller opengym.ch.",
+  "Pair your watch in its own app, like Galaxy Wearable.": "Par dit ur i dets egen app, fx Galaxy Wearable.",
+  "On the watch, install openGym from the Play Store.": "Installer openGym fra Play Butik på uret.",
+  "Install the Wear OS APK of this release. The Play Store one won’t pair.": "Installer Wear OS-APK’en fra denne udgivelse. Den fra Play Butik kan ikke parres.",
+  "Syncing": "Synkroniserer",
+  "Not set up": "Ikke sat op",
+  "Update watch app": "Opdater appen på uret",
 }

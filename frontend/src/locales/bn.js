@@ -5996,6 +5996,8 @@ export default {
   "Add a watch or connect a server in Settings": "সেটিংসে একটি ঘড়ি যোগ করুন বা সার্ভার সংযুক্ত করুন",
   "Open Settings": "সেটিংস খুলুন",
 
+  // --- routines on the watch, in Settings → Apple Watch ---
+  "Keep openGym open on the watch for a moment.": "কিছুক্ষণ ঘড়িতে openGym খোলা রাখুন।",
   // Arrange your own Home and Stats (#1119)
   "Customize": "কাস্টমাইজ করুন",
   "Collapsed": "গুটানো",
@@ -6008,4 +6010,18 @@ export default {
   "Watch connected": "ঘড়ি সংযুক্ত",
   "Watch reconnecting": "ঘড়ি আবার সংযুক্ত হচ্ছে",
   "No watch linked": "কোনো ঘড়ি সংযুক্ত নেই",
+  // --- Settings → watch status pill (#1329) ---
+  "Still connecting. Try again in a moment.": "সংযোগ হচ্ছে। একটু পরে আবার চেষ্টা করুন।",
+  "Pair a watch in the Watch app.": "Watch অ্যাপে একটি ঘড়ি পেয়ার করুন।",
+  "Install openGym from the Watch app.": "Watch অ্যাপ থেকে openGym ইনস্টল করুন।",
+  "Open openGym on the watch once.": "ঘড়িতে একবার openGym খুলুন।",
+  "Open openGym on the watch, or bring it closer.": "ঘড়িতে openGym খুলুন, বা ঘড়িটি কাছে আনুন।",
+  "Update openGym on the watch.": "ঘড়িতে openGym আপডেট করুন।",
+  "This version can’t reach a watch. Get openGym from Google Play or opengym.ch.": "এই সংস্করণ ঘড়িতে পৌঁছাতে পারে না। Google Play বা opengym.ch থেকে openGym নিন।",
+  "Pair your watch in its own app, like Galaxy Wearable.": "ঘড়িটি তার নিজের অ্যাপে পেয়ার করুন, যেমন Galaxy Wearable।",
+  "On the watch, install openGym from the Play Store.": "ঘড়িতে Play Store থেকে openGym ইনস্টল করুন।",
+  "Install the Wear OS APK of this release. The Play Store one won’t pair.": "এই রিলিজের Wear OS APK ইনস্টল করুন। Play Store-এরটি পেয়ার হবে না।",
+  "Syncing": "সিঙ্ক হচ্ছে",
+  "Not set up": "সেট আপ করা নেই",
+  "Update watch app": "ঘড়ির অ্যাপ আপডেট করুন",
 }

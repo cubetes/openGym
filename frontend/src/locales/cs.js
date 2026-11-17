@@ -5883,6 +5883,8 @@ export default {
   "No devices connected": "Žádná připojená zařízení",
   "Add a watch or connect a server in Settings": "V nastavení přidej hodinky nebo připoj server",
   "Open Settings": "Otevřít nastavení",
+  // --- routines on the watch, in Settings → Apple Watch ---
+  "Keep openGym open on the watch for a moment.": "Nechte na chvíli openGym v hodinkách otevřený.",
   // Arrange your own Home and Stats (#1119)
   "Customize": "Přizpůsobit",
   "Collapsed": "Sbalené",
@@ -5895,4 +5897,18 @@ export default {
   "Watch connected": "Hodinky připojeny",
   "Watch reconnecting": "Hodinky se znovu připojují",
   "No watch linked": "Žádné připojené hodinky",
+  // --- Settings → watch status pill (#1329) ---
+  "Still connecting. Try again in a moment.": "Připojuje se. Zkuste to za chvíli.",
+  "Pair a watch in the Watch app.": "Spárujte hodinky v aplikaci Watch.",
+  "Install openGym from the Watch app.": "Nainstalujte openGym z aplikace Watch.",
+  "Open openGym on the watch once.": "Jednou otevřete openGym v hodinkách.",
+  "Open openGym on the watch, or bring it closer.": "Otevřete openGym v hodinkách, nebo je dejte blíž.",
+  "Update openGym on the watch.": "Aktualizujte openGym v hodinkách.",
+  "This version can’t reach a watch. Get openGym from Google Play or opengym.ch.": "Tato verze se k hodinkám nepřipojí. Stáhněte openGym z Google Play nebo z opengym.ch.",
+  "Pair your watch in its own app, like Galaxy Wearable.": "Spárujte hodinky v jejich aplikaci, třeba Galaxy Wearable.",
+  "On the watch, install openGym from the Play Store.": "V hodinkách nainstalujte openGym z Obchodu Play.",
+  "Install the Wear OS APK of this release. The Play Store one won’t pair.": "Nainstalujte APK pro Wear OS z tohoto vydání. To z Obchodu Play se nespáruje.",
+  "Syncing": "Synchronizuje se",
+  "Not set up": "Nenastaveno",
+  "Update watch app": "Aktualizujte aplikaci v hodinkách",
 }

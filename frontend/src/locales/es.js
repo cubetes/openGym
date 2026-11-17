@@ -5917,6 +5917,8 @@ export default {
   "Add a watch or connect a server in Settings": "Añade un reloj o conecta un servidor en Ajustes",
   "Open Settings": "Abrir Ajustes",
 
+  // --- routines on the watch, in Settings → Apple Watch ---
+  "Keep openGym open on the watch for a moment.": "Mantén openGym abierto en el reloj un momento.",
   // Arrange your own Home and Stats (#1119)
   "Customize": "Personalizar",
   "Collapsed": "Plegada",
@@ -5929,4 +5931,18 @@ export default {
   "Watch connected": "Reloj conectado",
   "Watch reconnecting": "Reloj reconectando",
   "No watch linked": "Sin reloj vinculado",
+  // --- Settings → watch status pill (#1329) ---
+  "Still connecting. Try again in a moment.": "Conectando. Vuelve a intentarlo en un momento.",
+  "Pair a watch in the Watch app.": "Empareja un reloj en la app Watch.",
+  "Install openGym from the Watch app.": "Instala openGym desde la app Watch.",
+  "Open openGym on the watch once.": "Abre openGym en el reloj una vez.",
+  "Open openGym on the watch, or bring it closer.": "Abre openGym en el reloj o acércalo.",
+  "Update openGym on the watch.": "Actualiza openGym en el reloj.",
+  "This version can’t reach a watch. Get openGym from Google Play or opengym.ch.": "Esta versión no puede llegar a un reloj. Consigue openGym en Google Play o en opengym.ch.",
+  "Pair your watch in its own app, like Galaxy Wearable.": "Empareja tu reloj en su propia app, como Galaxy Wearable.",
+  "On the watch, install openGym from the Play Store.": "En el reloj, instala openGym desde Play Store.",
+  "Install the Wear OS APK of this release. The Play Store one won’t pair.": "Instala el APK de Wear OS de esta versión. El de Play Store no se emparejará.",
+  "Syncing": "Sincronizando",
+  "Not set up": "Sin configurar",
+  "Update watch app": "Actualiza la app del reloj",
 }
