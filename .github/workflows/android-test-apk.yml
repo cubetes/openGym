@@ -1,0 +1,42 @@
+name: Android test APKs
+
+# Fork-only test branch: the phone (sideload debug) and Wear OS debug APKs, from one run so they
+# share the debug signing key and pair. Never merged; the branch lives on cubetes/openGym only.
+on:
+  push:
+    branches: ['test/android-*']
+
+permissions:
+  contents: read
+
+jobs:
+  apks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+        working-directory: frontend
+      - run: npm run build:mobile
+        working-directory: frontend
+      - working-directory: frontend/android
+        run: ./gradlew --no-daemon assembleSideloadDebug :wear:assembleDebug
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: android-test-apks
+          path: |
+            frontend/android/app/build/outputs/apk/sideload/debug/*.apk
+            frontend/android/wear/build/outputs/apk/debug/*.apk
+          retention-days: 7
