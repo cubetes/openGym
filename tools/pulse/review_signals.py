@@ -28,7 +28,8 @@ def search(q, page=1, per_page=100):
     if key in cache:
         return cache[key]
     assert 'is:pr' in q or 'is:issue' in q
-    for attempt in range(2):
+    waits = [30, 60, 120, 180, 240]  # GitHub's secondary rate limit can last a few minutes
+    for attempt in range(len(waits) + 1):
         time.sleep(2.5)
         calls += 1
         p = subprocess.run(['gh', 'api', '-X', 'GET', 'search/issues',
@@ -46,8 +47,8 @@ def search(q, page=1, per_page=100):
             return res
         err = p.stderr + p.stdout
         print(f'error on {q!r} p{page}: {err[:200]}', file=sys.stderr)
-        if attempt == 0:
-            time.sleep(30)
+        if attempt < len(waits):
+            time.sleep(waits[attempt])
     raise RuntimeError(f'search failed: {q}')
 
 
