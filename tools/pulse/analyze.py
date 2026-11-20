@@ -230,7 +230,7 @@ M=[('commits_total',len(commits)),('issues_total',len(iss)),('prs_total',len(prs
  ('enh_close_median_h',round(out['close']['enh']['median'])),('enh_close_p25_h',round(out['close']['enh']['p25'])),('enh_close_p75_h',round(out['close']['enh']['p75'])),
  ('issues_referenced_pct',round(100*iss_ref_share)),('openpr_over14d',out['openpr_age']['over14']),('openpr_median_age_d',out['openpr_age']['median']),
  ('baseline_issues_3d',round(base)),('releases_count',len(rel)),('cla_total',len(cla)),('last_commit',lastc.date().isoformat()),
- ('days_since_last_commit',(today-lastc.date()).days),('top_number',numw[-1]),
+ ('days_since_last_commit',(today-lastc.date()).days),('snapshot',today.isoformat()),('top_number',numw[-1]),
  ('you_prs',me['prs']),('you_merged',me['merged']),('you_landed',me['landed']),('you_open',me['open']),('you_issues',me['issues']),('you_commits',me['commits']),
  ('you_credits',me['credits']),('you_merge_median_h',round(me['merge_med'])),('you_commit_rank',me['commit_rank']),('you_pr_rank',me['rank_prs']),
  ('you_open_share_pct',round(100*me['open']/funnel['open'])),('you_first',me['first']),('you_commit_share_others_pct',round(100*me['commits']/sum(1 for c in commits if not isowner(c))))]

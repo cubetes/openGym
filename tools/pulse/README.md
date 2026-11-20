@@ -21,7 +21,7 @@ tools/pulse/run.sh /path/to/data
 | Review signals from search qualifiers | `review_signals.py` | `new/review_signals.json` |
 | Contributor cohorts | `cohorts.py` | `new/cohorts.json` |
 | Base datasets | `analyze.py` | `out/weekly, daily, hours, releases, people, areas, summary` |
-| Extra datasets | `extend.py` | `out/open_prs, reviewers, themes, theme_months, labels, stability, retention`, rows added to `summary` |
+| Extra datasets | `extend.py` | `out/open_prs, reviewers, themes, labels, stability, retention`, rows added to `summary` |
 
 `SNAPSHOT=YYYY-MM-DD` pins the "today" the numbers are measured against (default: today, UTC).
 `PULSE_ME` names the GitHub login shown as "you" (default `cubetes`).

@@ -2,7 +2,7 @@
 
 Reads what analyze.py, the collectors (open_prs_git.json, review_signals.json, cohorts.json)
 and the title classification (classification.json) produced, and writes the extra dashboard
-datasets: open_prs, reviewers, themes, theme_months, stability, retention, plus rows added
+datasets: open_prs, reviewers, themes, labels, stability, retention, plus rows added
 to summary.json.
 
 Usage: python3 -I extend.py <data-dir>   (data-dir holds items.jsonl, tags.txt, new/, out/)
@@ -121,12 +121,6 @@ for t in THEMES.values():
 theme_rows.sort(key=lambda r: -r['total'])
 save('themes', theme_rows, 'classification.json: one theme and kind per title, assigned by Claude from the title and labels')
 
-months = collections.Counter()
-for i in items:
-    c = cls.get(i['n'])
-    if c and not i['pr']:
-        months[(i['created'][:7], c['theme'])] += 1
-save('theme_months', [dict(month=m, theme=t, issues=v) for (m, t), v in sorted(months.items())])
 save('labels', [dict(n=n, type='pr' if by_n[n]['pr'] else 'issue', theme=c['theme'], kind=c['kind'], title=by_n[n]['title'])
                 for n, c in sorted(cls.items()) if n in by_n],
      'Claude read each title and its labels and picked one theme and kind; this is a reading, not data from GitHub')
