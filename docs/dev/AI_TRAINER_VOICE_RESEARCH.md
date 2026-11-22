@@ -185,3 +185,36 @@ Lessons:
 
 Unverified: what Workout Buddy says in a strength workout; NRC's and Runna's default frequency;
 whether Peloton IQ's voice is synthetic; Ladder's voice and offline details.
+
+## 8. Speaking with the screen off
+
+Added 2026-11-22, after Adrián asked for speech with the screen off, like Apple's Workout app.
+
+- **iPhone apps cannot use Siri voices**, on iOS 26 too: no public API, no Apple statement opening
+  them. The closest is the best downloaded voice, `AVSpeechSynthesisVoice.speechVoices()` filtered
+  to `.premium`, then `.enhanced`. One developer reports some formerly preinstalled voices were
+  dropped around iOS 18.6 / 26. Details and more sources in `VOICE_QUALITY.md` (F1, F2).
+  [Apple forums 829725](https://developer.apple.com/forums/thread/829725),
+  [Apple forums 804648](https://developer.apple.com/forums/thread/804648).
+- **Background modes.** Apple lists "Audio, AirPlay, and Picture in Picture" for iOS ("The app
+  plays audible content in the background") and "Workout processing" for Apple Watch only ("The
+  app uses a workout session to track a user's activity on Apple Watch").
+  [Apple: Configuring background execution modes](https://developer.apple.com/documentation/xcode/configuring-background-execution-modes)
+- **iPhone workout sessions (iOS 26).** WWDC25 session 322 covers locked-phone data access, Live
+  Activities and Siri on the lock screen, and crash relaunch; it says nothing on background run
+  time or audio. Unverified (U): whether a running iPhone session keeps an app awake to speak.
+  [WWDC25 322](https://developer.apple.com/videos/play/wwdc2025/322/)
+- **App Review.** Guideline 2.5.4: "Multitasking apps may only use background services for their
+  intended purposes: VoIP, audio playback, location, task completion, local notifications, etc."
+  A local notification's sound is within that; an audio session kept alive with silence is not.
+  In an April 2026 forum thread on workout audio cues in the background, Apple DTS said a session
+  type must match its documented use and would not speak for App Review.
+  [App Review Guidelines](https://developer.apple.com/app-store/review/guidelines/),
+  [Apple forums 821905](https://developer.apple.com/forums/thread/821905)
+- **Speech into a file.** `AVSpeechSynthesizer.write(_:toBufferCallback:)` (iOS 13+) renders an
+  utterance to audio buffers instead of the speaker; `UNNotificationSound` plays a file from
+  Library/Sounds, under 30 s. openGym already writes its end tones there (`RestTone.swift`).
+  [AVSpeechSynthesizer.write](https://developer.apple.com/documentation/avfaudio/avspeechsynthesizer/write(_:tobuffercallback:)),
+  [UNNotificationSound](https://developer.apple.com/documentation/usernotifications/unnotificationsound)
+- **Android.** `TextToSpeech` needs no visible activity; openGym's `SpeechCue` already uses it with
+  audio focus, and the rest's foreground service and exact alarm already run with the screen off.
