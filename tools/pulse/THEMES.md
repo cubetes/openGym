@@ -26,3 +26,10 @@ Labels such as `bug` or `enhancement` are a hint, not a rule.
 
 `bug` (something broken), `feature` (new capability), `improvement` (change to existing behaviour or
 polish), `question` (support or discussion), `chore` (dependencies, CI, docs, refactors, tests).
+
+## Commit kinds
+
+Commits use their own kinds: `fix` (repairs something broken), `feature` (new capability),
+`improvement` (changes or polishes existing behaviour), `test` (tests only), `docs` (documentation,
+changelog, website text), `chore` (dependencies, CI, version bumps, merges, refactors). Commits use
+the same themes as issues; pick what the change is about, not which file it touched.
