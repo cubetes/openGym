@@ -1,7 +1,8 @@
 # Voice quality: the best voice on the phone, by default (issue #1390)
 
 Status: spec, not built. Base: `release-1.4.6`. Sibling: #1393 (AI trainer voice) speaks through
-the same path and needs nothing extra from this spec.
+the same path and needs nothing extra from this spec. Adrián answered the open questions on
+2026-11-22; his decisions are folded in below and listed under "Decisions".
 
 ## Why (the lifter's reason)
 
@@ -11,15 +12,23 @@ installed, or one free download away. openGym just does not use it unless you di
 Settings → Timer alerts → Voice and pick it by hand. On iOS 26 it is worse: the phone's own voice
 choice is ignored (see Findings, F3).
 
-The fix: use the best voice this phone has, automatically, and tell people how to get a better one
-when the phone has none. No new dependency, nothing sent anywhere, works offline.
+The bar Adrián set is Siri: on an iPhone it is the best voice there is. Apps cannot use it. Siri
+voices are not offered to apps at all (F1, checked again on 2026-11-22). The closest an app can get
+is the best voice the person has downloaded: one marked Premium, else Enhanced. On a phone with one,
+that sounds close to Siri; on a phone without, a short hint shows where to get one.
+
+The fix: the person picks the voice, and the sheet makes the best one easy to find. People who never
+picked one get the best voice their phone has in their own accent, automatically. No new dependency,
+nothing sent anywhere, works offline.
 
 ## Goals
 
-1. **Best voice by default.** When no voice was picked by hand, speak with the best installed voice
-   for the app's language: Premium, then Enhanced, then today's default. Same rule on Android with
-   its own quality values.
-2. **Best first in the list.** The voice sheet lists the best voices at the top.
+1. **The person picks the voice.** The voice sheet lists the best voices at the top, each with its
+   quality and accent, so picking a good one takes one tap. A pick is never changed by the app.
+2. **Best voice for people who never picked.** When no voice was picked by hand, speak with the best
+   installed voice for the app's language in the person's own accent: Premium, then Enhanced, then
+   today's default. Same rule on Android with its own quality values. This includes everyone
+   upgrading who never picked a voice (decided, with a release-note line).
 3. **Show the way to a better voice.** On an iPhone with only basic voices for the language, say
    where to download a better one. On Android, offer a button to the phone's voice download screen.
 4. **Pick it up on return.** Coming back to openGym after a download, the new voice is used and
@@ -29,17 +38,19 @@ when the phone has none. No new dependency, nothing sent anywhere, works offline
 
 | Left out | Why | Add it when |
 |---|---|---|
-| Siri voices | Not reachable by any app (F1). | Apple opens them. |
-| Personal Voice (iOS 17+) | Apple says it is meant for speech-aid apps (F5); 3 languages only; iPhone 12+; a long setup. Your own recorded clips (v1.4.5) already cover "my own voice". | Users ask for it, or Apple widens the use. See open question Q2. |
+| Siri voices | Not reachable by any app (F1). The best downloaded Premium voice is the closest. | Apple opens them. |
+| Personal Voice (iOS 17+) | Decided: no (Adrián, 2026-11-22). Apple says it is meant for speech-aid apps (F5); 3 languages only; iPhone 12+; a long setup. Your own recorded clips (v1.4.5) already cover "my own voice". | Not planned. |
 | A bundled voice engine (Piper, Kokoro) | 60 to 170 MB per voice, per language, 25 languages (F11). A hard sell on size and dependencies. | Never, unless phones stop shipping good voices. |
 | Cloud voices (ElevenLabs, OpenAI, Google Cloud) | Sends text to a third party and needs an account. Breaks privacy-first and offline. | Never as a default. #1393 may revisit as an opt-in. |
 | Recorded voice packs | Fixed lines cannot say "80 kilos, 8 reps" naturally, and #1393's lines are new every session. | Never. |
 | Browser ranking | Browsers do not report voice quality (F7). | A browser starts reporting it. |
-| Speaking on the watches | Neither watch app speaks today. A separate feature. | Its own issue. |
+| Speaking on the watches | Decided: the watches never speak. When a watch is in use, the words come from the phone. | Not planned. Speech through AirPods paired to a watch is a later idea in #1393. |
 
 ## Anti-goals (must stay true)
 
 - A voice someone picked by hand stays picked. The automatic choice only fills the "no pick" case.
+- The automatic choice never changes the accent. A better voice in another accent is shown in the
+  sheet for the person to pick; the app does not pick it for them.
 - The automatic choice never uses a voice that needs the internet. A gym basement has no signal,
   and openGym Offline has no network at all. A network voice is still there to pick by hand, as now.
 - The text never leaves the phone to be spoken.
@@ -80,7 +91,7 @@ Confidence: **V** = two or more independent sources agree, **1** = one source, *
 
 | # | Finding | Conf. | Sources |
 |---|---|---|---|
-| F1 | Third-party apps cannot use Siri voices. They do not appear in `speechVoices()`, and `siri_` identifiers do not play. Apple documents no way in. | V (no Apple doc either way) | [CoMaps, Aug 2026](https://www.comaps.app/news/ios-hq-voices/); [Apple forums 682438](https://developer.apple.com/forums/thread/682438); [Apple forums 676726](https://developer.apple.com/forums/thread/676726) |
+| F1 | Third-party apps cannot use Siri voices. They do not appear in `speechVoices()`, and `siri_` identifiers do not play. Apple documents no way in. Checked again 2026-11-22 for iOS 26: still no public API, no Apple statement opening them; one report says some voices that used to come preinstalled were dropped around iOS 18.6 / 26, so fewer good voices are there without a download. | V (no Apple doc either way) | [CoMaps, Aug 2026](https://www.comaps.app/news/ios-hq-voices/); [Apple forums 682438](https://developer.apple.com/forums/thread/682438); [Apple forums 676726](https://developer.apple.com/forums/thread/676726); [Apple forums 829725, Jun 2026](https://developer.apple.com/forums/thread/829725) |
 | F2 | Premium (iOS 16+) is "a premium quality voice that you must download". Downloaded Enhanced and Premium voices are usable by apps. All preinstalled voices report `default`, though they vary. | V | [Apple: AVSpeechSynthesisVoiceQuality.premium](https://developer.apple.com/documentation/avfaudio/avspeechsynthesisvoicequality/premium); [Ben Dodson, 2024](https://bendodson.com/weblog/2024/04/03/using-your-personal-voice-in-an-ios-app/); [Readium read-aloud best practices](https://github.com/HadrienGardeur/read-aloud-best-practices/blob/main/voice-selection.md) |
 | F3 | On iOS 26, `AVSpeechSynthesisVoice(language:)` returns the system default and ignores the voice the person chose in Accessibility settings. Asking for a voice by its identifier still works. | 1 (forum report, bug FB20271264) | [Apple forums 804648](https://developer.apple.com/forums/thread/804648) |
 | F4 | `AVSpeechSynthesizer.availableVoicesDidChangeNotification` (iOS 17+) fires when the set of voices changes. | 1 (primary doc) | [Apple docs](https://developer.apple.com/documentation/avfaudio/avspeechsynthesizer/availablevoicesdidchangenotification) |
@@ -125,7 +136,7 @@ Approaches:
 | | What | Cost | Verdict |
 |---|---|---|---|
 | A | Ideas 1 + 2 | Small: one pure helper, Android reports quality, a hint, a refresh on return | **Picked** |
-| B | A + Personal Voice behind a permission | A plus a permission flow, three languages, App Review risk (F5) | Later, if asked (Q2) |
+| B | A + Personal Voice behind a permission | A plus a permission flow, three languages, App Review risk (F5) | Rejected (decided: no Personal Voice) |
 | C | A + bundled engine | Large app size, new native dependency | Rejected |
 
 ## Design
@@ -142,13 +153,16 @@ Among voices that speak the app's language (`voiceSpeaks`), and are not `online`
 2. Same tier: exact region first (`en-GB` before `en-US` for a British app).
 3. Same tier and region: keep today's order (by name).
 
-The automatic choice is the top voice **only if it has a tier**. With no Enhanced or Premium voice,
-the automatic choice is `''`, exactly today's behaviour (the system's default for the language).
-This keeps novelty voices and odd defaults out, and makes the change zero-risk on phones with
-nothing better.
+That is the order of the list. The **automatic choice** is the first voice in the person's own
+region (the region of the app's language, else the phone's) **that has a tier**. With no Enhanced
+or Premium voice in that region, the automatic choice is `''`, exactly today's behaviour (the
+system's default for the language). This keeps novelty voices, odd defaults and a surprise accent
+out, and makes the change zero-risk on phones with nothing better. When no region is known, any
+region counts as the person's own.
 
-Assumption A1: quality beats region. A Premium American voice beats a basic British one for a
-British app. See Q3.
+Accent or quality is the person's call (decided: the user selects the voice). A Premium American
+voice still tops the list for a British app, labelled with its accent, but the app never switches
+to it on its own.
 
 ### 2. Android reports quality
 
@@ -178,10 +192,13 @@ native sides need no change: both already speak a voice by id (iOS
 - The first row of the voice sheet, today "Default voice", becomes **Automatic**, with a subtitle
   naming what it uses: "Uses Ava (Premium), the best voice on this phone." With nothing better than
   the basic voice: "Uses your phone's standard voice."
+- Each voice row shows its accent next to its quality ("Premium · American"), so a better voice in
+  another accent is easy to spot and pick.
 - The Voice row's value reads "Automatic" (or "Automatic · Ava" if it fits).
 - The list below follows the ranking rule, best first.
 - **iPhone hint**, in the sheet's footer, only when no Enhanced or Premium voice exists for the
-  language:
+  language in the person's accent (a better voice in another accent is already at the top of the
+  list, labelled):
   > For a voice that sounds more like a person, download one marked Enhanced or Premium. On your
   > iPhone: Settings → Accessibility → Read & Speak → Voices (Spoken Content on older iPhones).
   > Each is 100 MB or more, so use Wi-Fi. openGym uses it as soon as it is there.
@@ -202,7 +219,7 @@ stays for the empty case.
 | iPhone | Yes (Premium/Enhanced) | Text, when only basic voices | Yes |
 | Android | Yes, where the engine reports quality | "Get more voices" row | Yes |
 | Browser | No change | No | No |
-| Apple Watch, Wear OS, Garmin | Not in scope: they do not speak | | |
+| Apple Watch, Wear OS, Garmin | Never: the watches do not speak; the phone says the words | | |
 
 AirPods change nothing: the phone's voice already plays through them like any audio. Workout
 Buddy's voice is Apple's own and not offered to apps (U).
@@ -213,7 +230,8 @@ The AI trainer will say longer, varied lines through the same `speak()` path. It
 automatic voice for free, and a good voice matters more for a full sentence than for "10 seconds".
 #1393 must not add a voice choice of its own. If a Premium voice takes noticeably long to say its
 first line of a workout (U, measure it), warming the synthesizer at workout start serves both
-features.
+features. #1393 also makes cues speak with the screen off (its "Screen off" section); those lines
+use the same voice: the picked one, else the automatic one.
 
 ### 7. What people will notice
 
@@ -223,8 +241,9 @@ voice on your phone. Pick another in Settings → Timer alerts → Voice."
 
 ## Acceptance checks for the builder
 
-- `bestVoice` unit tests: tier order; region tie-break; network voices never picked; no tier gives
-  `''`; a hand-picked voice is untouched.
+- `bestVoice` unit tests: tier order; region tie-break; network voices never picked; no tier in
+  the person's region gives `''` even when another region has a Premium voice; a hand-picked voice
+  is untouched.
 - iPhone with a Premium voice for the app language and no pick: cues use it (check the voice name
   in the sheet subtitle and by ear).
 - iPhone with only basic voices: cues sound as before; the hint shows; after downloading a voice
@@ -234,24 +253,21 @@ voice on your phone. Pick another in Settings → Timer alerts → Voice."
 - openGym Offline: no network voice is ever chosen automatically.
 - All locale checks pass (`check-locales.mjs`, `check-source-strings.mjs --strict`).
 
-## Assumptions (no answer from the user yet)
+## Decisions (Adrián, 2026-11-22)
 
-- A1: quality beats region (see Q3).
-- A2: Personal Voice waits (see Q2).
-- A3: iPhone and Android in this build; browser and watches out.
-- A4: the automatic voice is the default for everyone who has not picked one, including people
-  upgrading.
+| Question | Decision |
+|---|---|
+| What does success sound like? | Siri, on the iPhone. Apps cannot use Siri voices (F1), so the target is the best Premium or Enhanced voice the person downloaded, plus the hint to get one. |
+| Personal Voice? | No. |
+| Accent or quality? | The person selects the voice. The automatic choice keeps their accent; the list shows better voices in other accents for them to pick. |
+| Switch people who never picked a voice? | Yes, to the best voice in their accent, with the release-note line in "What people will notice". |
+| Should the watches speak? | No. When a watch is in use, the words come from the phone. |
 
-## Open questions, most important first
+Scope stays: iPhone and Android in this build; browser unchanged; watches never speak.
 
-1. **Q1. What does "success" sound like to you?** Is "the best voice your phone already has, plus
-   a nudge to download one" enough, or do you need it to sound like Siri on every phone out of the
-   box? (The second is not possible without cloud voices or a bundled engine.) Recommended: the first.
-2. **Q2. Personal Voice now or later?** Recommended: later. Apple points it at speech-aid apps, it
-   covers three languages, and your own recorded clips already let you hear yourself.
-3. **Q3. Accent or quality?** Should a Premium voice from another region win over a basic voice
-   from yours (American Premium over basic British)? Recommended: quality wins.
-4. **Q4. Should the upgrade switch voices for existing users silently?** Recommended: yes, with
-   the one-line release note.
-5. **Q5. Watches**: should #1393 or a later issue make the watches speak, for the phone-in-locker
-   case? Out of scope here.
+## Still open (for Duarte)
+
+1. **The switch on update.** People who never picked a voice will hear a different one after
+   updating. Adrián wants it, with the release-note line. OK to ship it that way?
+2. **iPhone hint without a button.** iOS has no public link into Accessibility settings, so the
+   hint names the path in words. OK, or would you rather leave the hint out?
