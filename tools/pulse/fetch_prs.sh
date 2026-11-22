@@ -1,9 +1,9 @@
 #!/bin/bash
 # Fetch open PR heads into refs/pr/N in batches of 40.
-# Usage: fetch_prs.sh <repo> <data-dir>
-R=$1; D=$2; mkdir -p $D/new
+# Usage: fetch_prs.sh <repo> <data-dir> [list-file]   (list defaults to <data-dir>/open_prs.txt)
+R=$1; D=$2; LIST=${3:-$D/open_prs.txt}; mkdir -p $D/new
 URL=https://github.com/DuarteSantos8/openGym.git
-mapfile -t prs < <(grep -E '^[0-9]+$' $D/open_prs.txt)
+mapfile -t prs < <(grep -E '^[0-9]+$' $LIST)
 : > $D/new/fetch_failed.txt
 dofetch() { git -C $R fetch -q $URL "$@" 2>&1; }
 for ((i=0; i<${#prs[@]}; i+=40)); do
