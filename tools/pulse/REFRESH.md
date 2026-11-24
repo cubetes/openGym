@@ -23,9 +23,10 @@ itself (`files/index.html`) is never changed by a refresh.
    rows and save. Then do the same for every commit in `D/commits_raw.txt` (lines starting `@@`;
    skip "has signed the CLA") whose first 10 sha characters are not in
    `commit_classification.json`, using the commit kinds in `THEMES.md`. Then run
-   `python3 -I tools/pulse/extend.py D` and `python3 -I tools/pulse/contributors.py <repo> D` again.
+   `python3 -I tools/pulse/extend.py D`, `python3 -I tools/pulse/contributors.py <repo> D` and
+   `python3 -I tools/pulse/release.py <repo> D` again.
 6. Upload each `D/out/*.json` file to the artifact as an asset (Artifact tool, `asset: true`, one
-   file per call). There are 18: summary, weekly, daily, hours, releases, people, areas, open_prs,
+   file per call). There are 19: next_release, summary, weekly, daily, hours, releases, people, areas, open_prs,
    reviewers, themes, labels, stability, retention, contributors, contrib_weekly, contrib_work,
    contrib_recent, commit_labels.
 7. Read every `datasets/<id>` document, then write one ArtifactData `batch` of `update`s, each

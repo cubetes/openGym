@@ -22,6 +22,7 @@ tools/pulse/run.sh /path/to/data
 | Contributor cohorts | `cohorts.py` | `new/cohorts.json` |
 | Base datasets | `analyze.py` | `out/weekly, daily, hours, releases, people, areas, summary` |
 | Extra datasets | `extend.py` | `out/open_prs, reviewers, themes, labels, stability, retention`, rows added to `summary` |
+| Next release against the last tag | `release.py` | `out/next_release`, rows added to `summary` |
 | Commits by contributor | `contributors.py` | `out/contributors, contrib_weekly, contrib_work, contrib_recent, commit_labels`, rows added to `summary` |
 
 `SNAPSHOT=YYYY-MM-DD` pins the "today" the numbers are measured against (default: today, UTC).

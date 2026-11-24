@@ -18,3 +18,4 @@ echo "== cohorts";                  python3 -I "$HERE/cohorts.py" "$D"
 echo "== base datasets";            python3 -I "$HERE/analyze.py" "$D" > /dev/null
 echo "== extra datasets";           python3 -I "$HERE/extend.py" "$D"
 echo "== contributors";             python3 -I "$HERE/contributors.py" "$REPO" "$D"
+echo "== next release";             python3 -I "$HERE/release.py" "$REPO" "$D"
