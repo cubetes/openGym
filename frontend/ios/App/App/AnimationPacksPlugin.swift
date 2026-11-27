@@ -308,7 +308,7 @@ public class AnimationPacksPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     /// Whether the phone is on a network that costs nothing extra (Wi-Fi or a cable), now.
-    private static func onWifi() async -> Bool {
+    static func onWifi() async -> Bool {
         await withCheckedContinuation { done in
             let monitor = NWPathMonitor()
             let once = Once()

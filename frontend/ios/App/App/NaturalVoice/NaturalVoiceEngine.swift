@@ -151,7 +151,7 @@ actor NaturalVoiceEngine {
 
     // MARK: - disk cache
 
-    private static var cacheDir: URL {
+    static var cacheDir: URL {
         FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("NaturalLines", isDirectory: true)
     }
 

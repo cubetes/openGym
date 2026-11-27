@@ -47,6 +47,7 @@ class MainViewController: CAPBridgeViewController {
         bridge?.registerPluginInstance(DeviceAuthPlugin())
         bridge?.registerPluginInstance(OidcBrowserPlugin())
         bridge?.registerPluginInstance(AnimationPacksPlugin())
+        bridge?.registerPluginInstance(NaturalVoicePlugin())
         bridge?.registerPluginInstance(NudgeCheckPlugin())
         bridge?.registerPluginInstance(GymReminderPlugin())
         bridge?.registerPluginInstance(GymMapPickerPlugin())
