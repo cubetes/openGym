@@ -18,6 +18,7 @@ import { MOBILE, nativePlatform } from './mobile.js'
 import { offlineBuild } from './build-caps.js'
 import { speakNative, hushNative, voicesNative } from './rest-alert.js'
 import { dateLocale } from './i18n-core.js'
+import { isNatural, naturalUsable, naturalState } from './natural-voice.js'
 
 export const SPEECH_RATES = { slow: 0.8, normal: 1, fast: 1.25 }
 export const speechRateOf = S => (S?.speechRate in SPEECH_RATES ? S.speechRate : 'normal')
@@ -40,9 +41,11 @@ export function setSpeechRate (s, n) {
 export function setSpeechPitch (s, n) { if (okNum(n)) s.speechPitch = clampSpeech(n) }
 
 const VOICE_KEY = 'og_speech_voice'
-/** The voice picked on this device ('' for the system's default). */
+/** The voice picked on this device ('' for the system's default). A Natural pick that cannot speak here (no model, not English) is '' too: Automatic speaks. */
 export function pickedVoice () {
-  try { return String(localStorage.getItem(VOICE_KEY) || '') } catch { return '' }
+  let id = ''
+  try { id = String(localStorage.getItem(VOICE_KEY) || '') } catch { return '' }
+  return isNatural(id) && !naturalUsable(id, speechLang(), naturalState()) ? '' : id
 }
 export function setPickedVoice (id) {
   try { if (id) localStorage.setItem(VOICE_KEY, String(id)); else localStorage.removeItem(VOICE_KEY) } catch { /* private mode: the default voice */ }
@@ -56,7 +59,10 @@ export function setPickedVoice (id) {
 export const voiceOpts = S => {
   const fresh = voiceCache?.lang === speechLang()
   if (MOBILE && voiceCache && !fresh) refreshOnce()
-  return { rate: speechRateNum(S), pitch: speechPitchNum(S), voice: pickedVoice() || (fresh ? voiceCache.auto?.id : '') || '' }
+  const auto = (fresh ? voiceCache.auto?.id : '') || ''
+  const picked = pickedVoice()
+  // A Natural voice that fails or is too slow on a line is said by Apple's automatic voice instead.
+  return { rate: speechRateNum(S), pitch: speechPitchNum(S), voice: picked || auto, ...(isNatural(picked) ? { fallback: auto } : {}) }
 }
 
 /** The app's language as a voice language: 'de-DE', 'pt-BR', 'ar' (no Unicode extensions). */
@@ -108,13 +114,14 @@ function speakWeb(text, { lang, rate, pitch, voice }) {
 
 /**
  * Says `text` now. `queue: false` (a countdown number) cuts off whatever is still being said, so
- * "3" is never heard after "2"; the default waits its turn. Resolves true once something took it.
+ * "3" is never heard after "2"; the default waits its turn. Resolves true once something took it, 'muted' when the phone's volume is 0.
  * `onSilent` is on by default: a voice someone switched on is heard through the iPhone's silent
  * switch and whether or not the end-of-rest sound is on (lib/spoken-cues.js VOICE_ON_SILENT).
  */
-export async function speak(text, { rate = 1, pitch = 1, voice = '', lang = speechLang(), onSilent = true, queue = true } = {}) {
+export async function speak(text, { rate = 1, pitch = 1, voice = '', fallback = '', lang = speechLang(), onSilent = true, queue = true } = {}) {
   if (!text) return false
-  if (MOBILE && await speakNative(text, { lang, rate, pitch, voice, onSilent, flush: !queue })) return true
+  // 'muted' (the phone's volume is 0) is truthy and passes through for the pill (lib/voice-caption.js).
+  if (MOBILE) { const res = await speakNative(text, { lang, rate, pitch, voice, fallback, onSilent, flush: !queue }); if (res) return res }
   if (!queue) { try { webSpeech()?.cancel() } catch { /* nothing to stop */ } }
   return speakWeb(text, { lang, rate, pitch, voice })
 }

@@ -227,3 +227,44 @@ describe('the automatic voice (#1390)', () => {
     expect(calls).toBe(1)
   })
 })
+
+describe('the Natural voice (iPhone)', () => {
+  let mod, usable, native
+  const setup = async locale => {
+    vi.resetModules()
+    usable = true
+    native = vi.fn(async () => true)
+    vi.doMock('./mobile.js', async orig => ({ ...(await orig()), MOBILE: true, nativePlatform: async () => 'ios' }))
+    vi.doMock('./rest-alert.js', () => ({ speakNative: native, hushNative: () => {}, voicesNative: async () => [{ id: 'ava', name: 'Ava', lang: locale, online: false, quality: 'premium' }] }))
+    vi.doMock('./natural-voice.js', () => ({ isNatural: id => String(id).startsWith('natural:'), naturalUsable: (id, lang) => usable && /^en/i.test(lang), naturalState: () => ({}) }))
+    vi.doMock('./i18n-core.js', async orig => ({ ...(await orig()), dateLocale: () => locale }))
+    vi.stubGlobal('navigator', { language: locale })
+    localStorage.clear()
+    mod = await import('./speech.js')
+    await mod.refreshVoices()
+    mod.setPickedVoice('natural:af_heart')
+  }
+  afterEach(() => { vi.doUnmock('./mobile.js'); vi.doUnmock('./rest-alert.js'); vi.doUnmock('./natural-voice.js'); vi.doUnmock('./i18n-core.js'); vi.unstubAllGlobals() })
+
+  test('an English app with the model ready: the Natural voice, and Apple\'s automatic voice as the fallback', async () => {
+    await setup('en-GB')
+    expect(mod.pickedVoice()).toBe('natural:af_heart')
+    expect(mod.voiceOpts({})).toEqual({ rate: 1, pitch: 1, voice: 'natural:af_heart', fallback: 'ava' })
+    await mod.speak('Go', mod.voiceOpts({}))
+    expect(native.mock.calls[0][1]).toMatchObject({ voice: 'natural:af_heart', fallback: 'ava' })
+  })
+  test('a German app, or no model: Apple\'s automatic voice speaks', async () => {
+    await setup('de-DE')
+    expect(mod.pickedVoice()).toBe('')
+    expect(mod.voiceOpts({})).toEqual({ rate: 1, pitch: 1, voice: 'ava' })
+    await setup('en-GB')
+    usable = false
+    expect(mod.pickedVoice()).toBe('')
+    expect(mod.voiceOpts({}).voice).toBe('ava')
+  })
+  test('speak() passes a muted phone through', async () => {
+    await setup('en-GB')
+    native.mockResolvedValue('muted')
+    await expect(mod.speak('Go')).resolves.toBe('muted')
+  })
+})

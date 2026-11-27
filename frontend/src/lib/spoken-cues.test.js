@@ -1,7 +1,10 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 
-vi.mock('./speech.js', () => ({ speak: vi.fn(() => Promise.resolve(true)), voiceOpts: S => ({ rate: S?.speechRate === 'fast' ? 1.25 : 1, pitch: 1, voice: '' }) }))
+const h = vi.hoisted(() => ({ voice: '' }))
+vi.mock('./speech.js', () => ({ speak: vi.fn(() => Promise.resolve(true)), voiceOpts: S => ({ rate: S?.speechRate === 'fast' ? 1.25 : 1, pitch: 1, voice: h.voice }) }))
+vi.mock('./rest-alert.js', () => ({ prepareNative: vi.fn(() => Promise.resolve(true)) }))
 const { speak } = await import('./speech.js')
+const { prepareNative } = await import('./rest-alert.js')
 const { nextSetAfter, setCueText, restStartText, cues, bindCueState, cuesOn, sampleCue } = await import('./spoken-cues.js')
 
 const BENCH = '0025', SQUAT = '0043'
@@ -9,7 +12,7 @@ const set = (w, r, done = false, extra = {}) => ({ w, r, done, ...extra })
 const entry = (id, sets, target = { mode: 'reps' }, extra = {}) => ({ id, target, sets, ...extra })
 const S = (entries, extra = {}) => ({ unit: 'kg', spokenCues: true, active: { cur: 0, entries }, ...extra })
 
-afterEach(() => { speak.mockClear(); bindCueState(null) })
+afterEach(() => { speak.mockClear(); prepareNative.mockClear(); h.voice = ''; bindCueState(null) })
 
 describe('what comes next after a rest', () => {
   test('the same exercise, then the next one down the list', () => {
@@ -192,5 +195,33 @@ describe('the first exercise and a circuit’s members (#1210)', () => {
     bindCueState(() => st)
     cues.movedOn(1)
     expect(speak.mock.calls.map(c => c[0])).toEqual([expect.stringMatching(/^.+\. Set 2, 80 kilos, 8 reps$/)])
+  })
+})
+
+describe('lines made ahead in the Natural voice', () => {
+  const st = (extra = {}) => S([entry(BENCH, [set(80, 8), set(80, 8)])], extra)
+  test('a workout beginning prepares the fixed lines once, the set announcement is left out', () => {
+    h.voice = 'natural:af_heart'
+    bindCueState(() => st({ cueStyle: 'calm' }))
+    cues.began()
+    expect(prepareNative).toHaveBeenCalledTimes(1)
+    const [texts, opts] = prepareNative.mock.calls[0]
+    expect(opts).toEqual({ voice: 'natural:af_heart', rate: 1 })
+    expect(texts).toEqual(expect.arrayContaining(['1', '2', '3', 'Go!', 'Ten seconds. Ease back in.', 'Whenever you’re ready. Now is good.', 'Breathe. You earned this break.', 'Last set. Make it a tidy one.', 'That’s a new record. Quietly brilliant.']))
+    expect(texts.some(x => /^Set \d/.test(x))).toBe(false)
+    expect(new Set(texts).size).toBe(texts.length)
+  })
+  test('lines with a placeholder are not prepared', () => {
+    h.voice = 'natural:af_heart'
+    bindCueState(() => st({ cueStyle: 'own', cueLines: { restStart: ['Set {0} next', 'Easy now'] } }))
+    cues.prepareFixed()
+    expect(prepareNative.mock.calls[0][0]).toContain('Easy now')
+    expect(prepareNative.mock.calls[0][0]).not.toContain('Set {0} next')
+  })
+  test('an Apple voice prepares nothing', () => {
+    bindCueState(() => st())
+    cues.began()
+    cues.prepareFixed()
+    expect(prepareNative).not.toHaveBeenCalled()
   })
 })

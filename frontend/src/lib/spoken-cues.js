@@ -26,6 +26,8 @@ import { t, tn, tnf, exerciseNameFor } from './i18n-core.js'
 import { EXIDX } from './exercises.js'
 import { viewEntry, exUnitOf } from './ex-unit.js'
 import { speak, voiceOpts } from './speech.js'
+import { isNatural } from './natural-voice.js'
+import { prepareNative } from './rest-alert.js'
 import { pickLine, linesFor } from './voice-styles.js'
 import { pickClip, voiceClipsOf } from './voice-clips.js'
 import { MOBILE } from './mobile.js'
@@ -228,6 +230,17 @@ export const cues = {
     const ex = EXIDX[entry.id]
     const name = (ex ? exerciseNameFor(ex) : (entry.n || '')) || null
     say(S, setCueText(S, entry, i, { name }))
+    cues.prepareFixed()
+  },
+  /** Has the Natural voice make the lines that never change ahead (so they play at once): the
+   *  count, "Go!" and the style's lines without a number to fill in. Set announcements change per
+   *  set, so they are made when said. Called when a workout begins and when a voice is picked. */
+  prepareFixed() {
+    const S = live()
+    const o = S && voiceOpts(S)
+    if (!isNatural(o?.voice)) return
+    const lines = ['restOver', 'restStart', 'tenLeft', 'lastSet', 'record'].flatMap(m => linesFor(S, m)).filter(l => !/\{\d+\}/.test(l))
+    prepareNative([...new Set(['1', '2', '3', t('Go!'), ...lines])], { voice: o.voice, rate: o.rate })
   },
   /** The focus moved to another exercise with no rest between (a superset's next member,
    *  views/Workout.jsx): its next set, named. A rest is what announced the next set before, and
