@@ -46,6 +46,21 @@
 		AA0800000000000000000002 /* GymReminderPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0800000000000000000001 /* GymReminderPlugin.swift */; };
 		AA0800000000000000000004 /* GymReminderRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0800000000000000000003 /* GymReminderRules.swift */; };
 		AA1461000000000000000002 /* CueAudioLedger.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1461000000000000000001 /* CueAudioLedger.swift */; };
+		AA5A00000000000000000002 /* AudioModelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A00000000000000000001 /* AudioModelError.swift */; };
+		AA5A00000000000000000004 /* ChinesePhonemizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A00000000000000000003 /* ChinesePhonemizer.swift */; };
+		AA5A00000000000000000006 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A00000000000000000005 /* Configuration.swift */; };
+		AA5A00000000000000000008 /* CoreMLComputeUnits.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A00000000000000000007 /* CoreMLComputeUnits.swift */; };
+		AA5A0000000000000000000A /* GermanPhonemizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A00000000000000000009 /* GermanPhonemizer.swift */; };
+		AA5A0000000000000000000C /* HindiPhonemizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A0000000000000000000B /* HindiPhonemizer.swift */; };
+		AA5A0000000000000000000E /* JapanesePhonemizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A0000000000000000000D /* JapanesePhonemizer.swift */; };
+		AA5A00000000000000000010 /* KokoroModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A0000000000000000000F /* KokoroModel.swift */; };
+		AA5A00000000000000000012 /* KokoroTTS.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A00000000000000000011 /* KokoroTTS.swift */; };
+		AA5A00000000000000000014 /* LatinPhonemizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A00000000000000000013 /* LatinPhonemizer.swift */; };
+		AA5A00000000000000000016 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A00000000000000000015 /* Logging.swift */; };
+		AA5A00000000000000000018 /* Phonemizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A00000000000000000017 /* Phonemizer.swift */; };
+		AA5A0000000000000000001A /* PronunciationDicts.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A00000000000000000019 /* PronunciationDicts.swift */; };
+		AA5A0000000000000000001C /* TextChunker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A0000000000000000001B /* TextChunker.swift */; };
+		AA5A0000000000000000001E /* NaturalVoiceMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A0000000000000000001D /* NaturalVoiceMath.swift */; };
 		AA1440000000000000000002 /* GymMapPickerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1440000000000000000001 /* GymMapPickerPlugin.swift */; };
 		AA1450000000000000000002 /* VoiceIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1450000000000000000001 /* VoiceIntents.swift */; };
 		AA1450000000000000000004 /* AppShortcuts.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA1450000000000000000003 /* AppShortcuts.strings */; };
@@ -98,6 +113,22 @@
 		AA1440000000000000000001 /* GymMapPickerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GymMapPickerPlugin.swift; sourceTree = "<group>"; };
 		AA0800000000000000000003 /* GymReminderRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GymReminderRules.swift; path = ../GymReminderCore/Sources/GymReminderCore/GymReminderRules.swift; sourceTree = "<group>"; };
 		AA1461000000000000000001 /* CueAudioLedger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CueAudioLedger.swift; path = ../CueAudioCore/Sources/CueAudioCore/CueAudioLedger.swift; sourceTree = "<group>"; };
+		AA5A00000000000000000001 /* AudioModelError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AudioModelError.swift; path = NaturalVoice/KokoroCoreML/AudioModelError.swift; sourceTree = "<group>"; };
+		AA5A00000000000000000003 /* ChinesePhonemizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChinesePhonemizer.swift; path = NaturalVoice/KokoroCoreML/ChinesePhonemizer.swift; sourceTree = "<group>"; };
+		AA5A00000000000000000005 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Configuration.swift; path = NaturalVoice/KokoroCoreML/Configuration.swift; sourceTree = "<group>"; };
+		AA5A00000000000000000007 /* CoreMLComputeUnits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CoreMLComputeUnits.swift; path = NaturalVoice/KokoroCoreML/CoreMLComputeUnits.swift; sourceTree = "<group>"; };
+		AA5A00000000000000000009 /* GermanPhonemizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GermanPhonemizer.swift; path = NaturalVoice/KokoroCoreML/GermanPhonemizer.swift; sourceTree = "<group>"; };
+		AA5A0000000000000000000B /* HindiPhonemizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HindiPhonemizer.swift; path = NaturalVoice/KokoroCoreML/HindiPhonemizer.swift; sourceTree = "<group>"; };
+		AA5A0000000000000000000D /* JapanesePhonemizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JapanesePhonemizer.swift; path = NaturalVoice/KokoroCoreML/JapanesePhonemizer.swift; sourceTree = "<group>"; };
+		AA5A0000000000000000000F /* KokoroModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KokoroModel.swift; path = NaturalVoice/KokoroCoreML/KokoroModel.swift; sourceTree = "<group>"; };
+		AA5A00000000000000000011 /* KokoroTTS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KokoroTTS.swift; path = NaturalVoice/KokoroCoreML/KokoroTTS.swift; sourceTree = "<group>"; };
+		AA5A00000000000000000013 /* LatinPhonemizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LatinPhonemizer.swift; path = NaturalVoice/KokoroCoreML/LatinPhonemizer.swift; sourceTree = "<group>"; };
+		AA5A00000000000000000015 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Logging.swift; path = NaturalVoice/KokoroCoreML/Logging.swift; sourceTree = "<group>"; };
+		AA5A00000000000000000017 /* Phonemizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Phonemizer.swift; path = NaturalVoice/KokoroCoreML/Phonemizer.swift; sourceTree = "<group>"; };
+		AA5A00000000000000000019 /* PronunciationDicts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PronunciationDicts.swift; path = NaturalVoice/KokoroCoreML/PronunciationDicts.swift; sourceTree = "<group>"; };
+		AA5A0000000000000000001B /* TextChunker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TextChunker.swift; path = NaturalVoice/KokoroCoreML/TextChunker.swift; sourceTree = "<group>"; };
+		AA5A0000000000000000001D /* NaturalVoiceMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NaturalVoiceMath.swift; path = ../CueAudioCore/Sources/CueAudioCore/NaturalVoiceMath.swift; sourceTree = "<group>"; };
+		AA5A0000000000000000FF01 /* LICENSE-speech-swift */ = {isa = PBXFileReference; lastKnownFileType = text; name = "LICENSE-speech-swift"; path = "NaturalVoice/KokoroCoreML/LICENSE-speech-swift"; sourceTree = "<group>"; };
 		AA1450000000000000000001 /* VoiceIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceIntents.swift; sourceTree = "<group>"; };
 		AA1451000000000000000001 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/AppShortcuts.strings; sourceTree = "<group>"; };
 		AA1451000000000000000002 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/AppShortcuts.strings; sourceTree = "<group>"; };
@@ -220,6 +251,22 @@
 				AA0800000000000000000001 /* GymReminderPlugin.swift */,
 				AA0800000000000000000003 /* GymReminderRules.swift */,
 				AA1461000000000000000001 /* CueAudioLedger.swift */,
+				AA5A00000000000000000001 /* AudioModelError.swift */,
+				AA5A00000000000000000003 /* ChinesePhonemizer.swift */,
+				AA5A00000000000000000005 /* Configuration.swift */,
+				AA5A00000000000000000007 /* CoreMLComputeUnits.swift */,
+				AA5A00000000000000000009 /* GermanPhonemizer.swift */,
+				AA5A0000000000000000000B /* HindiPhonemizer.swift */,
+				AA5A0000000000000000000D /* JapanesePhonemizer.swift */,
+				AA5A0000000000000000000F /* KokoroModel.swift */,
+				AA5A00000000000000000011 /* KokoroTTS.swift */,
+				AA5A00000000000000000013 /* LatinPhonemizer.swift */,
+				AA5A00000000000000000015 /* Logging.swift */,
+				AA5A00000000000000000017 /* Phonemizer.swift */,
+				AA5A00000000000000000019 /* PronunciationDicts.swift */,
+				AA5A0000000000000000001B /* TextChunker.swift */,
+				AA5A0000000000000000001D /* NaturalVoiceMath.swift */,
+				AA5A0000000000000000FF01 /* LICENSE-speech-swift */,
 				AA1440000000000000000001 /* GymMapPickerPlugin.swift */,
 				AA1450000000000000000001 /* VoiceIntents.swift */,
 				AA1450000000000000000003 /* AppShortcuts.strings */,
@@ -414,6 +461,21 @@
 				AA0800000000000000000002 /* GymReminderPlugin.swift in Sources */,
 				AA0800000000000000000004 /* GymReminderRules.swift in Sources */,
 				AA1461000000000000000002 /* CueAudioLedger.swift in Sources */,
+				AA5A00000000000000000002 /* AudioModelError.swift in Sources */,
+				AA5A00000000000000000004 /* ChinesePhonemizer.swift in Sources */,
+				AA5A00000000000000000006 /* Configuration.swift in Sources */,
+				AA5A00000000000000000008 /* CoreMLComputeUnits.swift in Sources */,
+				AA5A0000000000000000000A /* GermanPhonemizer.swift in Sources */,
+				AA5A0000000000000000000C /* HindiPhonemizer.swift in Sources */,
+				AA5A0000000000000000000E /* JapanesePhonemizer.swift in Sources */,
+				AA5A00000000000000000010 /* KokoroModel.swift in Sources */,
+				AA5A00000000000000000012 /* KokoroTTS.swift in Sources */,
+				AA5A00000000000000000014 /* LatinPhonemizer.swift in Sources */,
+				AA5A00000000000000000016 /* Logging.swift in Sources */,
+				AA5A00000000000000000018 /* Phonemizer.swift in Sources */,
+				AA5A0000000000000000001A /* PronunciationDicts.swift in Sources */,
+				AA5A0000000000000000001C /* TextChunker.swift in Sources */,
+				AA5A0000000000000000001E /* NaturalVoiceMath.swift in Sources */,
 				AA1440000000000000000002 /* GymMapPickerPlugin.swift in Sources */,
 				AA1450000000000000000002 /* VoiceIntents.swift in Sources */,
 			);

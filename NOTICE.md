@@ -186,3 +186,17 @@ store requires for a feature (such as Google Play services' Wearable Data Layer 
 system frameworks), without the Corresponding Source of those libraries. Everything else stays
 under the AGPL: openGym's own source, including the code that talks to these libraries, must
 remain available as the license requires.
+
+## Natural voice (iPhone): speech-swift, Kokoro-82M and misaki
+
+The iPhone app can speak workout cues with a Natural voice. That code and model are not
+openGym's own work, and each keeps its own licence:
+
+- **speech-swift** (`github.com/soniqo/speech-swift`), the Kokoro Core ML sources vendored in
+  `frontend/ios/App/App/NaturalVoice/KokoroCoreML/`. Copyright 2025 Ivan Digital. Apache License
+  2.0; the licence text is `LICENSE-speech-swift` in that folder. openGym changed it: it trims
+  each chunk, adds an 80 ms gap between chunks, and drops the download code.
+- **Kokoro-82M**, the voice model. By hexgrad, Apache License 2.0. The Core ML conversion
+  (`aufklarer/Kokoro-82M-CoreML`) is by aufklarer. The phone downloads it on request; it is not
+  in the app or this repository.
+- **misaki**, the British English pronunciation dictionaries. By hexgrad, Apache License 2.0.
