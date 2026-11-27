@@ -11,7 +11,7 @@ const h = vi.hoisted(() => {
   vi.stubEnv('VITE_MOBILE', '1')   // lib/mobile.js: MOBILE = import.meta.env.VITE_MOBILE === '1'
   const store = new Map()
   vi.stubGlobal('localStorage', { getItem: k => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, String(v)), clear: () => store.clear() })
-  return { platform: 'android', calls: [], registerPlugin: null, perm: 'granted', request: null }
+  return { platform: 'android', calls: [], registerPlugin: null, perm: 'granted', request: null, speakResult: undefined, args: {} }
 })
 
 // Shaped like the proxy registerPlugin() returns: every property is a native method, `then`
@@ -22,6 +22,8 @@ const pluginProxy = () => new Proxy({}, {
     if (prop === 'then') return () => new Promise(() => {})
     return (...args) => {
       h.calls.push(String(prop))
+      h.args[String(prop)] = args[0]
+      if (prop === 'speak' && h.speakResult !== undefined) return Promise.resolve(h.speakResult)
       if (h.platform !== 'android' && h.platform !== 'ios') return Promise.reject(new Error(`"RestAlert.${String(prop)}()" is not implemented on ${h.platform}`))
       return Promise.resolve(prop === 'addListener' ? { remove: async () => {} } : undefined)
     }
@@ -56,6 +58,8 @@ beforeEach(() => {
   h.registerPlugin = vi.fn(() => pluginProxy())
   h.perm = 'granted'
   h.request = null
+  h.speakResult = undefined
+  h.args = {}
   localStorage.clear()
   unhandled.length = 0
   process.on('unhandledRejection', onUnhandled)
@@ -446,6 +450,32 @@ describe('spoken cues through the phone', () => {
     alert = await import('./rest-alert.js')
     await expect(alert.speakNative('Rest is over')).resolves.toBe(false)
     expect(unhandled).toEqual([])
+  })
+
+  it('answers "muted" when the phone says the volume is off, true otherwise', async () => {
+    h.platform = 'ios'
+    const alert = await import('./rest-alert.js')
+    h.speakResult = { muted: true }
+    await expect(alert.speakNative('Go', { voice: 'natural:af_heart', fallback: 'com.apple.voice.x' })).resolves.toBe('muted')
+    expect(h.args.speak).toMatchObject({ voice: 'natural:af_heart', fallback: 'com.apple.voice.x' })
+    h.speakResult = { muted: false }
+    await expect(alert.speakNative('Go')).resolves.toBe(true)
+    h.speakResult = {}
+    await expect(alert.speakNative('Go')).resolves.toBe(true)
+  })
+
+  it('prepareNative hands the lines to the plugin, and does nothing in a browser shell', async () => {
+    h.platform = 'ios'
+    let alert = await import('./rest-alert.js')
+    await alert.prepareNative(['1', '2'], { voice: 'natural:af_heart', rate: 1.2 })
+    expect(h.calls).toContain('prepare')
+    expect(h.args.prepare).toEqual({ texts: ['1', '2'], voice: 'natural:af_heart', rate: 1.2 })
+    vi.resetModules()
+    h.platform = 'web'
+    h.calls = []
+    alert = await import('./rest-alert.js')
+    await alert.prepareNative(['1'], {})
+    expect(h.calls).not.toContain('prepare')
   })
 
   it('Android ducks for a line and lets go when nothing is left to say', () => {

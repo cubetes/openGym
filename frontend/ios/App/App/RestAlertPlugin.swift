@@ -20,7 +20,7 @@ import UserNotifications
  * navigator.vibrate, which iOS does not have.
  */
 @objc(RestAlertPlugin)
-public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDelegate {
+public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDelegate, AVAudioPlayerDelegate {
     public let identifier = "RestAlertPlugin"
     public let jsName = "RestAlert"
     public let pluginMethods: [CAPPluginMethod] = [
@@ -33,6 +33,7 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
         CAPPluginMethod(name: "speak", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "hush", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "voices", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "prepare", returnType: CAPPluginReturnPromise),
     ]
 
     static let requestId = "opengym.rest"
@@ -64,6 +65,19 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
     private var lines: [ObjectIdentifier: Int] = [:]
     /// Which of our sounds play now, and whether the session is held for them.
     private var ledger = CueAudioLedger()
+    /// A line in the Natural voice, from the moment it is asked for until its sound ended.
+    private final class NaturalLine {
+        let text: String, voice: String, speed: Double, id: Int
+        let apple: (lang: String, rate: Float, pitch: Float, fallback: String, onSilent: Bool)
+        var wav: URL?
+        var player: AVAudioPlayer?
+        var done = false
+        init(text: String, voice: String, speed: Double, id: Int, apple: (lang: String, rate: Float, pitch: Float, fallback: String, onSilent: Bool)) {
+            self.text = text; self.voice = voice; self.speed = speed; self.id = id; self.apple = apple
+        }
+    }
+    /// Natural lines in the order asked: the first one plays once its sound is there, the rest wait behind it.
+    private var naturalQueue: [NaturalLine] = []
     /// Whether a spoken cue is talking, without making the synthesizer just to ask.
     private var speechMade = false
     /// Spoken cues (lib/spoken-cues.js): made the first time something is said.
@@ -227,36 +241,142 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
         let rate = Float(call.getDouble("rate") ?? 1)
         let pitch = Float(call.getDouble("pitch") ?? 1)
         let voiceId = call.getString("voice") ?? ""
+        let fallback = call.getString("fallback") ?? ""
         let onSilent = call.getBool("onSilent") ?? false
         let flush = call.getBool("flush") ?? false
         DispatchQueue.main.async {
-            let utterance = AVSpeechUtterance(string: text)
-            // Settings → Timer alerts → Voice (v1.4.5): the voice picked there, by its identifier;
-            // one that is not on this phone (any more) leaves the language's default.
-            if !voiceId.isEmpty, let picked = AVSpeechSynthesisVoice(identifier: voiceId) {
-                utterance.voice = picked
-            } else if !lang.isEmpty {
-                let base = String(lang.split(separator: "-").first ?? "")
-                if let voice = AVSpeechSynthesisVoice(language: lang) ?? AVSpeechSynthesisVoice(language: base) {
-                    utterance.voice = voice
+            // The line is not heard at volume 0, whichever voice says it.
+            let muted = AVAudioSession.sharedInstance().outputVolume == 0
+            if voiceId.hasPrefix("natural:"), #available(iOS 16, *) {
+                self.speakNatural(text, raw: String(voiceId.dropFirst("natural:".count)), apple: (lang, rate, pitch, fallback, onSilent), flush: flush)
+            } else {
+                self.speakApple(text, lang: lang, rate: rate, pitch: pitch, voiceId: voiceId.hasPrefix("natural:") ? fallback : voiceId, onSilent: onSilent, flush: flush)
+            }
+            call.resolve(["muted": muted])
+        }
+    }
+
+    /// Makes lines ahead in the Natural voice, so a cue finds its sound ready. Answers at once.
+    @objc func prepare(_ call: CAPPluginCall) {
+        let texts = call.getArray("texts", String.self) ?? []
+        let raw = (call.getString("voice") ?? "").replacingOccurrences(of: "natural:", with: "")
+        let speed = max(0.5, min(2, call.getDouble("rate") ?? 1))
+        call.resolve()
+        if #available(iOS 16, *), !texts.isEmpty, !raw.isEmpty {
+            Task { await NaturalVoiceEngine.shared.prepare(texts, voice: raw, speed: speed) }
+        }
+    }
+
+    /// The phone's own voice says the line: Settings → Timer alerts → Voice, or the cover for a Natural line that missed.
+    private func speakApple(_ text: String, lang: String, rate: Float, pitch: Float, voiceId: String, onSilent: Bool, flush: Bool) {
+        let utterance = AVSpeechUtterance(string: text)
+        // Settings → Timer alerts → Voice (v1.4.5): the voice picked there, by its identifier;
+        // one that is not on this phone (any more) leaves the language's default.
+        if !voiceId.isEmpty, let picked = AVSpeechSynthesisVoice(identifier: voiceId) {
+            utterance.voice = picked
+        } else if !lang.isEmpty {
+            let base = String(lang.split(separator: "-").first ?? "")
+            if let voice = AVSpeechSynthesisVoice(language: lang) ?? AVSpeechSynthesisVoice(language: base) {
+                utterance.voice = voice
+            }
+        }
+        let wanted = AVSpeechUtteranceDefaultSpeechRate * max(0.5, min(2, rate))
+        utterance.rate = max(AVSpeechUtteranceMinimumSpeechRate, min(AVSpeechUtteranceMaximumSpeechRate, wanted))
+        utterance.pitchMultiplier = max(0.5, min(2, pitch))
+        // The new line holds the session before the old ones are cut off, so the music stays
+        // down across a flush instead of bouncing up for a moment.
+        let id = beginSound(.speech, onSilent: onSilent)
+        lines[ObjectIdentifier(utterance)] = id
+        if flush && speech.isSpeaking {
+            speech.stopSpeaking(at: .immediate)
+        }
+        speech.speak(utterance)
+        // The synthesizer now and then never reports a line as done: it lets go by itself.
+        DispatchQueue.main.asyncAfter(deadline: .now() + CueAudioLedger.speechCap(text: text, rate: Double(rate))) {
+            if self.lines.removeValue(forKey: ObjectIdentifier(utterance)) != nil { self.endSound(id) }
+        }
+    }
+
+    // MARK: the Natural voice (NaturalVoice/NaturalVoiceEngine.swift makes the sound, this plays it)
+
+    @available(iOS 16.0, *)
+    private func speakNatural(_ text: String, raw: String, apple: (lang: String, rate: Float, pitch: Float, fallback: String, onSilent: Bool), flush: Bool) {
+        let speed = Double(max(0.5, min(2, apple.rate)))
+        let id = beginSound(.speech, onSilent: apple.onSilent)
+        if flush {
+            // Cut off after the new line holds the session, like the synthesizer's flush.
+            if speechMade && speech.isSpeaking { speech.stopSpeaking(at: .immediate) }
+            stopNatural(endingSounds: true)
+        }
+        let line = NaturalLine(text: text, voice: raw, speed: speed, id: id, apple: apple)
+        naturalQueue.append(line)
+        Task {
+            let url = try? await NaturalVoiceEngine.shared.render(text: text, voice: raw, speed: speed)
+            await MainActor.run {
+                guard !line.done else { return } // already said by the Apple voice, or hushed: the late sound is dropped
+                if let url = url {
+                    line.wav = url
+                    self.playNext()
+                } else if NaturalVoiceMath.shouldFallBack(waited: 0, hasAudio: false, failed: true) {
+                    self.fallBack(line)
                 }
             }
-            let wanted = AVSpeechUtteranceDefaultSpeechRate * max(0.5, min(2, rate))
-            utterance.rate = max(AVSpeechUtteranceMinimumSpeechRate, min(AVSpeechUtteranceMaximumSpeechRate, wanted))
-            utterance.pitchMultiplier = max(0.5, min(2, pitch))
-            // The new line holds the session before the old ones are cut off, so the music stays
-            // down across a flush instead of bouncing up for a moment.
-            let id = self.beginSound(.speech, onSilent: onSilent)
-            self.lines[ObjectIdentifier(utterance)] = id
-            if flush && self.speech.isSpeaking {
-                self.speech.stopSpeaking(at: .immediate)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + NaturalVoiceMath.fallBackSec) {
+            if !line.done, NaturalVoiceMath.shouldFallBack(waited: NaturalVoiceMath.fallBackSec, hasAudio: line.wav != nil, failed: false) {
+                self.fallBack(line)
             }
-            self.speech.speak(utterance)
-            // The synthesizer now and then never reports a line as done: it lets go by itself.
-            DispatchQueue.main.asyncAfter(deadline: .now() + CueAudioLedger.speechCap(text: text, rate: Double(rate))) {
-                if self.lines.removeValue(forKey: ObjectIdentifier(utterance)) != nil { self.endSound(id) }
-            }
-            call.resolve()
+        }
+    }
+
+    /// The Apple voice says a Natural line that had no sound in time, in the line's place in the queue.
+    private func fallBack(_ line: NaturalLine) {
+        let a = line.apple
+        speakApple(line.text, lang: a.lang, rate: a.rate, pitch: a.pitch, voiceId: a.fallback, onSilent: a.onSilent, flush: false)
+        finish(line)
+    }
+
+    /// The first line in the queue plays when its sound is there; one at a time.
+    private func playNext() {
+        guard let line = naturalQueue.first, line.player == nil, let url = line.wav else { return }
+        guard let p = try? AVAudioPlayer(contentsOf: url) else { return fallBack(line) }
+        p.delegate = self
+        line.player = p
+        guard p.play() else { return fallBack(line) }
+        // The player's delegate can stay silent: let go at the sound's end plus a little.
+        DispatchQueue.main.asyncAfter(deadline: .now() + p.duration + 0.5) { self.finish(line) }
+    }
+
+    /// A line is over (played, failed, covered or cut off): its sound ends once, and the next one may play.
+    private func finish(_ line: NaturalLine) {
+        guard !line.done else { return }
+        line.done = true
+        line.player?.stop()
+        naturalQueue.removeAll { $0 === line }
+        endSound(line.id)
+        playNext()
+    }
+
+    /// Everything Natural stops. `endingSounds` is false where the ledger is ended as a whole right after.
+    private func stopNatural(endingSounds: Bool) {
+        let all = naturalQueue
+        naturalQueue = []
+        for line in all where !line.done {
+            line.done = true
+            line.player?.stop()
+            if endingSounds { endSound(line.id) }
+        }
+    }
+
+    public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        DispatchQueue.main.async {
+            if let line = self.naturalQueue.first(where: { $0.player === player }) { self.finish(line) }
+        }
+    }
+
+    public func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
+        DispatchQueue.main.async {
+            if let line = self.naturalQueue.first(where: { $0.player === player }) { self.fallBack(line) }
         }
     }
 
@@ -327,6 +447,7 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
             self.players.values.forEach { $0.stop() }
             self.players = [:]
             self.lines = [:]
+            self.stopNatural(endingSounds: false)
             self.ledger.reset()
         }
     }
@@ -350,6 +471,7 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
     @objc func hush(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             if self.speechMade { self.speech.stopSpeaking(at: .immediate) }
+            self.stopNatural(endingSounds: false)
             // didCancel lets go of each line; anything it missed goes here.
             self.lines = [:]
             self.apply(self.ledger.endAll(.speech))
@@ -383,6 +505,7 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
         players.values.forEach { $0.stop() }
         players = [:]
         lines = [:]
+        stopNatural(endingSounds: false)
         if speechMade { speech.stopSpeaking(at: .immediate) }
         apply(ledger.endAll())
     }

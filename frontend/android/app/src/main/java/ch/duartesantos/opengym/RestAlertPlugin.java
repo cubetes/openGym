@@ -172,8 +172,13 @@ public class RestAlertPlugin extends Plugin {
         Double pitch = call.getDouble("pitch");
         boolean ok = SpeechCue.speak(ctx, text, call.getString("lang", ""), rate == null ? 1f : rate.floatValue(),
                 pitch == null ? 1f : pitch.floatValue(), call.getString("voice", ""), Boolean.TRUE.equals(call.getBoolean("flush", false)));
-        if (ok) call.resolve();
-        else call.reject("no voice");
+        if (ok) {
+            // SpeechCue's attributes (navigation guidance) play on the music stream.
+            android.media.AudioManager am = (android.media.AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
+            JSObject res = new JSObject();
+            res.put("muted", am != null && am.getStreamVolume(android.media.AudioManager.STREAM_MUSIC) == 0);
+            call.resolve(res);
+        } else call.reject("no voice");
     }
 
     /**

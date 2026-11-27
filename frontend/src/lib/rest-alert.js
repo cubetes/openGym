@@ -201,11 +201,19 @@ export function toneNative(kind, { onSilent = false, at = 0 } = {}) {
 // use the page's own speechSynthesis instead. Never resolves with the plugin itself.
 // `flush`: cut off what is still being said first (a countdown number).
 // `voice`: a voice's id from voicesNative (Settings → Timer alerts → Voice), '' for the default;
-// `pitch` 0.5 to 2. An app from before v1.4.5's voice picker ignores both.
-export function speakNative(text, { lang = '', rate = 1, pitch = 1, voice = '', onSilent = false, flush = false } = {}) {
+// `pitch` 0.5 to 2; `fallback`: the Apple voice's id when `voice` is a natural one that is not ready in time. Resolves true, false, or 'muted' (the phone's volume is 0). An app from before v1.4.5's voice picker ignores both.
+export function speakNative(text, { lang = '', rate = 1, pitch = 1, voice = '', fallback = '', onSilent = false, flush = false } = {}) {
   if (!MOBILE || !text) return Promise.resolve(false)
   return restPlugin()
-    .then(plugin => (plugin ? plugin.RestAlert.speak({ text: String(text), lang: String(lang || ''), rate: Number(rate) || 1, pitch: Number(pitch) || 1, voice: String(voice || ''), onSilent: onSilent === true, flush: flush === true }).then(() => true) : false))
+    .then(plugin => (plugin ? plugin.RestAlert.speak({ text: String(text), lang: String(lang || ''), rate: Number(rate) || 1, pitch: Number(pitch) || 1, voice: String(voice || ''), fallback: String(fallback || ''), onSilent: onSilent === true, flush: flush === true }).then(res => (res && res.muted === true ? 'muted' : true)) : false))
+    .catch(() => false)
+}
+
+/** Has the phone make these lines ahead in the Natural voice (iPhone only; an older app lacks the call). */
+export function prepareNative(texts, { voice = '', rate = 1 } = {}) {
+  if (!MOBILE || !Array.isArray(texts) || !texts.length) return Promise.resolve(false)
+  return restPlugin()
+    .then(plugin => (plugin ? plugin.RestAlert.prepare({ texts: texts.map(String), voice: String(voice || ''), rate: Number(rate) || 1 }).then(() => true) : false))
     .catch(() => false)
 }
 
