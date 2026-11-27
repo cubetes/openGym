@@ -154,6 +154,27 @@ do, not with every release, and are uploaded once per change, separate from the 
 
 The full-quality files only ever travel from the release machine to Apple, like the IPA (licence).
 
+#### Natural voice pack (Background Assets)
+
+The Natural voice (iPhone, English) is one Apple-hosted asset pack, `voice-natural-en`, about
+320 MB, on demand. It changes only when the model does, not with every release. The model is
+Apache-2.0, so unlike the animations the licence does not limit where it lives. It is too big for
+the repo, so it is built on the release machine and uploaded here.
+
+1. Fetch `aufklarer/Kokoro-82M-CoreML` at revision `d21aa979562ed8c0f4ff6b9e64807cef8e7a38e4`
+   from Hugging Face into one folder. Take only what the app uses: `kokoro_5s.mlmodelc/`,
+   `G2PEncoder.mlmodelc/`, `G2PDecoder.mlmodelc/`, `us_gold.json`, `us_silver.json`,
+   `vocab_index.json`, `g2p_vocab.json`, `config.json`, and `voices/af_heart.json`,
+   `voices/am_michael.json`, `voices/bf_emma.json`.
+2. Add the British dictionaries from `hexgrad/misaki` (`misaki/data/`): `gb_gold.json` and
+   `gb_silver.json`, next to the US ones.
+3. `node scripts/voice/make-voice-pack.mjs <model-dir> <out>` refuses a folder with a missing
+   file. It writes `<model-dir>/files.json` (every file and its size, because the phone cannot
+   list a pack's files) and `<out>/manifest.json`.
+4. `xcrun ba-package package <out>/manifest.json -o voice-natural-en.aar`, with `<model-dir>` as
+   the `sourceRoot` (Xcode 26 or later).
+5. Upload it with the same App Store Connect calls as the animation packs above.
+
 ## One-time setup (owner)
 
 ### Google Play
