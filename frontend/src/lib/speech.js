@@ -41,10 +41,13 @@ export function setSpeechRate (s, n) {
 export function setSpeechPitch (s, n) { if (okNum(n)) s.speechPitch = clampSpeech(n) }
 
 const VOICE_KEY = 'og_speech_voice'
+/** What is stored as the pick, usable or not: this is what syncs, so a phone without the model keeps another phone's Natural pick. */
+export function storedVoice () {
+  try { return String(localStorage.getItem(VOICE_KEY) || '') } catch { return '' }
+}
 /** The voice picked on this device ('' for the system's default). A Natural pick that cannot speak here (no model, not English) is '' too: Automatic speaks. */
 export function pickedVoice () {
-  let id = ''
-  try { id = String(localStorage.getItem(VOICE_KEY) || '') } catch { return '' }
+  const id = storedVoice()
   return isNatural(id) && !naturalUsable(id, speechLang(), naturalState()) ? '' : id
 }
 export function setPickedVoice (id) {

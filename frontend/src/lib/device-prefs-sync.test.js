@@ -16,6 +16,13 @@ beforeEach(() => {
 })
 
 describe('device prefs in the profile', () => {
+  it('a Natural pick this phone cannot use is still the pick that syncs', async () => {
+    const { localPrefs } = await import('./device-prefs-sync.js')
+    setPickedVoice('natural:af_heart')
+    expect(pickedVoice()).toBe('')
+    expect(localPrefs().voice).toBe('natural:af_heart')
+  })
+
   it('a profile without prefs and a device on the defaults: nothing is written', () => {
     const { S, update } = store({})
     expect(syncPrefs(S, update)).toBe('same')

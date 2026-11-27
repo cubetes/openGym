@@ -13,7 +13,7 @@
 // phone can have it off while the others keep it), what was read from Health Connect or Apple Health (it never
 // leaves the phone, privacy page), the server pairing, the animation packs downloaded here.
 import { readDisplay, applyDisplay } from './display-prefs.js'
-import { pickedVoice, setPickedVoice } from './speech.js'
+import { storedVoice, setPickedVoice } from './speech.js'
 
 const DEFAULT_DISPLAY = { motion: 'system', text: 'default' }
 const isMap = v => !!v && typeof v === 'object' && !Array.isArray(v)
@@ -28,7 +28,7 @@ export function platform() {
 const VOICE_KEYS = ['android', 'ios', 'web']
 const voicesOf = v => (isMap(v) ? Object.fromEntries(VOICE_KEYS.filter(k => typeof v[k] === 'string' && v[k]).map(k => [k, v[k]])) : {})
 
-export const localPrefs = () => ({ display: readDisplay(), voice: pickedVoice() })
+export const localPrefs = () => ({ display: readDisplay(), voice: storedVoice() })
 
 /** The profile's prefs, cleaned, or null when the profile has none yet. */
 export function prefsOf(S) {
