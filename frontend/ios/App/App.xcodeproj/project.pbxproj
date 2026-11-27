@@ -60,6 +60,7 @@
 		AA5A00000000000000000018 /* Phonemizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A00000000000000000017 /* Phonemizer.swift */; };
 		AA5A0000000000000000001A /* PronunciationDicts.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A00000000000000000019 /* PronunciationDicts.swift */; };
 		AA5A0000000000000000001C /* TextChunker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A0000000000000000001B /* TextChunker.swift */; };
+		AA5A00000000000000000021 /* NaturalVoiceEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A00000000000000000020 /* NaturalVoiceEngine.swift */; };
 		AA5A0000000000000000001E /* NaturalVoiceMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5A0000000000000000001D /* NaturalVoiceMath.swift */; };
 		AA1440000000000000000002 /* GymMapPickerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1440000000000000000001 /* GymMapPickerPlugin.swift */; };
 		AA1450000000000000000002 /* VoiceIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1450000000000000000001 /* VoiceIntents.swift */; };
@@ -127,6 +128,7 @@
 		AA5A00000000000000000017 /* Phonemizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Phonemizer.swift; path = NaturalVoice/KokoroCoreML/Phonemizer.swift; sourceTree = "<group>"; };
 		AA5A00000000000000000019 /* PronunciationDicts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PronunciationDicts.swift; path = NaturalVoice/KokoroCoreML/PronunciationDicts.swift; sourceTree = "<group>"; };
 		AA5A0000000000000000001B /* TextChunker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TextChunker.swift; path = NaturalVoice/KokoroCoreML/TextChunker.swift; sourceTree = "<group>"; };
+		AA5A00000000000000000020 /* NaturalVoiceEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NaturalVoiceEngine.swift; path = NaturalVoice/NaturalVoiceEngine.swift; sourceTree = "<group>"; };
 		AA5A0000000000000000001D /* NaturalVoiceMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NaturalVoiceMath.swift; path = ../CueAudioCore/Sources/CueAudioCore/NaturalVoiceMath.swift; sourceTree = "<group>"; };
 		AA5A0000000000000000FF01 /* LICENSE-speech-swift */ = {isa = PBXFileReference; lastKnownFileType = text; name = "LICENSE-speech-swift"; path = "NaturalVoice/KokoroCoreML/LICENSE-speech-swift"; sourceTree = "<group>"; };
 		AA1450000000000000000001 /* VoiceIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceIntents.swift; sourceTree = "<group>"; };
@@ -265,6 +267,7 @@
 				AA5A00000000000000000017 /* Phonemizer.swift */,
 				AA5A00000000000000000019 /* PronunciationDicts.swift */,
 				AA5A0000000000000000001B /* TextChunker.swift */,
+				AA5A00000000000000000020 /* NaturalVoiceEngine.swift */,
 				AA5A0000000000000000001D /* NaturalVoiceMath.swift */,
 				AA5A0000000000000000FF01 /* LICENSE-speech-swift */,
 				AA1440000000000000000001 /* GymMapPickerPlugin.swift */,
@@ -475,6 +478,7 @@
 				AA5A00000000000000000018 /* Phonemizer.swift in Sources */,
 				AA5A0000000000000000001A /* PronunciationDicts.swift in Sources */,
 				AA5A0000000000000000001C /* TextChunker.swift in Sources */,
+				AA5A00000000000000000021 /* NaturalVoiceEngine.swift in Sources */,
 				AA5A0000000000000000001E /* NaturalVoiceMath.swift in Sources */,
 				AA1440000000000000000002 /* GymMapPickerPlugin.swift in Sources */,
 				AA1450000000000000000002 /* VoiceIntents.swift in Sources */,
