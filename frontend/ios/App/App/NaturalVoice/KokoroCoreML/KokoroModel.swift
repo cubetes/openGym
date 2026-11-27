@@ -5,6 +5,7 @@ import Foundation
 ///
 /// Loads a single pre-compiled `kokoro_5s.mlmodelc` that runs the full pipeline
 /// (BERT → duration → alignment → prosody → decoder) in one CoreML call.
+@available(iOS 16.0, *)
 class KokoroNetwork {
 
     private let e2eModel: MLModel

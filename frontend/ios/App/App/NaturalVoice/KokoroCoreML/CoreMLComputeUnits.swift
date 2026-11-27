@@ -19,6 +19,7 @@ import Foundation
 /// so every loader skips ANE *and* GPU codegen — pure CPU MIL execution loads
 /// instantly, is deterministic, and yields identical text for our roundtrip
 /// assertions (~86 ms/step for the T=128 decoder, fine for correctness tests).
+@available(iOS 16.0, *)
 public enum CoreMLComputeUnitsResolver {
     public static let envKey = "SPEECH_COREML_COMPUTE_UNITS"
 

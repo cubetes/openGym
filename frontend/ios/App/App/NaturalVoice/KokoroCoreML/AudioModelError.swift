@@ -1,6 +1,7 @@
 // Vendored from github.com/soniqo/speech-swift (Ivan Digital), Apache-2.0, see LICENSE-speech-swift.
 // Upstream commit not recorded when the sources were first copied (lab round 2).
 // Modified: trim and gap (KokoroTTS.swift: 80 ms gap and trimmed chunks via NaturalVoiceMath); download code removed.
+// Also: @available(iOS 16.0, *) on the engine types (the app target is iOS 15.5).
 
 import Foundation
 

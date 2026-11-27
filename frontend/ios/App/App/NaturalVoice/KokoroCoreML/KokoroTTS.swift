@@ -17,6 +17,7 @@ import Foundation
 /// let tts = try await KokoroTTSModel.fromPretrained()
 /// let audio = try tts.synthesize(text: "Hello world", voice: "af_heart")
 /// ```
+@available(iOS 16.0, *)
 public final class KokoroTTSModel {
 
     /// Default HuggingFace model ID.

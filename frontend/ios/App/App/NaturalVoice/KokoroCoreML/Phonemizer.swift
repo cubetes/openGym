@@ -10,6 +10,7 @@ import NaturalLanguage
 /// German: number/abbreviation normalization, `dict_de.json` (shipped with the
 /// German voice bundles), inflection/compound fallbacks and rule-based G2P in
 /// the espeak-ng convention the German voices were trained on.
+@available(iOS 16.0, *)
 public final class KokoroPhonemizer {
 
     /// IPA symbol → token ID mapping (from vocab_index.json).
