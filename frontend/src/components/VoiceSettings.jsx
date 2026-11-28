@@ -74,7 +74,7 @@ function useNatural() {
 const mbOf = bytes => Math.round(bytes / 1e6)
 
 /** What the Voice row says. `cur` is the usable pick, so an unusable Natural pick reads as Automatic (Ruling 7). */
-function voiceRowValue({ voices, auto, stuck }, cur) {
+export function voiceRowValue({ voices, auto, stuck }, cur) {
   const nat = NATURAL_VOICES.find(v => v.id === cur)
   if (nat) return t('Natural voice · {0}', nat.name)
   if (voices === null) return null
@@ -400,7 +400,7 @@ export default function VoiceSettings({ openList }) {
       {!isNatural(cur) && <SliderRow icon="speaker" title={t('Pitch')} value={speechPitchNum(S)} set={setSpeechPitch} low={t('Lower')} high={t('Higher')} />}
       <Row icon="play" iconTint="var(--green)" title={t('Try it')} onClick={() => { sayIt(sampleCue(S.unit)); speak(sampleLine(S), { ...voiceOpts(S) }) }} />
     </Section>
-    <Section title={t('Style')} footer={t('Only the words change. The voice is always one of your device’s own.')}>
+    <Section title={t('Style')} footer={t('Only the words change. Your own lines live here too.')}>
       {STYLE_IDS.map(id => <Row key={id} icon="chat" iconTint="var(--teal)" title={t(STYLE_COPY[id][0])} subtitle={t(STYLE_COPY[id][1])}
         accessory={style === id ? 'check' : 'none'} onClick={() => pickStyle(id)} />)}
     </Section>

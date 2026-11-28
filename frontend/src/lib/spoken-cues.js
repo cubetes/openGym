@@ -247,7 +247,7 @@ export const cues = {
    *  count, "Go!" and the style's lines without a number to fill in. Set announcements change per
    *  set, so they are made when said. Called when a workout begins and when a voice is picked. */
   prepareFixed() {
-    const S = live()
+    const S = readStore?.() // not live(): the picker calls this with no workout running
     const o = S && voiceOpts(S)
     if (!isNatural(o?.voice)) return
     const lines = ['restOver', 'restStart', 'tenLeft', 'lastSet', 'record'].flatMap(m => linesFor(S, m)).filter(l => !/\{\d+\}/.test(l))

@@ -103,7 +103,7 @@ export default {
   "Nothing said here in this style.": "這個風格在這裡什麼也不說。",
   "One is picked at random each time.": "每次隨機挑一句。",
   "One is picked at random each time. Up to {0} lines.": "每次隨機挑一句。最多 {0} 句。",
-  "Only the words change. The voice is always one of your device’s own.": "變的只是台詞。聲音一律是你裝置內建的語音。",
+  "Only the words change. Your own lines live here too.": "只有話語會變。你自己的台詞也在這裡。",
   "Pick a file": "選擇檔案",
   "Pitch": "音調",
   "Premium": "高級音質",

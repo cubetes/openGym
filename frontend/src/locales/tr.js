@@ -104,7 +104,7 @@ export default {
   "Nothing said here in this style.": "Bu tarzda burada bir şey söylenmez.",
   "One is picked at random each time.": "Her seferinde rastgele biri seçilir.",
   "One is picked at random each time. Up to {0} lines.": "Her seferinde rastgele biri seçilir. En fazla {0} cümle.",
-  "Only the words change. The voice is always one of your device’s own.": "Sadece sözler değişir. Ses her zaman cihazının kendi seslerinden biridir.",
+  "Only the words change. Your own lines live here too.": "Yalnızca sözler değişir. Kendi cümlelerin de burada.",
   "Pick a file": "Dosya seç",
   "Pitch": "Ses tonu",
   "Premium": "Premium",

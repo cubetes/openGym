@@ -104,7 +104,7 @@ export default {
   "Nothing said here in this style.": "V tomhle stylu tu nezazní nic.",
   "One is picked at random each time.": "Pokaždé se náhodně vybere jedna.",
   "One is picked at random each time. Up to {0} lines.": "Pokaždé se náhodně vybere jedna. Maximum vět: {0}.",
-  "Only the words change. The voice is always one of your device’s own.": "Mění se jen slova. Hlas je vždycky jeden z hlasů tvého zařízení.",
+  "Only the words change. Your own lines live here too.": "Mění se jen slova. Tvoje vlastní věty jsou taky tady.",
   "Pick a file": "Vybrat soubor",
   "Pitch": "Výška hlasu",
   "Premium": "Prémiový",

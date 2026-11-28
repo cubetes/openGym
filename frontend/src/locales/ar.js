@@ -104,7 +104,7 @@ export default {
   "Nothing said here in this style.": "لا يُقال شيء هنا بهذا الأسلوب.",
   "One is picked at random each time.": "تُختار جملة عشوائيًا في كل مرة.",
   "One is picked at random each time. Up to {0} lines.": "تُختار جملة عشوائيًا في كل مرة. حتى {0} جمل.",
-  "Only the words change. The voice is always one of your device’s own.": "الكلمات فقط هي التي تتغير. الصوت دائمًا أحد أصوات جهازك.",
+  "Only the words change. Your own lines live here too.": "تتغير الكلمات فقط. وجملك الخاصة موجودة هنا أيضاً.",
   "Pick a file": "اختر ملفًا",
   "Pitch": "طبقة الصوت",
   "Premium": "مميز",

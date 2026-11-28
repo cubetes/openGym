@@ -106,7 +106,7 @@ export default {
   "Nothing said here in this style.": "In questo stile qui non si dice niente.",
   "One is picked at random each time.": "Ogni volta ne viene scelta una a caso.",
   "One is picked at random each time. Up to {0} lines.": "Ogni volta ne viene scelta una a caso. Fino a {0} frasi.",
-  "Only the words change. The voice is always one of your device’s own.": "Cambiano solo le parole. La voce è sempre una del tuo dispositivo.",
+  "Only the words change. Your own lines live here too.": "Cambiano solo le parole. Anche le tue frasi si trovano qui.",
   "Pick a file": "Scegli un file",
   "Pitch": "Tono",
   "Premium": "Premium",

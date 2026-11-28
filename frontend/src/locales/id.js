@@ -104,7 +104,7 @@ export default {
   "Nothing said here in this style.": "Gaya ini tidak mengucapkan apa pun di sini.",
   "One is picked at random each time.": "Satu dipilih acak setiap kali.",
   "One is picked at random each time. Up to {0} lines.": "Satu dipilih acak setiap kali. Maksimal {0} kalimat.",
-  "Only the words change. The voice is always one of your device’s own.": "Hanya kata-katanya yang berubah. Suaranya selalu salah satu suara bawaan perangkatmu.",
+  "Only the words change. Your own lines live here too.": "Hanya kata-katanya yang berubah. Kalimatmu sendiri juga ada di sini.",
   "Pick a file": "Pilih file",
   "Pitch": "Nada",
   "Premium": "Premium",

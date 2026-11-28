@@ -104,7 +104,7 @@ export default {
   "Nothing said here in this style.": "이 스타일은 여기서 아무 말도 안 해요.",
   "One is picked at random each time.": "매번 하나를 무작위로 골라요.",
   "One is picked at random each time. Up to {0} lines.": "매번 하나를 무작위로 골라요. 최대 {0}개.",
-  "Only the words change. The voice is always one of your device’s own.": "바뀌는 건 말뿐이에요. 목소리는 항상 기기에 있는 음성이에요.",
+  "Only the words change. Your own lines live here too.": "바뀌는 건 말뿐이에요. 내가 만든 문장도 여기에 있어요.",
   "Pick a file": "파일 선택",
   "Pitch": "음높이",
   "Premium": "프리미엄",

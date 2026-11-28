@@ -104,7 +104,7 @@ export default {
   "Nothing said here in this style.": "এই স্টাইলে এখানে কিছু বলা হয় না।",
   "One is picked at random each time.": "প্রতিবার এলোমেলোভাবে একটি বেছে নেওয়া হয়।",
   "One is picked at random each time. Up to {0} lines.": "প্রতিবার এলোমেলোভাবে একটি বেছে নেওয়া হয়। {0}টি লাইন পর্যন্ত।",
-  "Only the words change. The voice is always one of your device’s own.": "শুধু কথাগুলো বদলায়। কণ্ঠ সবসময় আপনার ডিভাইসেরই একটি।",
+  "Only the words change. Your own lines live here too.": "শুধু কথাগুলো বদলায়। আপনার নিজের লাইনগুলোও এখানে আছে।",
   "Pick a file": "ফাইল বেছে নিন",
   "Pitch": "পিচ",
   "Premium": "প্রিমিয়াম",

@@ -104,7 +104,7 @@ export default {
   "Nothing said here in this style.": "สไตล์นี้ไม่พูดอะไรตรงนี้",
   "One is picked at random each time.": "สุ่มเลือกมาหนึ่งประโยคทุกครั้ง",
   "One is picked at random each time. Up to {0} lines.": "สุ่มเลือกมาหนึ่งประโยคทุกครั้ง สูงสุด {0} ประโยค",
-  "Only the words change. The voice is always one of your device’s own.": "เปลี่ยนแค่คำพูด เสียงยังเป็นเสียงของอุปกรณ์คุณเสมอ",
+  "Only the words change. Your own lines live here too.": "เปลี่ยนแค่คำพูด ประโยคของคุณเองก็อยู่ที่นี่ด้วย",
   "Pick a file": "เลือกไฟล์",
   "Pitch": "ระดับเสียง",
   "Premium": "พรีเมียม",

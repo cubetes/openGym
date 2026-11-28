@@ -102,7 +102,7 @@ export default {
   "Nothing said here in this style.": "Her siges intet i denne stil.",
   "One is picked at random each time.": "Der vælges en tilfældig hver gang.",
   "One is picked at random each time. Up to {0} lines.": "Der vælges en tilfældig hver gang. Op til {0} replikker.",
-  "Only the words change. The voice is always one of your device’s own.": "Kun ordene ændres. Stemmen er altid en af enhedens egne.",
+  "Only the words change. Your own lines live here too.": "Kun ordene ændrer sig. Dine egne linjer findes også her.",
   "Pick a file": "Vælg en fil",
   "Pitch": "Tonehøjde",
   "Premium": "Premium",

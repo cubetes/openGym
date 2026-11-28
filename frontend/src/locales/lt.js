@@ -104,7 +104,7 @@ export default {
   "Nothing said here in this style.": "Šiuo stiliumi čia nieko nesakoma.",
   "One is picked at random each time.": "Kaskart parenkama atsitiktinė.",
   "One is picked at random each time. Up to {0} lines.": "Kaskart parenkama atsitiktinė. Daugiausia frazių: {0}.",
-  "Only the words change. The voice is always one of your device’s own.": "Keičiasi tik žodžiai. Balsas visada vienas iš jūsų įrenginio balsų.",
+  "Only the words change. Your own lines live here too.": "Keičiasi tik žodžiai. Tavo paties frazės taip pat čia.",
   "Pick a file": "Pasirinkti failą",
   "Pitch": "Balso aukštis",
   "Premium": "Premium",

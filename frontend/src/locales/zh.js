@@ -104,7 +104,7 @@ export default {
   "Nothing said here in this style.": "这种风格在这里什么也不说。",
   "One is picked at random each time.": "每次随机挑一句。",
   "One is picked at random each time. Up to {0} lines.": "每次随机挑一句。最多 {0} 句。",
-  "Only the words change. The voice is always one of your device’s own.": "变的只是台词。声音始终是你设备自带的语音。",
+  "Only the words change. Your own lines live here too.": "只有话语会变。你自己的台词也在这里。",
   "Pick a file": "选择文件",
   "Pitch": "音调",
   "Premium": "高级音质",

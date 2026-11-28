@@ -40,8 +40,8 @@ import { scheduleModeOf, chooseFixedWeek, chooseRotation } from '../lib/rotation
 import { queueOf } from '../lib/queue.js'
 import { weekTargetOf } from '../lib/week-left.js'
 import { speak, speechSupported, voiceOpts, voiceState, onVoices, pickedVoice } from '../lib/speech.js'
-import { STYLE_COPY, cueStyleOf } from '../lib/voice-styles.js'
-import VoiceSettings, { VoiceList } from '../components/VoiceSettings.jsx'
+import { onNatural } from '../lib/natural-voice.js'
+import VoiceSettings, { VoiceList, voiceRowValue } from '../components/VoiceSettings.jsx'
 import { bandsSheet } from '../components/Bands.jsx'
 import { bandsOf } from '../lib/bands.js'
 import { sampleCue } from '../lib/spoken-cues.js'
@@ -199,7 +199,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
   const toast = useUI(s => s.toast)
   // The Timer alerts row reads the voice list: draw again when a refresh lands (a voice downloaded in iPhone Settings).
   const [, voicesV] = useState(0)
-  useEffect(() => onVoices(() => voicesV(v => v + 1)), [])
+  useEffect(() => { const bump = () => voicesV(v => v + 1); const a = onVoices(bump), b = onNatural(bump); return () => { a(); b() } }, [])
   const fileRef = useRef(null)
   const importRef = useRef(null)
   const body = useRef(null)
@@ -936,7 +936,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
           </Row>
           {/* Settings → Timer alerts → Voice (components/VoiceSettings.jsx, v1.4.5): the voice,
               speed and pitch, a style, and lines and clips of your own per moment. */}
-          {S.spokenCues === true && <Row icon="chat" iconTint="var(--teal)" title={t('Voice')} value={t(STYLE_COPY[cueStyleOf(S)][0])}
+          {S.spokenCues === true && <Row icon="chat" iconTint="var(--teal)" title={t('Voice')} value={voiceRowValue({ ...voiceState(), stuck: voiceState().ios && !voiceState().auto }, pickedVoice())}
             subtitle={voiceState().ios && !voiceState().auto && !pickedVoice() ? t('Better voices need a download. Tap Voice to see how.') : null} accessory="chevron" onClick={() => nav('/settings/voice')} />}
         </Section>
       </>

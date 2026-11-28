@@ -104,7 +104,7 @@ export default {
   "Nothing said here in this style.": "Ebben a stílusban itt nem hangzik el semmi.",
   "One is picked at random each time.": "Minden alkalommal véletlenszerűen választunk egyet.",
   "One is picked at random each time. Up to {0} lines.": "Minden alkalommal véletlenszerűen választunk egyet. Legfeljebb {0} mondat.",
-  "Only the words change. The voice is always one of your device’s own.": "Csak a szavak változnak. A hang mindig az eszközöd egyik saját hangja.",
+  "Only the words change. Your own lines live here too.": "Csak a szavak változnak. A saját soraid is itt vannak.",
   "Pick a file": "Fájl választása",
   "Pitch": "Hangmagasság",
   "Premium": "Prémium",

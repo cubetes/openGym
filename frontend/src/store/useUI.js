@@ -14,6 +14,7 @@ import { accentValue } from '../lib/accent.js'
 import { COUNT_IN_SEC, chainCues, heldSec, phaseLeft, resumedEnd, shouldWait } from '../lib/auto-holds.js'
 import { cues, bindCueState } from '../lib/spoken-cues.js'
 import { refreshVoices } from '../lib/speech.js'
+import { refreshNatural } from '../lib/natural-voice.js'
 import { restNextLine, restOverTitle } from '../lib/rest-next.js'
 
 // Timed holds that run themselves (lib/auto-holds.js): the workout screen hands in what comes
@@ -903,7 +904,8 @@ bindCueState(() => useStore.getState?.()?.S)
 // comes back (a voice may have been downloaded or deleted in iPhone Settings meanwhile).
 if (MOBILE) {
   refreshVoices().catch(() => {})
-  onAppActive(() => refreshVoices().catch(() => {}))
+  refreshNatural()
+  onAppActive(() => { refreshVoices().catch(() => {}); refreshNatural() })
 }
 
 // A workout that begins gets its first set announced (#1210): only a rest announced anything

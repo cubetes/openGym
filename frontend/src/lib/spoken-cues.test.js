@@ -220,6 +220,12 @@ describe('lines made ahead in the Natural voice', () => {
     expect(prepareNative.mock.calls[0][0]).toContain('Easy now')
     expect(prepareNative.mock.calls[0][0]).not.toContain('Set {0} next')
   })
+  test('prepareFixed works with no workout running: the picker calls it', () => {
+    h.voice = 'natural:af_heart'
+    bindCueState(() => ({ unit: 'kg', spokenCues: true, active: null }))
+    cues.prepareFixed()
+    expect(prepareNative.mock.calls[0][0]).toEqual(expect.arrayContaining(['1', 'Go!']))
+  })
   test('an Apple voice prepares nothing', () => {
     bindCueState(() => st())
     cues.began()

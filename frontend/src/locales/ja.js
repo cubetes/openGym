@@ -3697,7 +3697,7 @@ export default {
   "Nothing said here in this style.": "このスタイルでは何も話しません。",
   "One is picked at random each time.": "毎回ランダムに1つ選ばれます。",
   "One is picked at random each time. Up to {0} lines.": "毎回ランダムに1つ選ばれます。最大{0}件までです。",
-  "Only the words change. The voice is always one of your device’s own.": "変わるのは言葉だけです。音声は常に端末内蔵のものを使います。",
+  "Only the words change. Your own lines live here too.": "変わるのは言葉だけです。自分のフレーズもここにあります。",
   "Pick a file": "ファイルを選ぶ",
   "Pitch": "ピッチ",
   "Premium": "プレミアム",

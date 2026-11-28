@@ -104,7 +104,7 @@ export default {
   "Nothing said here in this style.": "У цьому стилі тут нічого не звучить.",
   "One is picked at random each time.": "Щоразу вибирається випадкова.",
   "One is picked at random each time. Up to {0} lines.": "Щоразу вибирається випадкова. Максимум фраз: {0}.",
-  "Only the words change. The voice is always one of your device’s own.": "Змінюються лише слова. Голос завжди один із голосів твого пристрою.",
+  "Only the words change. Your own lines live here too.": "Змінюються лише слова. Твої власні фрази теж тут.",
   "Pick a file": "Вибрати файл",
   "Pitch": "Висота голосу",
   "Premium": "Преміум",

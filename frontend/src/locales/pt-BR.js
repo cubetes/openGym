@@ -152,7 +152,7 @@ export const PT_BR_OVERRIDES = {
   "Nothing said here in this style.": "Nada é dito aqui neste estilo.",
   "One is picked at random each time.": "Uma é sorteada a cada vez.",
   "One is picked at random each time. Up to {0} lines.": "Uma é sorteada a cada vez. Até {0} frases.",
-  "Only the words change. The voice is always one of your device’s own.": "Só as palavras mudam. A voz é sempre uma do seu dispositivo.",
+  "Only the words change. Your own lines live here too.": "Só as palavras mudam. Suas próprias frases também ficam aqui.",
   "Pick a file": "Escolher um arquivo",
   "Pitch": "Tom",
   "Premium": "Premium",

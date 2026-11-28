@@ -104,7 +104,7 @@ export default {
   "Nothing said here in this style.": "Phong cách này không nói gì ở đây.",
   "One is picked at random each time.": "Mỗi lần sẽ chọn ngẫu nhiên một câu.",
   "One is picked at random each time. Up to {0} lines.": "Mỗi lần sẽ chọn ngẫu nhiên một câu. Tối đa {0} câu.",
-  "Only the words change. The voice is always one of your device’s own.": "Chỉ lời nói thay đổi. Giọng luôn là một trong những giọng có sẵn trên thiết bị của bạn.",
+  "Only the words change. Your own lines live here too.": "Chỉ lời nói thay đổi. Các câu của riêng bạn cũng nằm ở đây.",
   "Pick a file": "Chọn tệp",
   "Pitch": "Cao độ",
   "Premium": "Cao cấp",

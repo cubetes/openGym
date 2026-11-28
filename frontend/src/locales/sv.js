@@ -104,7 +104,7 @@ export default {
   "Nothing said here in this style.": "Inget sägs här i den här stilen.",
   "One is picked at random each time.": "En väljs slumpmässigt varje gång.",
   "One is picked at random each time. Up to {0} lines.": "En väljs slumpmässigt varje gång. Upp till {0} repliker.",
-  "Only the words change. The voice is always one of your device’s own.": "Bara orden ändras. Rösten är alltid en av enhetens egna.",
+  "Only the words change. Your own lines live here too.": "Bara orden ändras. Dina egna rader finns också här.",
   "Pick a file": "Välj en fil",
   "Pitch": "Tonhöjd",
   "Premium": "Premium",

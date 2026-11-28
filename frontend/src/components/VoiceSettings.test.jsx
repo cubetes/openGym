@@ -47,7 +47,7 @@ vi.mock('../lib/speech.js', async importOriginal => {
 })
 
 const { cues } = await import('../lib/spoken-cues.js')
-const { default: VoiceSettings, VoiceList, momentSummary, micErrorText, recordType } = await import('./VoiceSettings.jsx')
+const { default: VoiceSettings, VoiceList, voiceRowValue, momentSummary, micErrorText, recordType } = await import('./VoiceSettings.jsx')
 
 let host, root, spoken
 beforeEach(() => {
@@ -413,6 +413,12 @@ describe('Settings → Timer alerts → Voice', () => {
       await render(<VoiceList />)
       expect(host.textContent).not.toContain('Natural voice')
     })
+  })
+  it('the Timer alerts row names the voice the same way the Voice page does', () => {
+    mocks.nat = { ...idleNat, available: true, state: 'ready' }
+    expect(voiceRowValue({ voices: [], auto: null, stuck: false }, 'natural:af_heart')).toBe('Natural voice · Heart')
+    expect(voiceRowValue({ voices: [], auto: null, stuck: true }, '')).toBe('Standard voice')
+    expect(voiceRowValue({ voices: [], auto: { id: 'a', name: 'Ava', lang: 'en-US' }, stuck: false }, '')).toBe('Automatic · Ava')
   })
   it('a moment says what it holds', () => {
     const m = { kind: 'audio', hash: 'a'.repeat(64), mime: 'audio/wav', size: 10, width: 1, height: 1, dur: 1 }
