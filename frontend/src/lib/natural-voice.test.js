@@ -70,12 +70,14 @@ describe('the native side', () => {
     expect(mocks.calls[0]).toEqual(['download', false])
     expect(seen.some(s => s.state === 'downloading' && s.fraction === 0.5)).toBe(true)
     expect(nv.naturalState()).toMatchObject({ state: 'ready', fraction: null, error: null })
+    expect(typeof nv.naturalState().installedAt).toBe('number')
   })
   it('a failed download sets the code and goes back to none; the next one clears it', async () => {
     await nv.refreshNatural()
     mocks.fail = 'failed'
     expect(await nv.downloadNatural()).toBe('failed')
     expect(nv.naturalState()).toMatchObject({ state: 'none', error: 'failed', fraction: null })
+    expect(nv.naturalState().installedAt).toBeUndefined()
     mocks.fail = null
     await nv.downloadNatural()
     expect(nv.naturalState().error).toBeNull()

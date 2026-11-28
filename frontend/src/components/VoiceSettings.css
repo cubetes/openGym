@@ -70,6 +70,8 @@
 .lrow-i.lrow-lead { width: auto; height: auto; border-radius: 0; background: none; font-size: inherit }
 .vp-voice.vp-pick .lrow-k { animation: vs-pop 160ms var(--ease-out) both }
 .vp-in { animation: vp-in 240ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms) }
+/* a span needs a box to move */
+.vp-head.vp-in, .sect-f > .vp-in { display: inline-block }
 @keyframes vp-in { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
 .vp-legend { display: flex; flex-wrap: wrap; gap: 6px 8px; margin: 0 16px 14px; font-size: var(--fs-caption, 12px); color: var(--label-2) }
 .vp-legend span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap }

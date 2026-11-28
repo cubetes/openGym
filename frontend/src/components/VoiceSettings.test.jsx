@@ -610,11 +610,19 @@ describe('Settings → Timer alerts → Voice', () => {
     it('on: Natural rows that arrive after a download enter in a stagger; ones that were there do not', async () => {
       phone({ state: 'downloading', fraction: 0.5 })
       await render(<VoiceList />)
-      mocks.nat = { ...idleNat, available: true, state: 'ready', bytes: 88e6 }
+      mocks.nat = { ...idleNat, available: true, state: 'ready', bytes: 88e6, installedAt: 1001 }
       await act(async () => { mocks.natSubs.forEach(cb => cb()) })
       expect(rowTitled('Heart').classList.contains('vp-in')).toBe(true)
-      expect(rowTitled('Michael').style.getPropertyValue('--i')).toBe('1')
+      expect(rowTitled('Michael').style.getPropertyValue('--i')).toBe('2')
+      expect(host.querySelector('.vp-head').classList.contains('vp-in')).toBe(true)
       await render(<VoiceList key="fresh" />)
+      expect(rowTitled('Heart').classList.contains('vp-in')).toBe(false)
+    })
+    it('a download that ended while away is still shown arriving, once', async () => {
+      phone({ state: 'ready', bytes: 88e6, installedAt: 2002 })
+      await render(<VoiceList />)
+      expect(rowTitled('Heart').classList.contains('vp-in')).toBe(true)
+      await render(<VoiceList key="again" />)
       expect(rowTitled('Heart').classList.contains('vp-in')).toBe(false)
     })
     it('the download bar scales instead of growing a width', async () => {

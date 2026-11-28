@@ -112,6 +112,7 @@ export function downloadNatural({ wifiOnly = prefs.wifiOnly } = {}) {
     set({ state: 'downloading', fraction: 0, error: null })
     try {
       await p.Voice.download({ wifiOnly })
+      state = { ...state, installedAt: Date.now() } // lands with refreshNatural's 'ready' in one emit, so the picker can mark the moment
       await refreshNatural()
       return state.state === 'ready' ? 'ready' : 'failed'
     } catch (e) {

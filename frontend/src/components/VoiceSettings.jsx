@@ -42,6 +42,7 @@ const announcePlaying = () => {
   live.textContent = ''
   setTimeout(() => { live.textContent = t('Playing') }, 50)
 }
+let celebrated = 0 // the Natural install the picker has already shown arriving
 let endPlaying = null // the hero's Playing state; anything else that speaks ends it
 const sayIt = (text, extra = {}) => { endPlaying?.(); announcePlaying(); hush(); speak(text, { ...voiceOpts(S_()), queue: false, ...extra }) }
 const fmtX = n => `${Math.round(n * 100) / 100}×`
@@ -129,8 +130,9 @@ export function VoiceList() {
   const [playKey, setPlayKey] = useState(null) // the row whose sample plays: its voice id, or 'auto'
   const timer = useRef(0)
   useEffect(() => () => clearTimeout(timer.current), [])
-  const downloaded = useRef(false) // Natural rows that appear after a download enter with a rise; ones already there do not
-  if (nat.state === 'downloading') downloaded.current = true
+  const [before] = useState(() => celebrated)
+  const fresh = nat.state === 'ready' && nat.installedAt > before // an install this picker has not shown yet; stays true for this visit
+  useEffect(() => { if (nat.state === 'ready') celebrated = Math.max(celebrated, nat.installedAt || 0) }, [nat.state, nat.installedAt]) // shown now: the next visit starts calm
   // read each render: it turns '' when the model goes away. With Better voices off a Natural pick reads as Automatic; the pick itself stays stored.
   const stored = pickedVoice()
   const cur = !on && isNatural(stored) ? '' : stored
@@ -190,9 +192,9 @@ export function VoiceList() {
     <Section footer={voices.length ? null : t('No other voices for this language here. Your device’s settings can add more.')}>
       <Row icon={tile('plain', '', 'bolt')} className={rowCls('')} title={t('Automatic')} subtitle={autoNote} ariaLabel={t('Automatic') + sel(!cur)} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', auto?.id || '')} />
     </Section>
-    {natural && nat.state === 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} tile={tile} rowCls={rowCls} fresh={downloaded.current} />}
+    {natural && nat.state === 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} tile={tile} rowCls={rowCls} fresh={fresh} />}
     {folded
-      ? <Section title={t('Apple voices')}><Row title={names} ariaLabel={t('Apple voices') + ', ' + names} accessory="chevron" onClick={() => setShowApple(true)} /></Section>
+      ? <Section title={t('Apple voices')}><Row title={names} ariaLabel={t('Apple voices') + ', ' + names} accessory="chevron" className={fresh ? 'vp-in' : ''} style={fresh ? { '--i': NATURAL_VOICES.length + 3 } : null} onClick={() => setShowApple(true)} /></Section>
       : apple}
     {natural && nat.state !== 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} tile={tile} rowCls={rowCls} />}
     {!ios && list !== null && MOBILE && <p className="sect-f vp-note"><Icon name="info" aria-hidden="true" />{t('Natural voice is on iPhone first. Android uses your phone’s voices for now.')}</p>}
@@ -215,13 +217,14 @@ function NaturalGroup({ nat, cur, pick, tile, rowCls, fresh }) {
   if (nat.state === 'ready') {
     const sel = id => (cur === id ? ', ' + t('selected') : '')
     const mb = mbOf(nat.bytes) || total
+    const n = NATURAL_VOICES.length
     return <>
-      <Section title={<span className="vp-head">{t('Natural voice · English')}<span className="vp-pill">{t('Installed')}</span></span>}
-        footer={t('Lines are made during the rest, so you do not hear a delay. Where it has no voice for your language, the Apple voice speaks.')}>
-        {NATURAL_VOICES.map((v, i) => <Row key={v.id} icon={tile('natural', v.id)} title={v.name} value={v.region} className={rowCls(v.id) + (fresh ? ' vp-in' : '')} style={fresh ? { '--i': i } : null}
+      <Section title={<span className={'vp-head' + (fresh ? ' vp-in' : '')} style={fresh ? { '--i': 0 } : null}>{t('Natural voice · English')}<span className="vp-pill">{t('Installed')}</span></span>}
+        footer={<span className={fresh ? 'vp-in' : undefined} style={fresh ? { '--i': n + 1 } : null}>{t('Lines are made during the rest, so you do not hear a delay. Where it has no voice for your language, the Apple voice speaks.')}</span>}>
+        {NATURAL_VOICES.map((v, i) => <Row key={v.id} icon={tile('natural', v.id)} title={v.name} value={v.region} className={rowCls(v.id) + (fresh ? ' vp-in' : '')} style={fresh ? { '--i': i + 1 } : null}
           ariaLabel={[v.name, t('Natural voice'), v.region].join(', ') + sel(v.id)} accessory={cur === v.id ? 'check' : 'none'} onClick={() => pick(v.id)} />)}
       </Section>
-      {!nat.debugModel && <Section><Row danger title={t('Remove download')} subtitle={t('Frees {0} MB', mb)} onClick={() => confirmSheet({
+      {!nat.debugModel && <Section><Row danger className={fresh ? 'vp-in' : ''} style={fresh ? { '--i': n + 2 } : null} title={t('Remove download')} subtitle={t('Frees {0} MB', mb)} onClick={() => confirmSheet({
         title: t('Remove Natural voice?'), message: t('Frees {0} MB. You can download it again.', mb), confirmText: t('Remove'), danger: true, onConfirm: () => removeNatural(),
       })} /></Section>}
     </>
