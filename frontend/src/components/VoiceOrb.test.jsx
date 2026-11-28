@@ -33,6 +33,7 @@ const { tickNative } = await import('../lib/rest-alert.js')
 const { nav } = await import('../lib/nav.js')
 const { cues } = await import('../lib/spoken-cues.js')
 const { useCaption, caption } = await import('../lib/voice-caption.js')
+const { useVoiceLevel } = await import('../lib/voice-level.js')
 const { default: VoiceOrb } = await import('./VoiceOrb.jsx')
 
 const SHORT = 'Next: Barbell Full Squat. 8 reps at 92.5 kilos.'
@@ -147,8 +148,12 @@ describe('the voice orb', () => {
     expect(S().active.voiceMuted).toBe(true)
     expect(tickNative).toHaveBeenCalledTimes(1)
     expect(useCaption.getState().speaking).toBe(false)
-    expect(orb().className).toContain('muted')
     expect(orb().className).not.toContain('held')
+    // the grey wash plays first, then the orb settles to the muted look
+    expect(orb().className).not.toContain('muted')
+    expect(q('.vo-wash').className).toContain('go')
+    await run(100)
+    expect(orb().className).toContain('muted')
     await ev(orb(), 'pointerup')
     await click(orb())
     expect(S().voiceBar).toBeUndefined()
@@ -497,6 +502,136 @@ describe('the place', () => {
   })
 })
 
+describe('the motion', () => {
+  let rafs, t, anims, reduce
+  const frames = async n => { for (let i = 0; i < n; i++) { const cb = rafs.shift(); if (!cb) break; t += 16; await act(async () => { cb(t) }) } }
+  beforeEach(() => {
+    rafs = []; t = 1000; anims = []; reduce = false
+    vi.stubGlobal('requestAnimationFrame', cb => rafs.push(cb))
+    vi.stubGlobal('cancelAnimationFrame', () => { rafs.length = 0 })
+    vi.stubGlobal('matchMedia', q => ({ matches: reduce && /reduce/.test(q), addEventListener() {}, removeEventListener() {} }))
+    HTMLElement.prototype.animate = function () { const a = { onfinish: null, el: this }; anims.push(a); return a }
+    useVoiceLevel.setState({ now: () => 1, real: false })
+  })
+  afterEach(() => { vi.unstubAllGlobals(); delete HTMLElement.prototype.animate })
+  const lineTf = i => host.querySelectorAll('.vo-lines b')[i].style.transform
+
+  it('at full level the lines, body and halo reach their peaks', async () => {
+    await mount()
+    await show(SHORT)
+    await frames(12)
+    expect(lineTf(1)).toMatch(/^scaleY\((1|0\.99\d*)\)$/)
+    expect(Number(q('.vo-body').style.transform.match(/scale\(([\d.]+)\)/)[1])).toBeGreaterThan(1.1)
+    expect(Number(q('.vo-halo').style.opacity)).toBeGreaterThan(0.9)
+    expect(Number(q('.vo-core').style.opacity)).toBeGreaterThan(0.45)
+  })
+
+  it('runs no loop when quiet, muted or silent', async () => {
+    await mount()
+    expect(rafs.length).toBe(0)
+    await show(SHORT, { silent: true })
+    expect(rafs.length).toBe(0)
+    await act(async () => { caption.hide() })
+    await act(async () => { cues.mute(true) })
+    await show(SHORT, { muted: true })
+    expect(rafs.length).toBe(0)
+  })
+
+  it('muting while it speaks ends the loop and clears the inline look', async () => {
+    await mount()
+    await show(SHORT)
+    await frames(4)
+    expect(lineTf(1)).not.toBe('')
+    await press(600)
+    await run(100)
+    await frames(60)
+    expect(rafs.length).toBe(0)
+    expect(lineTf(1)).toBe('')
+    expect(q('.vo-body').style.transform).toBe('')
+  })
+
+  it('stops by itself when the line has ended and the level is back to nothing', async () => {
+    await mount()
+    await show(SHORT)
+    await frames(3)
+    await act(async () => { useCaption.setState({ speaking: false }) })
+    useVoiceLevel.setState({ now: () => 0 })
+    await frames(80)
+    expect(rafs.length).toBe(0)
+    expect(q('.vo-halo').style.opacity).toBe('')
+  })
+
+  it('one ripple on a rising edge through .7, the next only after 300 ms', async () => {
+    await mount()
+    await show(SHORT)
+    await frames(3)
+    expect(host.querySelectorAll('.vo-rp').length).toBe(1)
+    await frames(5)
+    expect(host.querySelectorAll('.vo-rp').length).toBe(1) // a loud stretch is one ring
+    useVoiceLevel.setState({ now: () => 0 })
+    await frames(4) // falls under .7 again
+    useVoiceLevel.setState({ now: () => 1 })
+    await frames(3)
+    expect(host.querySelectorAll('.vo-rp').length).toBe(1) // rose again inside 300 ms
+    useVoiceLevel.setState({ now: () => 0 })
+    await frames(12)
+    useVoiceLevel.setState({ now: () => 1 })
+    await frames(3)
+    expect(host.querySelectorAll('.vo-rp').length).toBe(2)
+    anims[0].onfinish()
+    expect(host.querySelectorAll('.vo-rp').length).toBe(1)
+  })
+
+  it('reduced motion: no scale, no ripple, lines at 60% with their opacity following', async () => {
+    reduce = true
+    await mount()
+    await show(SHORT)
+    await frames(12)
+    expect(q('.vo-body').style.transform).toBe('')
+    expect(q('.vo-halo').style.transform).toBe('')
+    expect(host.querySelectorAll('.vo-rp').length).toBe(0)
+    expect(lineTf(1)).toBe('scaleY(0.6)')
+    expect(Number(host.querySelectorAll('.vo-lines b')[1].style.opacity)).toBeGreaterThan(0.9)
+    expect(Number(q('.vo-halo').style.opacity)).toBeLessThanOrEqual(0.6)
+    expect(Number(q('.vo-core').style.opacity)).toBeGreaterThan(0.4)
+  })
+
+  it('a real curve that is still playing keeps the loop going after the caption says it is done', async () => {
+    await mount()
+    await show(SHORT)
+    await frames(2)
+    useVoiceLevel.setState({ real: true, curve: new Array(100).fill(1), start: performance.now() })
+    await act(async () => { useCaption.setState({ speaking: false }) })
+    await frames(5)
+    expect(rafs.length).toBe(1)
+  })
+
+  it('the edge glow is only in bar mode, tinted, hidden from screen readers, and lifts over the rest bar', async () => {
+    await mount()
+    await show(SHORT)
+    expect(q('.vo-glow')).toBeNull()
+    await click(orb())
+    const g = q('.vo-glow')
+    expect(g.getAttribute('aria-hidden')).toBe('true')
+    expect(g.className).toContain('tier-natural')
+    expect(g.className).toContain('sp')
+    expect(g.className).not.toContain('rest')
+    h.ui = { timer: { kind: 'rest' }, work: null, countIn: null }
+    await mount()
+    expect(q('.vo-glow').className).toContain('rest')
+    expect(q('.vo-fx').className).toContain('off') // the halo gives way
+  })
+
+  it('the glow is grey when muted and absent when the phone is silent', async () => {
+    await setS({ active: { cur: 0, entries: [], voiceMuted: true }, voiceBar: true })
+    await mount()
+    expect(q('.vo-glow').className).toContain('mut')
+    await setS({ active: { cur: 0, entries: [] }, voiceBar: true })
+    await show(SHORT, { silent: true })
+    expect(q('.vo-glow').className).not.toMatch(/\bon\b/)
+  })
+})
+
 describe('the style', () => {
   const css = readFileSync('src/components/VoiceOrb.css', 'utf8')
 
@@ -518,5 +653,17 @@ describe('the style', () => {
     expect(css).toMatch(/\.vo-orb\.held\{--s:\.92/)
     expect(css).toMatch(/\.vo-orb\.muted\.held\{--s:\.79/)
     expect(css).toMatch(/:active\{transform:scale\(\.97\)\}/)
+  })
+
+  it('spins the blobs only while speaking, and keeps the glow still under reduced motion', () => {
+    expect(css).toMatch(/\.vo-b1\{[^}]*9s linear infinite paused/)
+    expect(css).toMatch(/\.vo-b2\{[^}]*13s linear infinite reverse paused/)
+    expect(css).toMatch(/\.vo-orb\.sp \.vo-b1,\.vo-orb\.sp \.vo-b2\{animation-play-state:running\}/)
+    expect(css).toMatch(/\.vo-glow\{[^}]*height:230px/)
+    expect(css).toMatch(/cubic-bezier\(\.77,0,\.175,1\) infinite/)
+    const rm = css.slice(css.indexOf('@media (prefers-reduced-motion:reduce)'))
+    expect(rm).toMatch(/\.vo-b1,\.vo-b2\{animation:none\}/)
+    expect(rm).toMatch(/\.vo-glow\.sp i\{animation:none\}/)
+    expect(rm).toMatch(/\.vo-glow\{transition:opacity 150ms linear\}/)
   })
 })

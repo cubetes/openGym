@@ -18,6 +18,9 @@ export function estimateCurve (text, speed = 1, rand = Math.random) {
   return curve
 }
 
+// How long a curve plays, in ms.
+export const curveMs = curve => curve.length * STEP
+
 export function levelAt (curve, ms) {
   const x = ms / STEP
   if (x < 0 || x > curve.length - 1) return 0

@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useStore } from '../store/useStore.js'
 import { useUI } from '../store/useUI.js'
 import { useCaption, caption, ageText, agoText } from '../lib/voice-caption.js'
+import { useVoiceLevel, smooth, lineLevels, curveMs } from '../lib/voice-level.js'
 import { cues } from '../lib/spoken-cues.js'
 import { hush, onVoices, pickedVoice, voiceLabel, voiceState } from '../lib/speech.js'
 import { NATURAL_VOICES } from '../lib/natural-voice.js'
@@ -16,6 +17,8 @@ import './VoiceOrb.css'
 const HOLD_MS = 500
 const HINT_DELAY = 600
 const HINT_MS = 4000
+const SETTLE_MS = 100 // the muted look waits for the grey wash to peak (96 ms)
+const RIPPLE_EASE = 'cubic-bezier(.23,1,.32,1)'
 const EASE = 'cubic-bezier(.32,.72,0,1)'
 const reduced = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
@@ -71,6 +74,12 @@ function Orb() {
   const [, tick] = useState(0)
   const root = useRef(null)
   const fx = useRef(null)
+  const orbBody = useRef(null)
+  const halo = useRef(null)
+  const core = useRef(null)
+  const lines = useRef(null)
+  const loop = useRef({ raf: 0, s: 0, hist: [], ripple: -1e3 })
+  const hold = useRef(false)
   const panel = useRef(null)
   const press = useRef({ timer: 0, long: false })
   const hintTimers = useRef([])
@@ -81,6 +90,59 @@ function Orb() {
   const dot = (card || silent) && !muted && !bar && c.shownAt !== ack
   const shut = () => { setActs(false); useCaption.getState().close() }
 
+  // The muted look (grey orb, flat lines) comes after the wash, not with it; unmuting is at once.
+  const [settled, setSettled] = useState(muted)
+  useEffect(() => {
+    if (!muted) { setSettled(false); return undefined }
+    if (!hold.current) { setSettled(true); return undefined }
+    hold.current = false
+    const id = setTimeout(() => setSettled(true), SETTLE_MS)
+    return () => clearTimeout(id)
+  }, [muted])
+
+  // The one animation loop: runs while the voice speaks (or a real curve is still playing) and ends when the level is back to nothing.
+  const gate = useRef({})
+  gate.current = { ok: !muted && !silent, speaking }
+  const endLoop = () => {
+    const l = loop.current
+    cancelAnimationFrame(l.raf)
+    l.raf = 0; l.s = 0; l.hist = []
+    for (const el of [orbBody.current, halo.current, core.current, ...(lines.current?.children || [])]) if (el) { el.style.transform = ''; el.style.opacity = '' }
+  }
+  const frame = at => {
+    const l = loop.current, st = gate.current, v = useVoiceLevel.getState()
+    const live = st.ok && (st.speaking || (v.real && globalThis.performance.now() - v.start < curveMs(v.curve)))
+    const was = l.s
+    const s = l.s = smooth(was, live ? v.now() : 0)
+    if (!live && s < 0.01) { endLoop(); return }
+    const calm = reduced()
+    if (!calm && was < 0.7 && s >= 0.7 && at - l.ripple > 300) { l.ripple = at; ripple() }
+    l.hist.push(s)
+    if (l.hist.length > 6) l.hist.shift()
+    const light = document.documentElement.dataset.theme === 'light'
+    const set = (el, tf, op) => { if (!el) return; if (tf) el.style.transform = tf; el.style.opacity = op }
+    if (!calm) orbBody.current.style.transform = `scale(${1 + 0.13 * s})`
+    set(halo.current, calm ? null : `scale(${0.62 + 0.42 * s})`, calm ? 0.2 + 0.4 * s : 0.14 + (light ? 0.41 : 0.86) * s)
+    set(core.current, null, 0.12 + 0.38 * s)
+    const hs = lineLevels(l.hist)
+    ;[...lines.current.children].forEach((b, i) => {
+      b.style.transform = `scaleY(${calm ? 0.6 : hs[i]})`
+      b.style.opacity = calm ? 0.55 + 0.45 * s : ''
+    })
+    l.raf = requestAnimationFrame(frame)
+  }
+  // One ring leaves the orb on a word peak, behind the page controls.
+  const ripple = () => {
+    const el = document.createElement('i')
+    el.className = 'vo-rp'
+    if (!el.animate) return
+    fx.current.append(el)
+    el.animate([{ transform: 'scale(1)', opacity: 0.5 }, { transform: 'scale(1.9)', opacity: 0 }], { duration: 650, easing: RIPPLE_EASE }).onfinish = () => el.remove()
+  }
+  useEffect(() => { if (speaking && !loop.current.raf) loop.current.raf = requestAnimationFrame(frame) }, [speaking])
+  useEffect(() => { if (settled || silent) endLoop() }, [settled, silent])
+  useEffect(() => () => { cancelAnimationFrame(loop.current.raf); fx.current?.querySelectorAll('.vo-rp').forEach(r => r.remove()) }, [])
+
   const setBar = v => update(S => { S.voiceBar = v })
   const toggleBar = () => { setBar(!bar); if (bar) shut() }
 
@@ -88,6 +150,7 @@ function Orb() {
   const toggleMute = () => {
     tickNative()
     setWash(n => n + 1)
+    if (!muted) hold.current = true
     cues.mute(!muted)
     if (muted) caption.hide(); else useCaption.setState({ speaking: false })
   }
@@ -253,12 +316,14 @@ function Orb() {
         : speaking ? (bar ? t('Voice, speaking, {0}. Hide the words.', who) : t('Voice, speaking, {0}. Show the words.', who))
           : (bar ? t('Voice, {0}. Hide the words.', who) : t('Voice, {0}. Show the words.', who))
 
-  const cls = ['vo-orb', muted && 'muted', silent && 'sil', speaking && 'sp', held && 'held', dot && 'dot'].filter(Boolean).join(' ')
+  const cls = ['vo-orb', settled && 'muted', silent && 'sil', speaking && 'sp', held && 'held', dot && 'dot'].filter(Boolean).join(' ')
   // Focus inside the bar holds the line (the store defers hide while `expanded`), so it never goes from under a finger or a screen reader.
   return <>
-    <div ref={fx} className={'vo-fx tier-' + voice.key + (muted || silent ? ' off' : '')} aria-hidden="true">
-      <i className="vo-halo" />
+    <div ref={fx} className={'vo-fx tier-' + voice.key + (muted || silent || bar ? ' off' : '')} aria-hidden="true">
+      <i ref={halo} className="vo-halo" />
     </div>
+    {/* In bar mode the halo gives way to the light along the screen's bottom edge (one glow at a time). */}
+    {bar && <div className={'vo-glow tier-' + voice.key + (speaking ? ' on sp' : muted ? ' on mut' : '') + (rest ? ' rest' : '')} aria-hidden="true"><i /></div>}
     <div ref={root} className={'vo tier-' + voice.key}>
       <div className="vo-stack"
         onFocus={() => useCaption.getState().open()}
@@ -275,8 +340,8 @@ function Orb() {
       <button type="button" className={cls} aria-expanded={bar} aria-label={label}
         onPointerDown={down} onPointerUp={release} onPointerLeave={release} onPointerCancel={release}
         onContextMenu={e => e.preventDefault()} onClick={click}>
-        <span className="vo-body"><i className="vo-b1" /><i className="vo-b2" /><i className="vo-core" /><i className={'vo-wash' + (wash ? ' go' : '')} key={wash} /></span>
-        <span className="vo-lines" aria-hidden="true"><b /><b /><b /></span>
+        <span ref={orbBody} className="vo-body"><i className="vo-b1" /><i className="vo-b2" /><i ref={core} className="vo-core" /><i className={'vo-wash' + (wash ? ' go' : '')} key={wash} /></span>
+        <span ref={lines} className="vo-lines" aria-hidden="true"><b /><b /><b /></span>
         <span className="vo-dot" aria-hidden="true" />
       </button>
       {/* VoiceOver cannot reach a custom action on a web element: this hidden button does what the hold does. */}
