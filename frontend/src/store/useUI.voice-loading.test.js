@@ -19,15 +19,24 @@ afterEach(() => { vi.clearAllTimers(); vi.useRealTimers() })
 
 describe('voiceLoading in the store', () => {
   it('a quick load shows nothing', () => {
-    mocks.loading({ on: true })
+    mocks.loading({ on: true, waiting: true })
     vi.advanceTimersByTime(1400)
     mocks.loading({ on: false })
     vi.advanceTimersByTime(5000)
     expect(useUI.getState().toastMsg).toBe('')
   })
 
-  it('a load past 1.5 s shows the toast once', () => {
+  it('a load nobody waits on (the launch warm-up) shows nothing', () => {
     mocks.loading({ on: true })
+    vi.advanceTimersByTime(5000)
+    expect(useUI.getState().toastMsg).toBe('')
+    mocks.loading({ on: false })
+  })
+
+  it('a waiting line over 1.5 s shows the toast once, also when the line comes after the load began', () => {
+    mocks.loading({ on: true })
+    vi.advanceTimersByTime(500)
+    mocks.loading({ on: true, waiting: true })
     vi.advanceTimersByTime(1500)
     expect(useUI.getState().toastMsg).toBe(MSG)
     useUI.setState({ toastMsg: '' })

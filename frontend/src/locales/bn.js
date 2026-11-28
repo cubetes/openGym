@@ -6228,7 +6228,7 @@ export default {
   "Fine tune": "সূক্ষ্ম সমন্বয়",
   "No pitch for Natural voices.": "প্রাকৃতিক ভয়েসে পিচ নেই।",
   "Loading, please wait…": "লোড হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন…",
-  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "প্রাকৃতিক ভয়েস তৈরি হচ্ছে। আপডেট বা রিস্টার্টের পরে প্রথমবার একটু বেশি সময় লাগে।",
+  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "স্বাভাবিক কণ্ঠ প্রস্তুত করা হচ্ছে। আপডেট বা রিস্টার্টের পরে প্রথমবার একটু বেশি সময় লাগে।",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "কথার সংকেত বন্ধ আছে। পরের সেট ও কাউন্টডাউন শুনতে চালু করুন।",
   "One rest, in order": "একটি বিশ্রাম, ক্রমানুসারে",
   "Starts": "শুরু",

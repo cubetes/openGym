@@ -134,7 +134,16 @@ actor NaturalVoiceEngine {
         }
     }
 
+    /// Renders in progress for a line to say now: the warm-up's `prepare` waits for them, so a line never queues behind it.
+    private var renders = 0
+
     func render(text: String, voice: String, speed: Double) async throws -> URL {
+        renders += 1
+        defer { renders -= 1 }
+        return try await make(text: text, voice: voice, speed: speed)
+    }
+
+    private func make(text: String, voice: String, speed: Double) async throws -> URL {
         let spoken = NaturalVoiceMath.speakable(text)  // keyed on what is said, so audio made before a reading fix is never reused
         let url = Self.cacheDir.appendingPathComponent(
             NaturalVoiceMath.cacheKey(text: spoken, voice: voice, speed: speed, revision: Self.revision + "-s1") + ".wav")  // -s1: sentence pauses
@@ -162,8 +171,9 @@ actor NaturalVoiceEngine {
         // Load first, even when every line is cached: the next miss then renders at once. Also warms the model when the picker opens.
         if (try? await loadedModel()) != nil { restartIdleTimer() }
         for text in texts {
+            while renders > 0 && !Task.isCancelled { try? await Task.sleep(nanoseconds: 50_000_000) }
             if Task.isCancelled { return }
-            _ = try? await render(text: text, voice: voice, speed: speed)
+            _ = try? await make(text: text, voice: voice, speed: speed)
         }
     }
 

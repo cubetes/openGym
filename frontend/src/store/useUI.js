@@ -924,11 +924,14 @@ if (MOBILE) {
   // The Natural voice says how loud and how long the line really is; the orb and the caption follow it.
   // A cover (the Apple voice speaks a Natural line) carries no levels or length: the orb keeps its own look.
   onVoiceLine(ev => { if (ev.cover) return; useVoiceLevel.getState().fromNative(ev); useCaption.getState().heard(ev.text, ev.ms) })
-  // A load that runs past 1.5 s is the slow first one: say so once, so a late voice is not read as broken.
+  // A line waiting on a load that runs past 1.5 s: say so once per load, so a late voice is not read as broken.
+  // A quiet launch warm-up load (no line waiting) says nothing.
   let loadingTm = null
+  let loadingToasted = false
   onVoiceLoading(ev => {
-    clearTimeout(loadingTm)
-    loadingTm = ev?.on ? setTimeout(() => useUI.getState().toast(t('Getting the Natural voice ready. The first time after an update or a restart takes a little longer.')), 1500) : null
+    if (!ev?.on) { clearTimeout(loadingTm); loadingTm = null; loadingToasted = false; return }
+    if (!ev.waiting || loadingTm || loadingToasted) return
+    loadingTm = setTimeout(() => { loadingToasted = true; useUI.getState().toast(t('Getting the Natural voice ready. The first time after an update or a restart takes a little longer.')) }, 1500)
   })
   onAppActive(() => { refreshVoices().catch(() => {}); refreshNatural() })
 }

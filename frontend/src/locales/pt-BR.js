@@ -4,6 +4,7 @@
 import pt from './pt.js'
 
 export const PT_BR_OVERRIDES = {
+  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "Preparando a voz natural. A primeira vez depois de uma atualização ou de uma reinicialização demora um pouco mais.",
   "Have a look": "Dar uma olhada",
   "Meet openNutrition": "Conheça o openNutrition",
   "Merry Christmas, rest well, and see you in the new year.": "Feliz Natal, descanse bastante e até o ano novo.",

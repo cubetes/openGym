@@ -60,6 +60,11 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
         var since: Double = Date().timeIntervalSince1970 * 1000
     }
     private var pending: Pending?
+    /// The Natural model is loading now / when the last load ended (main queue only): a line waits for a load instead of being covered.
+    private var modelLoading = false
+    private var loadEndedAt: Date?
+    /// This load already told the page a line waits on it (once per load).
+    private var waitingSent = false
     /// The tones playing now, by their CueAudioLedger id (an end tone, an own clip, a hype clip).
     private var players: [Int: AVAudioPlayer] = [:]
     /// The spoken lines not finished yet, to their CueAudioLedger id.
@@ -67,9 +72,6 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
     /// Which of our sounds play now, and whether the session is held for them.
     private var ledger = CueAudioLedger()
     /// A line in the Natural voice, from the moment it is asked for until its sound ended.
-    /// The Natural model is loading now / when the last load ended (main queue only): a line waits for a load instead of being covered.
-    private var modelLoading = false
-    private var loadEndedAt: Date?
     private final class NaturalLine {
         let text: String, voice: String, speed: Double, id: Int
         let apple: (lang: String, rate: Float, pitch: Float, fallback: String, onSilent: Bool)
@@ -125,9 +127,12 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
         if #available(iOS 16.0, *) {
             Task { await NaturalVoiceEngine.shared.setOnLoading { [weak self] on in
                 DispatchQueue.main.async {
-                    self?.modelLoading = on
-                    if !on { self?.loadEndedAt = Date() }
-                    self?.notifyListeners("voiceLoading", data: ["on": on])
+                    guard let self = self else { return }
+                    self.modelLoading = on
+                    if !on { self.loadEndedAt = Date(); self.waitingSent = false }
+                    let waiting = on && self.naturalQueue.contains { $0.wav == nil && !$0.done && !$0.fallBack }
+                    if waiting { self.waitingSent = true }
+                    self.notifyListeners("voiceLoading", data: ["on": on, "waiting": waiting])
                 }
             } }
         }
@@ -339,6 +344,15 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
             // Cut off after the new line holds the session, like the synthesizer's flush.
             if speechMade && speech.isSpeaking { speech.stopSpeaking(at: .immediate) }
             stopNatural(endingSounds: true)
+        }
+        if modelLoading {
+            // A newer line makes the older ones still waiting for the load out of date: dropped, not covered.
+            for old in naturalQueue where old.wav == nil && !old.speaking && !old.done && !old.fallBack {
+                old.done = true
+                endSound(old.id)
+            }
+            naturalQueue.removeAll { $0.done }
+            if !waitingSent { waitingSent = true; notifyListeners("voiceLoading", data: ["on": true, "waiting": true]) }
         }
         let line = NaturalLine(text: text, voice: raw, speed: speed, id: id, apple: apple)
         naturalQueue.append(line)
