@@ -177,17 +177,17 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
         call.resolve()
     }
 
-    /**
-     * The page's vibration pattern (on, off, on, … in milliseconds). iOS has one vibration of its
-     * own length and no patterns, so each pulse of 100 ms or more is that vibration at its moment
-     * in the pattern, and a shorter one (a set tick) is a tap of the haptic engine.
-     */
     /// A light tap for the long press on the orb.
     @objc func tick(_ call: CAPPluginCall) {
         DispatchQueue.main.async { UIImpactFeedbackGenerator(style: .light).impactOccurred() }
         call.resolve()
     }
 
+    /**
+     * The page's vibration pattern (on, off, on, … in milliseconds). iOS has one vibration of its
+     * own length and no patterns, so each pulse of 100 ms or more is that vibration at its moment
+     * in the pattern, and a shorter one (a set tick) is a tap of the haptic engine.
+     */
     @objc func buzz(_ call: CAPPluginCall) {
         let pattern = (call.getArray("pattern") as? [NSNumber])?.map { $0.doubleValue } ?? [400]
         DispatchQueue.main.async {
