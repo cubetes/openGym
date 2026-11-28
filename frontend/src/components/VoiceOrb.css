@@ -22,9 +22,11 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 @starting-style{.vo-glow.on{opacity:0}}
 .vo-glow.rest{transform:translateY(-72px)}
 .vo-glow i{position:absolute;inset:0;transform-origin:50% 100%;mix-blend-mode:screen;
-  background:radial-gradient(60% 100% at 50% 100%,var(--tier-a),transparent 70%),radial-gradient(45% 80% at 12% 100%,var(--tier-b),transparent 70%),radial-gradient(40% 70% at 92% 100%,var(--tier-a),transparent 70%)}
+  background:radial-gradient(60% 100% at 50% 100%,var(--tier-a),transparent 70%),radial-gradient(45% 80% at 12% 100%,var(--tier-b),transparent 70%),radial-gradient(40% 70% at 92% 100%,var(--tier-a),transparent 70%);
+  animation:vo-breathe 2.6s cubic-bezier(.77,0,.175,1) infinite paused}
 :root[data-theme="light"] .vo-glow i{mix-blend-mode:normal}
-.vo-glow.sp i{animation:vo-breathe 2.6s cubic-bezier(.77,0,.175,1) infinite}
+/* Paused, not removed, when the voice stops: the glow fades out from the frame it was on. */
+.vo-glow.sp i{animation-play-state:running}
 @keyframes vo-breathe{0%,100%{opacity:.62;transform:scaleY(.86)}50%{opacity:1;transform:scaleY(1.08)}}
 .vo-gh{position:absolute;bottom:0;left:0;width:200px;height:150px;mix-blend-mode:screen;transform:translateX(-200px);
   background:radial-gradient(50% 100% at 50% 100%,var(--tier-b),transparent 72%);animation:vo-sweep 4s cubic-bezier(.77,0,.175,1) 1 both paused}
@@ -34,7 +36,7 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 .vo-ge{display:none;position:absolute;left:30px;right:30px;bottom:0;height:2px;opacity:.9;background:linear-gradient(90deg,transparent,var(--tier-a) 30%,var(--tier-a) 70%,transparent)}
 :root[data-theme="light"] .vo-ge{display:block}
 .vo-glow.mut .vo-ge{background:linear-gradient(90deg,transparent,rgba(150,150,160,.7) 30%,rgba(150,150,160,.7) 70%,transparent)}
-.vo-glow.mut i{mix-blend-mode:normal;background:radial-gradient(70% 100% at 50% 100%,rgba(150,150,160,.5),transparent 72%)}
+.vo-glow.mut i{mix-blend-mode:normal;animation:none;background:radial-gradient(70% 100% at 50% 100%,rgba(150,150,160,.5),transparent 72%)}
 
 /* The bar and its panel: glass, grown out of the orb. */
 .vo-stack{position:absolute;inset-inline:0;bottom:0}
@@ -130,7 +132,7 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
   .vo-wash.go{animation-duration:150ms}
   .vo-b1,.vo-b2{animation:none}
   .vo-glow{transition:opacity 150ms linear}
-  .vo-glow.sp i{animation:none}
+  .vo-glow i{animation:none}
   .vo-gh{display:none}
   .vo-bar,.vo-bar.on,.vo-panel,.vo-panel.on,.vo-hint{transform:none;transition:opacity 150ms linear}
   .vo-words,.vo-bar.on .vo-words{transition:opacity 150ms linear}

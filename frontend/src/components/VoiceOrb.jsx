@@ -97,7 +97,7 @@ function Orb() {
     if (!muted) { setSettled(false); return undefined }
     if (!hold.current) { setSettled(true); return undefined }
     hold.current = false
-    const id = setTimeout(() => setSettled(true), SETTLE_MS)
+    const id = setTimeout(() => { setSettled(true); setHeld(false) }, SETTLE_MS) // held and muted swap in one render: .92 straight to .86
     return () => clearTimeout(id)
   }, [muted])
 
@@ -156,7 +156,8 @@ function Orb() {
     if (muted) caption.hide(); else useCaption.setState({ speaking: false })
   }
 
-  const release = () => { clearTimeout(press.current.timer); setHeld(false) }
+  // After a long press the settle clears `held`, so the orb goes .92 to .86 with no bounce back toward 1.
+  const release = () => { clearTimeout(press.current.timer); if (!press.current.long) setHeld(false) }
   const down = e => {
     if (e.button > 0) return
     // Touch captures the pointer to the orb: let go, so sliding a finger off it cancels the hold.
@@ -165,7 +166,7 @@ function Orb() {
     setHeld(true)
     setHint(false)
     clearTimeout(press.current.timer)
-    press.current.timer = setTimeout(() => { press.current.long = true; setHeld(false); toggleMute() }, HOLD_MS)
+    press.current.timer = setTimeout(() => { press.current.long = true; if (muted) setHeld(false); toggleMute() }, HOLD_MS)
   }
   // The click after a long press is the same finger lifting: it must not also toggle the bar.
   const click = () => { if (press.current.long) { press.current.long = false; return } toggleBar() }

@@ -149,18 +149,31 @@ describe('the voice orb', () => {
     expect(S().active.voiceMuted).toBe(true)
     expect(tickNative).toHaveBeenCalledTimes(1)
     expect(useCaption.getState().speaking).toBe(false)
-    expect(orb().className).not.toContain('held')
+    expect(orb().className).toContain('held') // still held until the muted look lands, so it never grows back toward 1
     // the grey wash plays first, then the orb settles to the muted look
     expect(orb().className).not.toContain('muted')
     expect(q('.vo-wash').className).toContain('go')
     await run(100)
     expect(orb().className).toContain('muted')
+    expect(orb().className).not.toContain('held')
     await ev(orb(), 'pointerup')
     await click(orb())
     expect(S().voiceBar).toBeUndefined()
     // and the next plain tap works again
     await press(100)
     expect(S().voiceBar).toBe(true)
+  })
+
+  it('lifting the finger between 500 and 600 ms keeps the orb held until it settles', async () => {
+    await mount()
+    await ev(orb(), 'pointerdown')
+    await run(520)
+    await ev(orb(), 'pointerup')
+    expect(orb().className).toContain('held')
+    expect(orb().className).not.toContain('muted')
+    await run(100)
+    expect(orb().className).toContain('muted')
+    expect(orb().className).not.toContain('held')
   })
 
   it('a second hold unmutes', async () => {
@@ -708,13 +721,14 @@ describe('the style', () => {
     expect(css).toMatch(/\.vo-glow\{[^}]*height:230px/)
     const idx = readFileSync('src/index.css', 'utf8')
     expect(idx).toMatch(/body\.vpill #app\{position:relative;z-index:1\}/) // the page paints over the glow (z 0), under the status-bar strip (z 30)
+    expect(css).toMatch(/\.vo-glow\.sp i\{animation-play-state:running\}/)
     expect(css).toMatch(/\.vo-fx\{z-index:0[;}]/)
     expect(css).toMatch(/\.vo-glow\{[^}]*z-index:0/)
     expect(css).toMatch(/:root\[data-theme="light"\] \.vo-ge\{display:block\}/)
     expect(css).toMatch(/cubic-bezier\(\.77,0,\.175,1\) infinite/)
     const rm = css.slice(css.indexOf('@media (prefers-reduced-motion:reduce)'))
     expect(rm).toMatch(/\.vo-b1,\.vo-b2\{animation:none\}/)
-    expect(rm).toMatch(/\.vo-glow\.sp i\{animation:none\}/)
+    expect(rm).toMatch(/\.vo-glow i\{animation:none\}/)
     expect(rm).toMatch(/\.vo-gh\{display:none\}/)
     expect(rm).toMatch(/\.vo-glow\{transition:opacity 150ms linear\}/)
   })
