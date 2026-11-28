@@ -923,7 +923,7 @@ if (MOBILE) {
   subscribeBuildCaps(allowNatural)
   // The Natural voice says how loud and how long the line really is; the orb and the caption follow it.
   // A cover (the Apple voice speaks a Natural line) carries no levels or length: the orb keeps its own look.
-  onVoiceLine(ev => { if (ev.cover) return; useVoiceLevel.getState().fromNative(ev); useCaption.getState().heard(ev.text, ev.ms) })
+  onVoiceLine(ev => { if (ev.cover || ev.dropped) return; useVoiceLevel.getState().fromNative(ev); useCaption.getState().heard(ev.text, ev.ms) })
   // A line waiting on a load that runs past 1.5 s: say so once per load, so a late voice is not read as broken.
   // A quiet launch warm-up load (no line waiting) says nothing.
   let loadingTm = null

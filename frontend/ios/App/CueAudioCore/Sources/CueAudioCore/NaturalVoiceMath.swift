@@ -60,6 +60,8 @@ public enum NaturalVoiceMath {
 
     /// While the model loads (the first time after an update or a restart is slow) a line never gets the Apple voice on time; this is the longest it waits.
     public static let firstLoadCapSec = 90.0
+    /// A line's own wait (2 s, a Settings sample 15 s) is over: only then may a newer line drop it while the model loads.
+    public static func windowPassed(age: Double, patient: Bool) -> Bool { age > (patient ? patientFallBackSec : fallBackSec) }
     public enum CoverStep: Equatable { case none, cover, wait(Double) }
     /// What to do about a line with no sound yet. The normal window restarts when a load ends (`sinceLoadEnded`, nil if none ended since the line was asked).
     public static func coverStep(loading: Bool, sinceAsked: Double, sinceLoadEnded: Double?, hasAudio: Bool, patient: Bool) -> CoverStep {

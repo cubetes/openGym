@@ -80,6 +80,9 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
         var done = false
         /// The sound missed: the Apple voice says it once the line is first in the queue.
         var fallBack = false
+        /// When it was asked for and whether it is a Settings sample: a newer line drops it only once its own window has passed.
+        let asked = Date()
+        var patient = false
         /// The Apple voice is saying it now; the line stays first until that ends.
         var speaking = false
         init(text: String, voice: String, speed: Double, id: Int, apple: (lang: String, rate: Float, pitch: Float, fallback: String, onSilent: Bool)) {
@@ -347,14 +350,18 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
         }
         if modelLoading {
             // A newer line makes the older ones still waiting for the load out of date: dropped, not covered.
-            for old in naturalQueue where old.wav == nil && !old.speaking && !old.done && !old.fallBack {
+            for old in naturalQueue where old.wav == nil && !old.speaking && !old.done && !old.fallBack
+                && NaturalVoiceMath.windowPassed(age: Date().timeIntervalSince(old.asked), patient: old.patient) {
                 old.done = true
                 endSound(old.id)
+                // The page stops waiting for it (Settings' "Loading" text, the end of a sample).
+                notifyListeners("voiceLine", data: ["text": old.text, "levels": [], "ms": 0, "dropped": true])
             }
             naturalQueue.removeAll { $0.done }
             if !waitingSent { waitingSent = true; notifyListeners("voiceLoading", data: ["on": true, "waiting": true]) }
         }
         let line = NaturalLine(text: text, voice: raw, speed: speed, id: id, apple: apple)
+        line.patient = patient
         naturalQueue.append(line)
         Task {
             let url = try? await NaturalVoiceEngine.shared.render(text: text, voice: raw, speed: speed)

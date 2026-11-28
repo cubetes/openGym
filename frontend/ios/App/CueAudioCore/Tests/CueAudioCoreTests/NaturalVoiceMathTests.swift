@@ -49,6 +49,13 @@ final class NaturalVoiceMathTests: XCTestCase {
         XCTAssertFalse(NaturalVoiceMath.shouldFallBack(waited: 3.0, hasAudio: true, failed: false))
     }
 
+    func testWindowPassed() {
+        XCTAssertFalse(NaturalVoiceMath.windowPassed(age: 0.01, patient: false)) // a cue and its line a few ms apart
+        XCTAssertTrue(NaturalVoiceMath.windowPassed(age: 2.5, patient: false))
+        XCTAssertFalse(NaturalVoiceMath.windowPassed(age: 10, patient: true))
+        XCTAssertTrue(NaturalVoiceMath.windowPassed(age: 16, patient: true))
+    }
+
     func testCoverStepWaitsForTheLoad() {
         func step(_ loading: Bool, _ asked: Double, _ ended: Double? = nil, audio: Bool = false, patient: Bool = false) -> NaturalVoiceMath.CoverStep {
             NaturalVoiceMath.coverStep(loading: loading, sinceAsked: asked, sinceLoadEnded: ended, hasAudio: audio, patient: patient)

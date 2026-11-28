@@ -18,6 +18,8 @@ describe('voiceLine in the store', () => {
     mocks.line({ text: 'a', levels: [], ms: 0, cover: true })
     expect(fromNative).not.toHaveBeenCalled()
     expect(heard).not.toHaveBeenCalled()
+    mocks.line({ text: 'a', levels: [], ms: 0, dropped: true })
+    expect(fromNative).not.toHaveBeenCalled()
     mocks.line({ text: 'a', levels: [1], ms: 900 })
     expect(fromNative).toHaveBeenCalledTimes(1)
     expect(heard).toHaveBeenCalledWith('a', 900)

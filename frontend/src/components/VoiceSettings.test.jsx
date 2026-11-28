@@ -566,6 +566,21 @@ describe('Settings → Timer alerts → Voice', () => {
         expect(rowTitled('Heart').querySelector('.tier-tile.playing')).toBeNull()
       } finally { vi.useRealTimers() }
     })
+    it('a dropped line (a newer one replaced it while the model loaded) ends the wait and the sample, no playing look', async () => {
+      phone(ready)
+      await render(<VoiceList />)
+      vi.useFakeTimers()
+      try {
+        await tap(rowTitled('Heart'))
+        await act(async () => { vi.advanceTimersByTime(400) })
+        expect(rowTitled('Heart').querySelector('.lrow-s')).not.toBeNull()
+        await act(async () => { say({ ms: 0, dropped: true }) })
+        expect(rowTitled('Heart').querySelector('.lrow-s')).toBeNull()
+        expect(rowTitled('Heart').querySelector('.tier-tile.playing')).toBeNull()
+        await act(async () => { vi.advanceTimersByTime(60) })
+        expect(host.querySelector('#vp-live').textContent).not.toBe('Playing')
+      } finally { vi.useRealTimers() }
+    })
     it('the hero says Playing only once a Natural line starts', async () => {
       phone(ready)
       localStorage.setItem('og_speech_voice', 'natural:af_heart')

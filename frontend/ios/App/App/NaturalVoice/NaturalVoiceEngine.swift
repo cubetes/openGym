@@ -171,6 +171,7 @@ actor NaturalVoiceEngine {
         // Load first, even when every line is cached: the next miss then renders at once. Also warms the model when the picker opens.
         if (try? await loadedModel()) != nil { restartIdleTimer() }
         for text in texts {
+            await Task.yield() // gives the actor back, so a render waiting for it can register in `renders`
             while renders > 0 && !Task.isCancelled { try? await Task.sleep(nanoseconds: 50_000_000) }
             if Task.isCancelled { return }
             _ = try? await make(text: text, voice: voice, speed: speed)

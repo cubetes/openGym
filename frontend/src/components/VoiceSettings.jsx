@@ -53,7 +53,7 @@ const startWait = text => {
   stopWait()
   setWait(1)
   // The phone sends the line's event when it starts (a cover too: the Apple voice speaks it); a workout cue's event is not this sample's.
-  offWait = onVoiceLine(ev => { if (ev?.text === text) { stopWait(); announcePlaying() } })
+  offWait = onVoiceLine(ev => { if (ev?.text === text) { stopWait(); if (!ev.dropped) announcePlaying() } })
   waitT = setTimeout(() => {
     setWait(2); announce(t('Loading, please wait…'))
     waitT = setTimeout(stopWait, 105000) // safety net: the phone waits no longer than 90 s for the model (the first load after an update is slow) plus 15 s
@@ -70,13 +70,14 @@ const sayIt = (text, extra = {}) => {
 }
 let offLine = () => {}
 /** Calls `done` once `last` has been said: when the Natural voice reports the line's real length, else after the word-count estimate for `all` (Apple voices report none). */
-// A Natural sample may wait up to 15 s for the model (RestAlertPlugin patient wait): the estimate must not end it before it starts.
+// A Natural sample may wait for the model (up to 90 s load, then 15 s: RestAlertPlugin patient wait): the estimate must not end it before it starts.
 const endAfter = (timer, all, last, speed, done, natural = false) => {
   clearTimeout(timer.current)
   offLine()
   const end = () => { stopWait(); done() }
   timer.current = setTimeout(end, speakMs(all, speed) + (natural ? 105000 : 0))
   offLine = onVoiceLine(ev => {
+    if (ev?.text === last && ev.dropped) { end(); return } // a newer line replaced it while the model loaded: nothing will play
     if (ev?.text !== last || !(ev.ms > 0 || ev.cover)) return
     clearTimeout(timer.current)
     timer.current = setTimeout(end, ev.cover ? speakMs(last, speed) : ev.ms) // a cover has no length: the plain estimate
