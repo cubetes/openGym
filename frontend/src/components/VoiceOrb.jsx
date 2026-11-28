@@ -4,7 +4,7 @@ import { useUI } from '../store/useUI.js'
 import { useCaption, caption, ageText, agoText, speakMs } from '../lib/voice-caption.js'
 import { useVoiceLevel, smooth, lineLevels, curveMs } from '../lib/voice-level.js'
 import { cues } from '../lib/spoken-cues.js'
-import { hush, onVoices, pickedVoice, voiceLabel, voiceState } from '../lib/speech.js'
+import { hush, onVoices, pickedVoice, speechSupported, voiceLabel, voiceState } from '../lib/speech.js'
 import { NATURAL_VOICES } from '../lib/natural-voice.js'
 import { tickNative } from '../lib/rest-alert.js'
 import { isOn } from '../lib/modules.js'
@@ -49,10 +49,10 @@ function Line({ text, className }) {
   </span>
 }
 
-// The orb is always there while a workout runs; tap opens the words, a 500 ms hold mutes (components/VoiceOrb.css).
+// The orb is there while a workout runs with Spoken cues on and a voice to speak with; tap opens the words, a 500 ms hold mutes (components/VoiceOrb.css).
 export default function VoiceOrb() {
-  const running = useStore(s => !!s.S.active)
-  return running ? <Orb /> : null
+  const running = useStore(s => !!s.S.active && s.S.spokenCues === true)
+  return running && speechSupported() ? <Orb /> : null
 }
 
 function Orb() {

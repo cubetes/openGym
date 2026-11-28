@@ -8,6 +8,7 @@ vi.mock('../lib/rest-alert.js', () => ({
   armRestAlert: vi.fn(() => Promise.resolve(true)),
   holdRestAlert: vi.fn(),
   disarmRestAlert: vi.fn(),
+  onVoiceLine: () => () => {},
   bindNativeRest: vi.fn(),
   toneNative: vi.fn(() => Promise.resolve(true)),
 }))

@@ -151,7 +151,8 @@ describe('Settings → Timer alerts → Voice', () => {
     await render(<VoiceSettings />)
     expect(host.querySelector('[role="radiogroup"]').getAttribute('aria-labelledby')).toBe('vp-style-h')
     expect(radio('Just the facts').getAttribute('aria-checked')).toBe('true')
-    expect(radio('Calm coach').getAttribute('aria-label')).toBe('Calm coach, 2 of 6')
+    expect(radio('Calm coach').getAttribute('aria-label')).toBe('Calm coach, 3 of 6')
+    expect(host.querySelector('[role="radio"]').getAttribute('aria-label')).toBe('Hype man, 1 of 6')
     expect(radio('Your own lines').classList.contains('own')).toBe(true)
     await act(async () => { radio('Hype man').click() })
     expect(mocks.S.cueStyle).toBe('hype')
@@ -552,6 +553,7 @@ describe('Settings → Timer alerts → Voice', () => {
     const block = css.slice(css.indexOf('@media (prefers-reduced-motion: reduce)'))
     expect(block).toMatch(/vhero-wave i[^}]*animation: none/)
     expect(block).toMatch(/\.vs-tile:active[^}]*transform: none/)
+    expect(block).toMatch(/\.vhero\.play \.vhero-wave i \{ transform: scaleY\(\.5\)/)
     expect(block).toMatch(/\.vs-ok \{ animation: vs-fade/)
   })
   describe('the picker: tier tiles, and the plain list with Better voices off', () => {

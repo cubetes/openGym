@@ -19,7 +19,7 @@ import { speak, hush, voiceState, onVoices, refreshVoices, langName, speechLang,
 import { isNatural, NATURAL_VOICES, NATURAL_MB, naturalState, onNatural, refreshNatural, downloadNatural, cancelNatural, removeNatural, readPrefs, writePrefs } from '../lib/natural-voice.js'
 import { sampleCue, cues } from '../lib/spoken-cues.js'
 import { confirmSheet } from '../sheets.jsx'
-import { MOMENTS, MOMENT_COPY, STYLE_COPY, STYLE_IDS, cueStyleOf, linesFor, ownLines, setOwnLines, startOwnFrom, hasOwnLines, sampleLine, LINES_MAX, LINE_MAX } from '../lib/voice-styles.js'
+import { MOMENTS, MOMENT_COPY, STYLE_COPY, cueStyleOf, linesFor, ownLines, setOwnLines, startOwnFrom, hasOwnLines, sampleLine, LINES_MAX, LINE_MAX } from '../lib/voice-styles.js'
 import { voiceClipsOf, addVoiceClip, removeVoiceClip, CLIPS_PER_MOMENT, CLIP_SEC } from '../lib/voice-clips.js'
 import { MOBILE } from '../lib/mobile.js'
 import { mediaStore } from '../lib/media-store.js'
@@ -461,6 +461,8 @@ function VoiceHero({ vs, cur, openList }) {
 }
 
 const STYLE_LOOK = { hype: ['bolt', '#f97316'], plain: ['list', '#8e8e93'], calm: ['heart', '#14a3a8'], drill: ['flag', '#e5484d'], deadpan: ['smile', '#7c7cf0'], own: ['pencil', '#8e8e93'] }
+// The tiles as drawn (flow-studio): Hype man first. STYLE_IDS keeps its own order.
+const TILE_ORDER = ['hype', 'plain', 'calm', 'drill', 'deadpan', 'own']
 const BUBBLES = ['restStart', 'restOver']
 
 /** The six styles as tiles, then the picked style's first line for two moments, then "Edit these lines". */
@@ -471,9 +473,9 @@ function StyleGrid({ S, style, pickStyle }) {
   return <section className="sect">
     <h2 className="sect-t" id="vp-style-h">{t('Style')}</h2>
     <div className="vs-grid" role="radiogroup" aria-labelledby="vp-style-h">
-      {STYLE_IDS.map((id, i) => {
+      {TILE_ORDER.map((id, i) => {
         const [icon, c] = STYLE_LOOK[id], nm = t(STYLE_COPY[id][0])
-        return <button key={id} type="button" role="radio" aria-checked={style === id} aria-label={`${nm}, ${t('{0} of {1}', i + 1, STYLE_IDS.length)}`} data-find={nm}
+        return <button key={id} type="button" role="radio" aria-checked={style === id} aria-label={`${nm}, ${t('{0} of {1}', i + 1, TILE_ORDER.length)}`} data-find={nm}
           className={'vs-tile' + (style === id ? ' sel' : '') + (id === 'own' ? ' own' : '')} style={{ '--c': c }} onClick={() => pickStyle(id)}>
           <span className="vs-ch"><span className="vs-ico"><Icon name={icon} aria-hidden="true" /></span><span className="vs-nn">{nm}</span></span>
           {style === id && <span className="vs-ok"><Icon name="check" aria-hidden="true" /></span>}
@@ -489,7 +491,6 @@ function StyleGrid({ S, style, pickStyle }) {
         </button> : null
       })}
     </div>
-    {/* "How much it says" (#1602) goes here, between Style and Moments. */}
     {!own && <div className="sect-b vs-edit"><EditLinesRow replace={replace} go={makeOwn} /></div>}
     <p className="sect-f">{replace ? REPLACE_NOTE() : t('Only the words change. Your own lines live here too.')}</p>
   </section>
@@ -521,6 +522,7 @@ export default function VoiceSettings({ openList }) {
       <VoiceHero vs={vs} cur={cur} openList={openList} />
       {footer && <p className="sect-f">{footer}</p>}
       <StyleGrid S={S} style={style} pickStyle={pickStyle} />
+      {/* "How much it says" (#1602) goes here, between Style and Moments. */}
       {/* Where your own voice goes in (TestFlight 11-08: "upload my own voice, or a file"): said
           up front, since the clips sit one tap down, in each moment's sheet. */}
       <Section title={t('Moments')} footer={<>{t('Tap a moment to record your own voice for it or pick an audio file, up to {0} seconds.', CLIP_SEC)} {t('Your next set is still said first when a rest starts. The count of a hold stays a count.')}</>}>

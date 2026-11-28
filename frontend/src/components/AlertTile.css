@@ -16,12 +16,12 @@
 .at.on .mini::after { transform: translateX(14px) }
 [dir="rtl"] .at.on .mini::after { transform: translateX(-14px) }
 .at[style*="yellow"].on .mini { background: #c99700 }
-.at .st { position: absolute; inset-inline-end: 58px; top: 19px; font-size: 12px; font-weight: 600; color: var(--at-l2) }
+.at .st { position: absolute; inset-inline-end: 58px; top: 19px; font-size: var(--fs-caption); font-weight: 600; color: var(--at-l2) }
 .at.on .st { color: var(--label) }
-.at .nm { display: block; margin-top: 10px; font-size: 17px; font-weight: 600; line-height: 1.2 }
-.at-op { display: flex; align-items: center; justify-content: space-between; gap: 6px; width: 100%; min-height: 44px; padding: 0 14px; margin-top: auto; border: 0; border-top: .5px solid var(--sep); background: none; font: inherit; font-size: 13px; text-align: start; color: var(--at-l2) }
+.at .nm { display: block; margin-top: 10px; font-size: var(--fs-body); font-weight: 600; line-height: 1.2 }
+.at-op { display: flex; align-items: center; justify-content: space-between; gap: 6px; width: 100%; min-height: 44px; padding: 0 14px; margin-top: auto; border: 0; border-top: .5px solid var(--sep); background: none; font: inherit; font-size: var(--fs-footnote); text-align: start; color: var(--at-l2) }
 .at.on .at-op { border-top-color: var(--sep, rgba(128,128,128,.3)); border-top-color: color-mix(in srgb, var(--c) 45%, transparent) }
-.at.on button.at-op { color: var(--label) }
+.at.on .at-op { color: var(--label) }
 button.at-op { cursor: pointer }
 button.at-op:active { background: var(--press-fill, rgba(128,128,128,.2)); background: color-mix(in srgb, var(--c) 22%, transparent) }
 .at-op span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
@@ -32,9 +32,8 @@ button.at-op:active { background: var(--press-fill, rgba(128,128,128,.2)); backg
 .alert-foot .sect-f { padding-top: 0; padding-bottom: 7px }
 .text-big .alert-grid { grid-template-columns: 1fr }
 .text-big .at-sw { min-height: 84px }
-.text-big .at .nm { font-size: 25px }
-.text-big .at .st { font-size: 17px; top: 22px }
-.text-big .at-op { font-size: 19px; min-height: 56px }
+.text-big .at .st { top: 22px }
+.text-big .at-op { min-height: 56px }
 @media (prefers-reduced-motion: reduce) {
   .at-sw, .at .mini::after { transition: none }
   .at-sw:active { transform: none }

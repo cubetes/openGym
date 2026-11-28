@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
-const h = vi.hoisted(() => ({ ui: { timer: null, work: null, countIn: null }, picked: 'natural:af_heart' }))
+const h = vi.hoisted(() => ({ ui: { timer: null, work: null, countIn: null }, picked: 'natural:af_heart', speech: true }))
 vi.mock('../store/useStore.js', async () => {
   const { create } = await import('zustand')
   const useStore = create(set => ({
@@ -17,7 +17,7 @@ vi.mock('../store/useStore.js', async () => {
 })
 vi.mock('../store/useUI.js', () => ({ useUI: sel => sel(h.ui) }))
 vi.mock('../lib/speech.js', () => ({
-  hush: vi.fn(), onVoices: () => () => {}, pickedVoice: () => h.picked,
+  hush: vi.fn(), speechSupported: () => h.speech, onVoices: () => () => {}, pickedVoice: () => h.picked,
   voiceLabel: v => v.name, voiceState: () => ({ voices: [], auto: null }),
 }))
 vi.mock('../lib/rest-alert.js', () => ({ tickNative: vi.fn() }))
@@ -38,7 +38,7 @@ const { default: VoiceOrb } = await import('./VoiceOrb.jsx')
 
 const SHORT = 'Next: Barbell Full Squat. 8 reps at 92.5 kilos.'
 const LONG = 'Your last two sets were identical. Stay at 92.5 and aim for a clean ninth rep next time.'
-const S0 = { active: { cur: 0, entries: [] } }
+const S0 = { spokenCues: true, active: { cur: 0, entries: [] } }
 
 let host, root
 const setS = S => act(async () => { useStore.setState({ S }) })
@@ -64,6 +64,7 @@ beforeEach(async () => {
   vi.useFakeTimers()
   h.ui = { timer: null, work: null, countIn: null }
   h.picked = 'natural:af_heart'
+  h.speech = true
   useStore.setState({ S: JSON.parse(JSON.stringify(S0)) })
   host = document.createElement('div'); document.body.append(host)
   root = createRoot(host)
@@ -78,7 +79,7 @@ afterEach(async () => {
 
 describe('the voice orb', () => {
   it('shows nothing without a workout, and an orb with one', async () => {
-    await setS({ active: null })
+    await setS({ spokenCues: true, active: null })
     await mount()
     expect(host.textContent).toBe('')
     await setS(S0)
@@ -203,6 +204,18 @@ describe('the voice orb', () => {
 })
 
 describe('the hint', () => {
+  it('with Spoken cues off, or no speech in the browser: no orb, and the hint is not used up', async () => {
+    await setS({ active: { cur: 0, entries: [] } })
+    await mount()
+    await run(1000)
+    expect(orb()).toBeNull()
+    expect(S().voiceHintSeen).toBeUndefined()
+    await setS(S0)
+    h.speech = false
+    await mount()
+    expect(orb()).toBeNull()
+  })
+
   it('shows once, 600 ms in, for 4 s, and is written as seen', async () => {
     await mount()
     expect(q('.vo-hint').className).not.toContain('on')
@@ -237,7 +250,7 @@ describe('the hint', () => {
     await mount()
     await run(700)
     expect(q('.vo-hint').className).not.toContain('on')
-    await setS({ active: { cur: 0, entries: [], voiceMuted: true } })
+    await setS({ spokenCues: true, active: { cur: 0, entries: [], voiceMuted: true } })
     await run(5000)
     expect(q('.vo-hint').className).not.toContain('on')
     expect(S().voiceHintSeen).toBeUndefined()
@@ -272,7 +285,7 @@ describe('the orb label', () => {
 
   it('says muted, not spoken, and a new Coach line', async () => {
     await mount()
-    await setS({ active: { cur: 0, entries: [], voiceMuted: true } })
+    await setS({ spokenCues: true, active: { cur: 0, entries: [], voiceMuted: true } })
     expect(orb().getAttribute('aria-label')).toBe('Voice is muted. Show the words.')
     await setS(S0)
     await act(async () => { useCaption.setState({ text: SHORT, kind: 'pill', silent: true, shownAt: Date.now() }) })
@@ -442,7 +455,7 @@ describe('the bar and its words', () => {
   })
 
   it('muted: says so and offers Unmute and Settings from the panel', async () => {
-    await setS({ active: { cur: 0, entries: [], voiceMuted: true }, voiceBar: true })
+    await setS({ spokenCues: true, active: { cur: 0, entries: [], voiceMuted: true }, voiceBar: true })
     await mount()
     expect(q('.vo-cap').textContent).toBe('Voice is muted for this workout')
     await click(q('.vo-cap'))
@@ -636,7 +649,7 @@ describe('the motion', () => {
   })
 
   it('the bright patch runs once over the estimated length, but not for a 1 or 2 word line', async () => {
-    await setS({ active: { cur: 0, entries: [] }, voiceBar: true })
+    await setS({ spokenCues: true, active: { cur: 0, entries: [] }, voiceBar: true })
     await mount()
     await show('Rest is over')
     expect(q('.vo-gh').style.animationDuration).toBe('1500ms') // 3 words x 400 ms + 300
@@ -646,10 +659,10 @@ describe('the motion', () => {
   })
 
   it('the glow is grey when muted and absent when the phone is silent', async () => {
-    await setS({ active: { cur: 0, entries: [], voiceMuted: true }, voiceBar: true })
+    await setS({ spokenCues: true, active: { cur: 0, entries: [], voiceMuted: true }, voiceBar: true })
     await mount()
     expect(q('.vo-glow').className).toContain('mut')
-    await setS({ active: { cur: 0, entries: [] }, voiceBar: true })
+    await setS({ spokenCues: true, active: { cur: 0, entries: [] }, voiceBar: true })
     await show(SHORT, { silent: true })
     expect(q('.vo-glow').className).not.toMatch(/\bon\b/)
   })
