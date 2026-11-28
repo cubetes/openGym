@@ -52,7 +52,7 @@
 /* Moments: the small "one rest, in order" card above the rows. */
 .vm-tl { padding: 14px 16px 12px; border-bottom: .5px solid var(--sep) }
 .vm-tl-t { display: block; font-size: 12px; color: var(--label-2) }
-.vm-trk { position: relative; height: 3px; margin: 14px 6px 26px; border-radius: 2px; background: var(--surface-3, var(--sep)) }
+.vm-trk { position: relative; height: 3px; margin: 14px 6px 36px; border-radius: 2px; background: var(--surface-3, var(--sep)) }
 .vm-trk b { position: absolute; top: -6px; width: 15px; height: 15px; margin-inline-start: -7px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 0 3px var(--surface) }
 .vm-trk u { position: absolute; top: 14px; font-size: 11px; color: var(--label-2); text-decoration: none; white-space: nowrap; transform: translateX(-50%) }
 .vm-tags { display: flex; flex-wrap: wrap; gap: 6px }
