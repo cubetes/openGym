@@ -7,7 +7,8 @@
 .vhero::before { content: ""; position: absolute; inset: 0; opacity: .28; pointer-events: none; background: radial-gradient(120% 120% at 0% 0%, var(--tier-a), transparent 60%), radial-gradient(90% 100% at 100% 100%, var(--tier-b), transparent 62%) }
 :root[data-theme="light"] .vhero::before { opacity: .2 }
 .vhero > * { position: relative }
-.vhero-main { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 60px; padding: 0; border: 0; background: none; font: inherit; color: var(--label); text-align: start; cursor: pointer }
+.vhero-main { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 60px; padding: 0; border: 0; background: none; font: inherit; color: var(--label); text-align: start; cursor: pointer; transition: transform var(--fast) var(--ease) }
+.vhero-main:active { transform: scale(var(--press-scale-card)) }
 .vhero-tx { display: flex; flex-direction: column; flex: 1; min-width: 0; gap: 1px }
 .vhero-k { font-size: var(--fs-caption, 12px); color: var(--label-2) }
 :root[data-theme="light"] .vhero-k { color: rgba(60,60,67,.86) }
@@ -77,8 +78,8 @@
   .vp-voice .lrow-k { animation-name: vs-fade; animation-duration: 140ms; animation-delay: 0s }
   .vhero-wave i, .vhero:is(.play, .end) .vhero-wave i { animation: none }
   .vhero.play .vhero-wave i { transform: scaleY(.5) }
-  .btn.vhero-try, .vs-tile, .vs-bub { transition: none }
-  .btn.vhero-try:active, .vs-tile:active, .vs-bub:active { transform: none }
+  .btn.vhero-try, .vs-tile, .vs-bub, .vhero-main { transition: none }
+  .btn.vhero-try:active, .vs-tile:active, .vs-bub:active, .vhero-main:active { transform: none }
   .vs-ok { animation: vs-fade 160ms linear both }
   @keyframes vs-fade { from { opacity: 0 } to { opacity: 1 } }
 }

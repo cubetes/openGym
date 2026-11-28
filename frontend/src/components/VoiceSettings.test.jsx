@@ -558,6 +558,7 @@ describe('Settings → Timer alerts → Voice', () => {
     expect(block).toMatch(/\.vs-tile:active[^}]*transform: none/)
     expect(block).toMatch(/\.vhero\.play \.vhero-wave i \{ transform: scaleY\(\.5\)/)
     expect(block).toMatch(/\.vs-ok \{ animation: vs-fade/)
+    expect(css).toMatch(/\.vhero-main:active \{ transform: scale\(var\(--press-scale-card\)\) \}/)
   })
   describe('the picker: tier tiles, and the plain list with Better voices off', () => {
     const ava = { id: 'ava', name: 'Ava', lang: 'en-US', online: false, quality: 'premium' }
