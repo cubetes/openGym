@@ -72,6 +72,7 @@ import { openDeviceLinkRedeem } from './components/Passkeys.jsx'
 import { useAnimPacksBoot, useAnimOffer } from './components/Animations.jsx'
 import { useNfcTagLinks } from './components/Nfc.jsx'
 import { useRoutineLinks } from './components/RoutineShare.jsx'
+import { lazyView as lazyViewIn } from './components/LazyView.jsx'
 import Login from './views/Login.jsx'
 import MobileOnboarding from './views/MobileOnboarding.jsx'
 import PermissionSteps from './views/PermissionSteps.jsx'
@@ -86,15 +87,7 @@ import Workout from './views/Workout.jsx'
 // and the phone build hold them locally anyway), so by the time one is opened it renders at once,
 // in the same frame, as before; only a tap within the first moments can see one empty frame.
 const views = []
-function lazyView(load) {
-  let View = null
-  const fetchIt = () => load().then(m => { View = m.default; return m })
-  const Lazy = lazy(fetchIt)
-  views.push(fetchIt)
-  return function LazyView(props) {
-    return View ? <View {...props} /> : <Suspense fallback={null}><Lazy {...props} /></Suspense>
-  }
-}
+const lazyView = load => lazyViewIn(load, views)
 const Admin = lazyView(() => import('./views/Admin.jsx'))
 const CoachChat = lazyView(() => import('./views/CoachChat.jsx'))
 const Connect = lazyView(() => import('./views/Connect.jsx'))
