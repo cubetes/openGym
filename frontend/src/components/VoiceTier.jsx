@@ -16,6 +16,9 @@ export function tierKey(voice) {
   return 'standard'
 }
 
+/** The class that gives a Natural voice its own shade inside the Natural look (VoiceTier.css `.nv-*`); '' for any other voice. */
+export const accentClass = id => (isNatural(id) ? ' nv-' + id.split('_').pop() : '')
+
 export function tierName(key) {
   return {
     natural: t('Natural voice'), premium: t('Premium'), enhanced: t('Enhanced'),
@@ -40,11 +43,11 @@ export function useEnding(on, ms = 120) {
 }
 
 // One tile per tier. `tier` is a TIER_KEYS value, or anything else (plain) for Automatic; `glyph` swaps the icon (Automatic wears bolt).
-export default function TierTile({ tier, size = 'md', playing = false, glyph }) {
+export default function TierTile({ tier, size = 'md', playing = false, glyph, accent = '' }) {
   const key = GLYPH[tier] ? tier : 'plain'
   const ending = useEnding(playing)
   return (
-    <span className={`tier-tile tier-${key} tier-${SIZE[size] || 'md'}${playing ? ' playing' : ''}`} aria-hidden="true">
+    <span className={`tier-tile tier-${key} tier-${SIZE[size] || 'md'}${playing ? ' playing' : ''}${key === 'natural' ? accent : ''}`} aria-hidden="true">
       <Icon name={glyph || GLYPH[key] || 'speaker'} className="tier-glyph" />
       {(playing || ending) && <span className={'tier-play' + (ending ? ' end' : '')}><span className="tier-bars"><i /><i /><i /><i /></span><span className="tier-ring" /></span>}
     </span>

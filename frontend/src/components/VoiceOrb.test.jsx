@@ -94,6 +94,12 @@ describe('the voice orb', () => {
     expect(q('.vo').className).toContain('tier-plain')
   })
 
+  it('a Natural voice gives the orb and its glow its own shade', async () => {
+    h.picked = 'natural:am_michael'
+    await mount()
+    for (const sel of ['.vo', '.vo-glow', '.vo-fx']) expect(q(sel).className).toContain('tier-natural nv-michael')
+  })
+
   it('a tap toggles the bar and saves S.voiceBar', async () => {
     await mount()
     expect(bar().hasAttribute('inert')).toBe(true)

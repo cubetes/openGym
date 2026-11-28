@@ -28,7 +28,7 @@ import { unlock, chime } from '../lib/sound.js'
 import { soundErrorText } from './OwnSounds.jsx'
 import { Section, Row, Slider, Switch, Button, TextField } from './ui.jsx'
 import Icon from './Icon.jsx'
-import TierTile, { tierKey, tierName, useEnding } from './VoiceTier.jsx'
+import TierTile, { tierKey, tierName, useEnding, accentClass } from './VoiceTier.jsx'
 import { isOn } from '../lib/modules.js'
 import { speakMs } from '../lib/voice-caption.js'
 import { onVoiceLine } from '../lib/rest-alert.js'
@@ -158,7 +158,7 @@ export function VoiceList() {
     setPlayKey(id || 'auto')
     endAfter(timer, text, text, speechRateNum(S_()), () => setPlayKey(null))
   }
-  const tile = (key, id, glyph) => on ? <TierTile tier={key} glyph={glyph} playing={playKey === (id || 'auto')} /> : null
+  const tile = (key, id, glyph) => on ? <TierTile tier={key} glyph={glyph} accent={accentClass(id)} playing={playKey === (id || 'auto')} /> : null
   const rowCls = id => 'vp-voice' + (playKey === (id || 'auto') ? ' vp-pick' : '') // the check pops on a pick, not on a visit
   // Opening the page with a Natural pick, or picking one, has the model make the fixed lines ahead.
   useEffect(() => { if (isNatural(cur)) cues.prepareFixed() }, [cur])
@@ -461,9 +461,9 @@ function VoiceHero({ vs, cur, openList }) {
     endAfter(timer, `${cue}. ${line}`, line, speechRateNum(S), () => setPlaying(false))
   }
   const ending = useEnding(playing)
-  return <div className={`vhero tier-${key}${playing ? ' play' : ''}${ending ? ' end' : ''}`}>
+  return <div className={`vhero tier-${key}${nat ? accentClass(cur) : ''}${playing ? ' play' : ''}${ending ? ' end' : ''}`}>
     <button type="button" className="vhero-main" aria-label={`${t('Using now')}, ${[name, sub].filter(Boolean).join(', ')}. ${t('Change voice')}`} onClick={openList}>
-      <TierTile tier={key} size="xl" playing={playing} />
+      <TierTile tier={key} size="xl" accent={accentClass(cur)} playing={playing} />
       <span className="vhero-tx">
         <span className="vhero-k">{t('Using now')}</span>
         <span className="vhero-n">{name}</span>

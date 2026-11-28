@@ -445,6 +445,13 @@ describe('Settings → Timer alerts → Voice', () => {
       expect(rowTitled('Heart').querySelector('.lrow-k')).not.toBeNull()
       prepare.mockRestore()
     })
+    it('each Natural row tile and the hero wear their own shade', async () => {
+      phone(ready)
+      localStorage.setItem('og_speech_voice', 'natural:bf_emma')
+      await render(<VoiceList />)
+      expect(['Heart', 'Michael', 'Emma'].map(n => [...rowTitled(n).querySelector('.tier-tile').classList].filter(c => c.startsWith('nv-')).join())).toEqual(['nv-heart', 'nv-michael', 'nv-emma'])
+      expect(rowTitled('Automatic').querySelector('.tier-tile').className).not.toContain('nv-')
+    })
     it('opening the page with a usable Natural pick loads the model once', async () => {
       phone(ready)
       localStorage.setItem('og_speech_voice', 'natural:am_michael')
