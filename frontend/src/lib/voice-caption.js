@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { t, tn } from './i18n.js'
+import { useVoiceLevel } from './voice-level.js'
 
 const words = text => text.trim().split(/\s+/).filter(Boolean).length
 
@@ -18,6 +19,14 @@ export function ageText (sec) {
   return t('Not spoken, {0} seconds ago', Math.max(10, Math.floor(sec / 10) * 10))
 }
 
+export function agoText (sec) {
+  if (sec >= 60) {
+    const m = Math.floor(sec / 60)
+    return tn('{0} minute ago', '{0} minutes ago', m)
+  }
+  return t('{0} seconds ago', Math.max(10, Math.floor(sec / 10) * 10))
+}
+
 // shortcut: estimate, the phones send no end event; add a native end event if the pill hides early or late on device
 export const speakMs = (text, speed = 1) => Math.round(words(text) * 400 / speed) + 300
 
@@ -27,14 +36,15 @@ const clear = () => { clearTimeout(timer); timer = null }
 
 export const useCaption = create((set, get) => ({
   text: '', kind: null, source: null, silent: false, muted: false,
-  speaking: false, expanded: false, shownAt: 0, last: '',
+  speaking: false, expanded: false, shownAt: 0, last: '', lastAt: 0,
 
   show (text, { source = null, silent = false, muted = false, speed = 1 } = {}) {
     clear()
     expired = false
     const kind = captionKind(text)
     const speaking = !silent && !muted
-    set({ text, kind, source, silent, muted, speaking, shownAt: Date.now(), last: text })
+    set({ text, kind, source, silent, muted, speaking, shownAt: Date.now(), last: text, lastAt: Date.now() })
+    if (speaking) useVoiceLevel.getState().startLine(text, speed)
     if (muted || kind === 'card') {
       if (speaking) timer = setTimeout(() => set({ speaking: false }), speakMs(text, speed))
       return
@@ -43,6 +53,16 @@ export const useCaption = create((set, get) => ({
     if (speaking) {
       timer = setTimeout(() => { set({ speaking: false }); hold() }, speakMs(text, speed))
     } else hold()
+  },
+
+  // The phone says how long the line really is: the speaking end moves to that, the hold starts after it.
+  heard (text, ms) {
+    const { text: cur, muted, silent, kind } = get()
+    if (text !== cur || muted || silent) return
+    clear()
+    set({ speaking: true })
+    const end = () => { set({ speaking: false }); if (kind === 'pill') timer = setTimeout(get().hide, holdMs(text)) }
+    timer = setTimeout(end, ms)
   },
 
   hide () {

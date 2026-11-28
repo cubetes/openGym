@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { captionKind, holdMs, ageText, speakMs, useCaption } from './voice-caption.js'
+import { captionKind, holdMs, ageText, agoText, speakMs, useCaption } from './voice-caption.js'
 
 const w = n => Array.from({ length: n }, () => 'word').join(' ')
 const s = () => useCaption.getState()
@@ -82,5 +82,42 @@ describe('store', () => {
     s().replay()
     expect(s().text).toBe('Rest is over')
     expect(s().speaking).toBe(true)
+  })
+  it('heard moves the speaking end to the real length', () => {
+    s().show('Rest is over')
+    vi.advanceTimersByTime(1000)
+    s().heard('Rest is over', 3000)
+    vi.advanceTimersByTime(1000)
+    expect(s().speaking).toBe(true)
+    vi.advanceTimersByTime(2000)
+    expect(s().speaking).toBe(false)
+    vi.advanceTimersByTime(1200)
+    expect(s().text).toBe('')
+  })
+  it('heard is ignored for another line, or while muted', () => {
+    s().show('Rest is over')
+    vi.advanceTimersByTime(1600)
+    s().heard('Something else', 3000)
+    expect(s().speaking).toBe(false)
+    s().show('Rest is over', { muted: true })
+    s().hide()
+    s().show('Rest is over', { muted: true })
+    vi.advanceTimersByTime(1000)
+    s().heard('Rest is over', 3000)
+    vi.advanceTimersByTime(1000)
+    expect(s().speaking).toBe(false)
+  })
+  it('lastAt is set with last', () => {
+    s().show('Rest is over', { silent: true })
+    expect(s().lastAt).toBeGreaterThan(0)
+  })
+})
+
+describe('agoText', () => {
+  it('steps', () => {
+    expect(agoText(25)).toBe('20 seconds ago')
+    expect(agoText(4)).toBe('10 seconds ago')
+    expect(agoText(65)).toBe('1 minute ago')
+    expect(agoText(130)).toBe('2 minutes ago')
   })
 })

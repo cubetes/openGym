@@ -7,7 +7,7 @@ import { api } from '../lib/api.js'
 import { t } from '../lib/i18n.js'
 import { deviceId } from '../lib/push.js'
 import { MOBILE, onAppActive } from '../lib/mobile.js'
-import { armRestAlert, bindNativeRest, disarmRestAlert, holdRestAlert, toneNative } from '../lib/rest-alert.js'
+import { onVoiceLine, armRestAlert, bindNativeRest, disarmRestAlert, holdRestAlert, toneNative } from '../lib/rest-alert.js'
 import { useStore } from './useStore.js'
 import { REST_MAX } from '../lib/duration.js'
 import { accentValue } from '../lib/accent.js'
@@ -15,6 +15,8 @@ import { COUNT_IN_SEC, chainCues, heldSec, phaseLeft, resumedEnd, shouldWait } f
 import { cues, bindCueState } from '../lib/spoken-cues.js'
 import { refreshVoices } from '../lib/speech.js'
 import { refreshNatural, setNaturalAllowed } from '../lib/natural-voice.js'
+import { useVoiceLevel } from '../lib/voice-level.js'
+import { useCaption } from '../lib/voice-caption.js'
 import { isOn } from '../lib/modules.js'
 import { subscribeBuildCaps } from '../lib/build-caps.js'
 import { restNextLine, restOverTitle } from '../lib/rest-next.js'
@@ -912,6 +914,8 @@ if (MOBILE) {
   allowNatural()
   useStore.subscribe(allowNatural)
   subscribeBuildCaps(allowNatural)
+  // The Natural voice says how loud and how long the line really is; the orb and the caption follow it.
+  onVoiceLine(ev => { useVoiceLevel.getState().fromNative(ev); useCaption.getState().heard(ev.text, ev.ms) })
   onAppActive(() => { refreshVoices().catch(() => {}); refreshNatural() })
 }
 
