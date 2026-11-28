@@ -27,7 +27,6 @@ import { EXIDX } from './exercises.js'
 import { viewEntry, exUnitOf } from './ex-unit.js'
 import { speak, hush, voiceOpts, speechRateNum } from './speech.js'
 import { useCaption, caption } from './voice-caption.js'
-import { useStore } from '../store/useStore.js'
 import { isNatural } from './natural-voice.js'
 import { prepareNative } from './rest-alert.js'
 import { pickLine, linesFor } from './voice-styles.js'
@@ -126,8 +125,9 @@ export function isLastSet(active, next) {
 /* ------------------------------ the moments useUI calls ------------------------------ */
 
 let readStore = null
-/** useUI hands over how to read the profile (it owns no copy of it). */
-export function bindCueState(get) { readStore = get }
+let writeStore = null
+/** useUI hands over how to read the profile and how to change it (it owns no copy of it). */
+export function bindCueState(get, update) { readStore = get; writeStore = update }
 
 const live = () => {
   const S = readStore?.()
@@ -267,7 +267,7 @@ export const cues = {
   count(n) { if (n >= 1 && n <= 3) { const S = live(); if (S) say(S, String(n), { queue: false, plain: true }) } },
   /** Mute the voice for this workout, or unmute: it goes with `S.active`. */
   mute(on) {
-    useStore.getState().update(S => { if (S.active) S.active.voiceMuted = on ? true : undefined }, false)
+    writeStore?.(S => { if (S.active) S.active.voiceMuted = on ? true : undefined }, false)
     if (on) hush()
   },
   /** Say the last pill line again (shows, speaks, respects mute). */

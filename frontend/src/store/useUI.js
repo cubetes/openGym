@@ -898,7 +898,7 @@ bindNativeRest(ev => {
 })
 
 // Spoken cues read the profile (on or off, the rate, the running workout) from the store.
-bindCueState(() => useStore.getState?.()?.S)
+bindCueState(() => useStore.getState?.()?.S, (mut, push) => useStore.getState().update(mut, push))
 
 // The phone's voice list for the automatic voice (#1390): at load, and again whenever the app
 // comes back (a voice may have been downloaded or deleted in iPhone Settings meanwhile).

@@ -56,3 +56,5 @@
 /* Large text: up to four lines, and no bars (they would crowd the line). */
 .text-big .vcap-line{-webkit-line-clamp:4}
 .text-big .vcap-wave{display:none}
+/* Safari before 16.2 has no color-mix(): plain stand-ins (the minifier drops a same-rule twin). */
+@supports not (color: color-mix(in srgb, red 50%, blue)){.vcap{background:var(--surface-raised);--vcap-tint:var(--label-4)}}

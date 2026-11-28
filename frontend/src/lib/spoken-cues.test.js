@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 
 const h = vi.hoisted(() => ({ voice: '', S: null }))
-vi.mock('../store/useStore.js', () => ({ useStore: { getState: () => ({ update: mut => mut(h.S) }) } }))
 vi.mock('./speech.js', () => ({ speak: vi.fn(() => Promise.resolve(true)), hush: vi.fn(), speechRateNum: S => (S?.speechRate === 'fast' ? 1.25 : 1), voiceOpts: S => ({ rate: S?.speechRate === 'fast' ? 1.25 : 1, pitch: 1, voice: h.voice }) }))
 vi.mock('./rest-alert.js', () => ({ prepareNative: vi.fn(() => Promise.resolve(true)) }))
 const { speak, hush } = await import('./speech.js')
@@ -271,6 +270,7 @@ describe('the voice pill and the mute', () => {
   })
   test('mute sets and clears the flag, and stops speech', () => {
     h.S = { active: {} }
+    bindCueState(null, mut => mut(h.S))
     cues.mute(true)
     expect(h.S.active.voiceMuted).toBe(true)
     expect(hush).toHaveBeenCalledTimes(1)
