@@ -39,15 +39,17 @@ export const autoNatural = (lang, s = state) => {
 }
 
 /* ---------------------------------------------------------------- the choice, per device */
-export function readPrefs(storage = globalThis.localStorage) {
+// The default store is looked up inside the try: a browser that blocks storage throws from the localStorage getter.
+const store = storage => (storage === undefined ? globalThis.localStorage : storage)
+export function readPrefs(storage) {
   let v = null
-  try { v = JSON.parse(storage?.getItem(PREFS_KEY) || 'null') } catch { /* unreadable: the defaults */ }
+  try { v = JSON.parse(store(storage)?.getItem(PREFS_KEY) || 'null') } catch { /* unreadable: the defaults */ }
   return { wifiOnly: v?.wifiOnly !== false }
 }
-export function writePrefs(patch, storage = globalThis.localStorage) {
+export function writePrefs(patch, storage) {
   const next = { ...readPrefs(storage), ...patch }
   next.wifiOnly = next.wifiOnly !== false
-  try { storage?.setItem(PREFS_KEY, JSON.stringify(next)) } catch { /* private mode: for this run only */ }
+  try { store(storage)?.setItem(PREFS_KEY, JSON.stringify(next)) } catch { /* private mode: for this run only */ }
   prefs = next
   return next
 }

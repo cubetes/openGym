@@ -197,6 +197,9 @@ function playClip(S, clip, fallback) {
   const dur = Math.max(300, Math.round((Number(clip.m.dur) || 2) * 1000))
   clipUntil = freeAt = start + dur + GAP
   const go = () => {
+    // Muted (or the workout gone) while the clip waited its turn: it stays quiet, and so does its line.
+    const active = readStore?.()?.active
+    if (!active || active.voiceMuted === true) { clipUntil = 0; return }
     Promise.resolve().then(() => clipPlayer(clip)).then(ok => {
       if (ok) return
       clipUntil = 0

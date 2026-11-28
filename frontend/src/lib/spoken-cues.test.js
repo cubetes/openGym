@@ -164,6 +164,19 @@ describe('styles, the last set, records and clips (v1.4.5 Voice)', () => {
     await vi.advanceTimersByTimeAsync(speechMs('Set 2, 80 kilos, 8 reps'))
     expect(played).toEqual(['c3'])
   })
+  test('a clip waiting its turn does not play once the voice is muted', async () => {
+    vi.useFakeTimers()
+    const played = []
+    _setClipPlayer(async clip => { played.push(clip.id); return true })
+    const m = { kind: 'audio', hash: 'd'.repeat(64), mime: 'audio/wav', size: 100, width: 1, height: 1, dur: 1 }
+    let st = { ...two(), sounds: [{ id: 'c4', name: 'x', m, voice: 'restStart' }] }
+    bindCueState(() => st)
+    cues.restStarted(0)
+    st = { ...st, active: { ...st.active, voiceMuted: true } } // muted before the clip's turn
+    await vi.advanceTimersByTimeAsync(speechMs('Set 2, 80 kilos, 8 reps') + 10)
+    expect(played).toEqual([])
+    expect(speak).toHaveBeenCalledTimes(1) // only the set line said before the mute, no fallback line
+  })
 })
 
 // #1210: only a rest announced the next set, so the workout's first exercise (nothing precedes

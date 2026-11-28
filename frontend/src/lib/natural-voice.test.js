@@ -103,6 +103,16 @@ describe('the native side', () => {
     expect(mocks.calls[0]).toEqual(['download', true])
     expect(nv.naturalState()).toMatchObject({ state: 'none', error: null })
   })
+  it('a browser that blocks storage (the localStorage getter throws) still gets the defaults', () => {
+    const d = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
+    Object.defineProperty(globalThis, 'localStorage', { configurable: true, get() { throw new DOMException('blocked', 'SecurityError') } })
+    try {
+      expect(nv.readPrefs()).toEqual({ wifiOnly: true })
+      expect(nv.writePrefs({ wifiOnly: false })).toEqual({ wifiOnly: false })
+    } finally {
+      if (d) Object.defineProperty(globalThis, 'localStorage', d); else delete globalThis.localStorage
+    }
+  })
   it('remove goes back to none', async () => {
     mocks.ready = true
     await nv.refreshNatural()
