@@ -129,22 +129,28 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 .vo-hint.on{opacity:1;transform:none}
 
 @media (prefers-reduced-motion:reduce){
-  .vo-orb{transition:opacity 150ms linear}
+  /* index.css turns every animation and transition off with !important. These are the voice UI's own gentle
+     reduced-motion fades (pill-orb.md), so they carry !important too and win by specificity. */
+  .vo-orb{transition:opacity 150ms linear!important}
   .vo-orb.held,.vo-orb.muted.held{opacity:.8}
   .vo-orb.held{--s:1}
   .vo-orb.muted.held{--s:.86}
-  .vo-wash.go{animation-duration:150ms}
+  .vo-wash.go{animation:vo-wash 150ms var(--ease-out)!important}
   .vo-b1,.vo-b2{animation:none}
-  .vo-glow{transition:opacity 150ms linear}
+  .vo-fx{transition:opacity 150ms linear!important}
+  .vo-glow{transition:opacity 150ms linear!important}
   .vo-glow i{animation:none}
   .vo-gh{display:none}
-  .vo-bar,.vo-bar.on,.vo-panel,.vo-panel.on,.vo-hint{transform:none;transition:opacity 150ms linear}
-  .vo-words,.vo-bar.on .vo-words{transition:opacity 150ms linear}
-  .vo-ln>span{transition:opacity 150ms linear}
+  .vo-bar,.vo-bar.on,.vo-panel,.vo-panel.on,.vo-hint{transform:none;transition:opacity 150ms linear!important}
+  .vo-words,.vo-bar.on .vo-words{transition:opacity 150ms linear!important}
+  .vo-ln>span{transition:opacity 150ms linear!important}
   .vo-ln>.out{filter:none;transform:none}
   .vo-cap,.vo-acts button,.vo-btn,.vo-round{transition:none}
-  .vo-cap:active,.vo-acts button:active,.vo-btn:active,.vo-round:active{transform:none}
+  /* No press scale: an instant dim says the press landed. */
+  .vo-cap:active,.vo-acts button:active,.vo-btn:active,.vo-round:active{transform:none;opacity:.6}
   .vo-orb.muted .vo-lines b,.vo-orb.sil .vo-lines b{transition:none}
+  .vo-orb.dot .vo-dot{animation:vo-fade 160ms linear both!important}
+  @keyframes vo-fade{from{opacity:0}}
   @starting-style{.vo-bar.on,.vo-panel.on{transform:none}.vo-ln>span{filter:none;transform:none}}
 }
 @media (prefers-reduced-transparency:reduce){
