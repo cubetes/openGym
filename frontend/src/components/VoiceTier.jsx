@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import Icon from './Icon.jsx'
 import { isNatural } from '../lib/natural-voice.js'
 import { t } from '../lib/i18n.js'
@@ -25,13 +26,27 @@ export function tierName(key) {
 const GLYPH = { natural: 'sparkles', premium: 'crown', enhanced: 'starFill', standard: 'speaker', online: 'cloud' }
 const SIZE = { xs: 'xs', md: 'md', xl: 'xl' }
 
+/** True for `ms` after `on` turns false, so a playing look can fade out before it goes. */
+export function useEnding(on, ms = 120) {
+  const [prev, setPrev] = useState(on)
+  const [ending, setEnding] = useState(false)
+  if (prev !== on) { setPrev(on); setEnding(!on) }
+  useEffect(() => {
+    if (!ending) return undefined
+    const id = setTimeout(() => setEnding(false), ms)
+    return () => clearTimeout(id)
+  }, [ending, ms])
+  return ending
+}
+
 // One tile per tier. `tier` is a TIER_KEYS value, or anything else (plain) for Automatic; `glyph` swaps the icon (Automatic wears bolt).
 export default function TierTile({ tier, size = 'md', playing = false, glyph }) {
   const key = GLYPH[tier] ? tier : 'plain'
+  const ending = useEnding(playing)
   return (
     <span className={`tier-tile tier-${key} tier-${SIZE[size] || 'md'}${playing ? ' playing' : ''}`} aria-hidden="true">
       <Icon name={glyph || GLYPH[key] || 'speaker'} className="tier-glyph" />
-      {playing && <><span className="tier-bars"><i /><i /><i /><i /></span><span className="tier-ring" /></>}
+      {(playing || ending) && <span className={'tier-play' + (ending ? ' end' : '')}><span className="tier-bars"><i /><i /><i /><i /></span><span className="tier-ring" /></span>}
     </span>
   )
 }

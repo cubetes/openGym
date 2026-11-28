@@ -2,7 +2,7 @@
 import React, { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { readFileSync } from 'node:fs'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import TierTile, { TIER_KEYS, tierKey, tierName } from './VoiceTier.jsx'
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
@@ -44,6 +44,22 @@ describe('TierTile', () => {
     const el = show(<TierTile tier="natural" playing />).firstChild
     expect(el.querySelectorAll('.tier-bars i').length).toBe(4)
     expect(el.querySelector('.tier-ring')).toBeTruthy()
+  })
+})
+
+describe('TierTile ending', () => {
+  it('stopping keeps the bars a moment while they fade, then they go', () => {
+    vi.useFakeTimers()
+    try {
+      const host = document.createElement('div')
+      const root = createRoot(host)
+      act(() => root.render(<TierTile tier="natural" playing />))
+      act(() => root.render(<TierTile tier="natural" playing={false} />))
+      expect(host.querySelector('.tier-play.end')).not.toBeNull()
+      expect(host.querySelector('.playing')).toBeNull()
+      act(() => { vi.advanceTimersByTime(120) })
+      expect(host.querySelector('.tier-play')).toBeNull()
+    } finally { vi.useRealTimers() }
   })
 })
 

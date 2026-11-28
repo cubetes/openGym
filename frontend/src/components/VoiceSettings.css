@@ -17,8 +17,11 @@
 .vhero-chg { display: flex; align-items: center; gap: 2px; flex: none; min-height: 44px; font-size: var(--fs-body); font-weight: 500; color: var(--acc) }
 .vhero-chg .icn { width: 14px; height: 14px }
 .vhero-wave { display: flex; align-items: center; justify-content: center; gap: 3px; height: 56px; margin: 10px 0 12px }
-.vhero-wave i { flex: none; width: 4px; height: 100%; border-radius: 2px; background: var(--tier-a); transform: scaleY(.12); opacity: .55 }
-.vhero.play .vhero-wave i { opacity: 1; transform: scaleY(var(--h)); animation: vhero-wv var(--d) cubic-bezier(.77, 0, .175, 1) infinite alternate; animation-delay: var(--dl) }
+.vhero-wave i { flex: none; width: 4px; height: 100%; border-radius: 2px; background: var(--tier-a); transform: scaleY(.12); opacity: .55; transition: opacity 120ms var(--ease-out) }
+/* Each bar grows from the rest height (positive delays: none jumps to mid-swing); ending, they keep moving while they fade out. */
+.vhero:is(.play, .end) .vhero-wave i { animation: vhero-wv var(--d) cubic-bezier(.77, 0, .175, 1) infinite alternate; animation-delay: var(--dl) }
+.vhero.play .vhero-wave i { opacity: 1 }
+.vhero.end .vhero-wave i { opacity: 0 }
 @keyframes vhero-wv { from { transform: scaleY(.12) } to { transform: scaleY(var(--h)) } }
 .btn.vhero-try { width: 100%; min-height: 52px; border-radius: 16px; transition: transform 160ms var(--ease-out) }
 .btn.vhero-try:active { transform: scale(.97) }
@@ -72,7 +75,7 @@
 @media (prefers-reduced-motion: reduce) {
   .vp-in { animation-name: vs-fade; animation-duration: 140ms; animation-delay: 0s }
   .vp-voice .lrow-k { animation-name: vs-fade; animation-duration: 140ms; animation-delay: 0s }
-  .vhero-wave i, .vhero.play .vhero-wave i { animation: none }
+  .vhero-wave i, .vhero:is(.play, .end) .vhero-wave i { animation: none }
   .vhero.play .vhero-wave i { transform: scaleY(.5) }
   .btn.vhero-try, .vs-tile, .vs-bub { transition: none }
   .btn.vhero-try:active, .vs-tile:active, .vs-bub:active { transform: none }

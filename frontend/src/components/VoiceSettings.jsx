@@ -28,7 +28,7 @@ import { unlock, chime } from '../lib/sound.js'
 import { soundErrorText } from './OwnSounds.jsx'
 import { Section, Row, Slider, Switch, Button, TextField } from './ui.jsx'
 import Icon from './Icon.jsx'
-import TierTile, { tierKey, tierName } from './VoiceTier.jsx'
+import TierTile, { tierKey, tierName, useEnding } from './VoiceTier.jsx'
 import { isOn } from '../lib/modules.js'
 import { speakMs } from '../lib/voice-caption.js'
 import './VoiceSettings.css'
@@ -417,8 +417,8 @@ export function momentSummary(S, moment) {
   return linesFor(S, moment)[0] || t('Quiet')
 }
 
-// The waveform is decoration: 28 bars of fixed height and period, moving only while a sample plays.
-const WAVE = Array.from({ length: 28 }, (_, i) => ({ '--h': (0.35 + 0.6 * Math.abs(Math.sin(i * 1.7))).toFixed(2), '--d': [0.8, 0.9, 1.1, 1.3][i % 4] + 's', '--dl': `-${((i * 0.37) % 1).toFixed(2)}s` }))
+// The waveform is decoration: 28 bars of fixed height and period, moving only while a sample plays. They start from flat and fade out before they stop.
+const WAVE = Array.from({ length: 28 }, (_, i) => ({ '--h': (0.35 + 0.6 * Math.abs(Math.sin(i * 1.7))).toFixed(2), '--d': [0.8, 0.9, 1.1, 1.3][i % 4] + 's', '--dl': `${(((i * 0.37) % 1) * 0.4).toFixed(2)}s` }))
 
 /** The voice in use: its tile, its name, Change (opens the picker), a waveform and Try it. */
 function VoiceHero({ vs, cur, openList }) {
@@ -445,7 +445,8 @@ function VoiceHero({ vs, cur, openList }) {
     setPlaying(true)
     timer.current = setTimeout(() => setPlaying(false), speakMs(`${cue}. ${line}`, speechRateNum(S)))
   }
-  return <div className={`vhero tier-${key}${playing ? ' play' : ''}`}>
+  const ending = useEnding(playing)
+  return <div className={`vhero tier-${key}${playing ? ' play' : ''}${ending ? ' end' : ''}`}>
     <button type="button" className="vhero-main" aria-label={`${t('Using now')}, ${[name, sub].filter(Boolean).join(', ')}. ${t('Change voice')}`} onClick={openList}>
       <TierTile tier={key} size="xl" playing={playing} />
       <span className="vhero-tx">

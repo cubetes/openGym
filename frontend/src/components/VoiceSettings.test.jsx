@@ -137,6 +137,9 @@ describe('Settings → Timer alerts → Voice', () => {
       await act(async () => { vi.advanceTimersByTime(speakMs(`${sampleCue('kg')}. ${sampleLine(mocks.S)}`, 1) + 10) })
       expect(btn().textContent).toBe('Try it')
       expect(host.querySelector('.vhero .tier-tile.playing')).toBeNull()
+      expect(host.querySelector('.vhero.end')).not.toBeNull()
+      await act(async () => { vi.advanceTimersByTime(120) })
+      expect(host.querySelector('.vhero.end')).toBeNull()
     } finally { vi.useRealTimers() }
   })
   it('anything else that speaks ends Playing', async () => {
