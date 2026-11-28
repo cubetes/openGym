@@ -15,7 +15,8 @@ import { useStore } from '../store/useStore.js'
 import { savePrefs } from '../lib/device-prefs-sync.js'
 import { useUI } from '../store/useUI.js'
 import { t } from '../lib/i18n.js'
-import { speak, hush, voiceState, onVoices, refreshVoices, langName, speechLang, voiceLabel, voiceOpts, pickedVoice, setPickedVoice, speechRateNum, speechPitchNum, setSpeechRate, setSpeechPitch, speechSupported, SPEECH_MIN, SPEECH_MAX } from '../lib/speech.js'
+import { speak, hush, voiceState, onVoices, refreshVoices, langName, speechLang, voiceLabel, voiceOpts, pickedVoice, storedVoice, setPickedVoice, speechRateNum, speechPitchNum, setSpeechRate, setSpeechPitch, speechSupported, SPEECH_MIN, SPEECH_MAX } from '../lib/speech.js'
+import { isNatural } from '../lib/natural-voice.js'
 import { sampleCue } from '../lib/spoken-cues.js'
 import { MOMENTS, MOMENT_COPY, STYLE_COPY, STYLE_IDS, cueStyleOf, linesFor, ownLines, setOwnLines, startOwnFrom, hasOwnLines, sampleLine, LINES_MAX, LINE_MAX } from '../lib/voice-styles.js'
 import { voiceClipsOf, addVoiceClip, removeVoiceClip, CLIPS_PER_MOMENT, CLIP_SEC } from '../lib/voice-clips.js'
@@ -57,8 +58,30 @@ export function useVoices() {
   return st
 }
 
-function VoiceSheet({ close }) {
-  const { voices: list, auto, ios, tag } = useVoices()
+const tierOf = (v, ios) => (v.quality === 'premium' ? t('Premium') : v.quality === 'enhanced' ? t('Enhanced') : ios ? t('Standard') : null)
+
+/** What the Voice row says. A Natural pick is named here too (Natural voice, task C3b). */
+function voiceRowValue({ voices, auto, stuck }, cur) {
+  if (voices === null) return null
+  const picked = voices.find(v => v.id === cur)
+  if (picked) return voiceLabel(picked)
+  return stuck ? t('Standard voice') : auto ? t('Automatic · {0}', voiceLabel(auto)) : t('Automatic')
+}
+
+/** The four steps to a better Apple voice. The menu names are the verified iPhone ones. */
+function StepsSheet({ close, lang }) {
+  const steps = [t('Open the iPhone Settings app.'), t('Tap Accessibility, then Read & Speak.'), t('Tap Voices, then {0}.', lang), t('Download a voice marked Premium or Enhanced.')]
+  return <>
+    <h3>{isEnglish() ? t('Get a better voice') : t('Get a better {0} voice', lang)}</h3>
+    <ol className="vp-steps">{steps.map((s, i) => <li key={i}><span className="vp-n" aria-hidden="true">{i + 1}</span>{s}</li>)}</ol>
+    <Button variant="primary" onClick={close}>{t('Done')}</Button>
+  </>
+}
+const isEnglish = () => speechLang().split('-')[0] === 'en'
+
+/** Settings > Timer alerts > Voice > Choose a voice: Automatic, then this language's voices, by tier. */
+export function VoiceList() {
+  const { voices: list, auto, ios } = useVoices()
   const voices = list || []
   const [cur, setCur] = useState(pickedVoice())
   const pick = (id, say = id) => {
@@ -67,23 +90,34 @@ function VoiceSheet({ close }) {
     setCur(id)
     sayIt(sampleLine(S_()) || sampleCue(S_().unit), { voice: say })
   }
-  const lang = langName(tag || speechLang())
+  const lang = langName(speechLang().split('-')[0])
+  const premium = voices.some(v => v.quality === 'premium')
   const autoNote = !ios ? null : auto
-    ? t('Uses {0} ({1}), the best {2} voice on this iPhone.', voiceLabel(auto), auto.quality === 'premium' ? t('Premium') : t('Enhanced'), lang)
+    ? t('Uses {0} ({1}), the best voice for your accent.', voiceLabel(auto), auto.quality === 'premium' ? t('Premium') : t('Enhanced'))
     : t('Uses your phone’s standard voice.')
-  const iosNote = !ios ? null : auto ? t('More voices: Settings → Accessibility → Read & Speak → Voices.') : t('Your iPhone only has the standard voice for {0}. For one that sounds more like a person, download a {0} voice marked Enhanced or Premium: Settings → Accessibility → Read & Speak → Voices. Each is 100 MB or more, so use Wi-Fi. openGym uses it as soon as it is there.', lang)
-  const empty = voices.length ? null : t('No other voices for this language here. Your device’s settings can add more.')
+  const groups = []
+  for (const v of voices) {
+    const g = groups.find(x => x.lang === v.lang)
+    if (g) g.voices.push(v); else groups.push({ lang: v.lang, voices: [v] })
+  }
   return <>
-    <h3>{t('Voice')}</h3>
-    <div className="muted small" style={{ marginBottom: 12 }}>{t('Tap one to hear it. The voices are your device’s own.')}</div>
-    <Section footer={empty || iosNote ? <>{empty} {iosNote}</> : null}>
+    <Section footer={voices.length ? null : t('No other voices for this language here. Your device’s settings can add more.')}>
       <Row icon={cur ? 'play' : 'speaker'} iconTint="var(--teal)" title={t('Automatic')} subtitle={autoNote} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', auto?.id || '')} />
-      {voices.map(v => <Row key={v.id} icon={cur === v.id ? 'speaker' : 'play'} iconTint="var(--teal)" title={voiceLabel(v)}
-        subtitle={[v.quality === 'premium' ? t('Premium') : v.quality === 'enhanced' ? t('Enhanced') : null, langName(v.lang), v.online ? t('Needs internet') : null].filter(Boolean).join(' · ') || null}
-        accessory={cur === v.id ? 'check' : 'none'} onClick={() => pick(v.id)} />)}
     </Section>
-    <div style={{ height: 14 }} />
-    <Button variant="primary" onClick={close}>{t('Done')}</Button>
+    {groups.map(g => <Section key={g.lang} title={langName(g.lang) || g.lang}>
+      {g.voices.map(v => <Row key={v.id} icon={cur === v.id ? 'speaker' : 'play'} iconTint="var(--teal)" title={voiceLabel(v)}
+        subtitle={v.online ? t('Needs internet') : null} value={tierOf(v, ios)} className="vp-voice"
+        accessory={cur === v.id ? 'check' : 'none'} onClick={() => pick(v.id)} />)}
+    </Section>)}
+    {ios && !premium && <section className="sect"><div className="sect-b vp-card">
+      <div className="vp-hint"><Icon name="info" aria-hidden="true" /><div>
+        <b>{isEnglish() ? t('Better voices are free') : t('Better {0} voices are free', lang)}</b>
+        <span>{t('Settings > Accessibility > Read & Speak > Voices')}</span>
+      </div></div>
+      <Button variant="tinted" className="vp-how" onClick={() => useUI.getState().openSheet(close => <StepsSheet close={close} lang={lang} />)}>{t('Show me how')}</Button>
+    </div></section>}
+    {ios && premium && <p className="sect-f vp-note"><Icon name="info" aria-hidden="true" />{t('You already have a Premium voice. Nothing to add.')}</p>}
+    {/* Task C3b: the Natural voice group goes here, after the Apple voices. */}
   </>
 }
 
@@ -236,14 +270,14 @@ export function momentSummary(S, moment) {
   return linesFor(S, moment)[0] || t('Quiet')
 }
 
-export default function VoiceSettings() {
+export default function VoiceSettings({ openList }) {
   const S = useStore(s => s.S)
   const update = useStore(s => s.update)
-  const { voices, auto, ios } = useVoices()
-  const stuck = ios && !auto
+  const vs = useVoices()
+  const { voices } = vs
+  const stuck = vs.ios && !vs.auto
   const style = cueStyleOf(S)
   const cur = pickedVoice()
-  const curVoice = voices?.find(v => v.id === cur)
   const pickStyle = id => {
     update(s => { s.cueStyle = id })
     const after = { ...S_(), cueStyle: id }
@@ -251,15 +285,17 @@ export default function VoiceSettings() {
   }
   // Shown in full even where nothing can speak (this browser): the lines and clips sync to the
   // devices that can, and the footer says why nothing is heard here.
-  const base = !speechSupported() ? t('This browser can’t speak. Try another one.')
-    : S.spokenCues === true ? null : t('Spoken cues are off. Switch them on in Timer alerts to hear any of this in a workout.')
-  const footer = stuck && !cur ? <>{t('Better voices need a download. Tap Voice to see how.')} {base}</> : base
+  const footer = !speechSupported() ? t('This browser can’t speak. Try another one.') : null
   return <>
+    {S.spokenCues !== true && <section className="sect"><div className="sect-b vp-card">
+      <div className="vp-off"><b>{t('Spoken cues are off')}</b><span>{t('Switch them on to hear any of this.')}</span></div>
+      <Button variant="primary" className="vp-how" onClick={() => { update(s => { s.spokenCues = true }); sayIt(sampleCue(S.unit)) }}>{t('Turn on')}</Button>
+    </div></section>}
     <Section footer={footer}>
-      <Row icon="personCircle" iconTint="var(--teal)" title={t('Voice')} value={voices === null ? null : curVoice ? voiceLabel(curVoice) : stuck ? t('Standard voice') : t('Automatic')} accessory="chevron"
-        onClick={() => { if (voices) useUI.getState().openSheet(close => <VoiceSheet close={close} />) }} />
+      <Row icon="personCircle" iconTint="var(--teal)" title={t('Voice')} value={voiceRowValue({ ...vs, stuck }, cur)} accessory="chevron" onClick={openList} />
       <SliderRow icon="gauge" title={t('Speed')} value={speechRateNum(S)} set={setSpeechRate} low={t('Slower')} high={t('Faster')} />
-      <SliderRow icon="speaker" title={t('Pitch')} value={speechPitchNum(S)} set={setSpeechPitch} low={t('Lower')} high={t('Higher')} />
+      {/* Kokoro has no pitch, and shifting it afterwards spoils the sound (Ruling 2). */}
+      {!isNatural(storedVoice()) && <SliderRow icon="speaker" title={t('Pitch')} value={speechPitchNum(S)} set={setSpeechPitch} low={t('Lower')} high={t('Higher')} />}
       <Row icon="play" iconTint="var(--green)" title={t('Try it')} onClick={() => { sayIt(sampleCue(S.unit)); speak(sampleLine(S), { ...voiceOpts(S) }) }} />
     </Section>
     <Section title={t('Style')} footer={t('Only the words change. The voice is always one of your device’s own.')}>

@@ -34,7 +34,7 @@ vi.mock('../lib/speech.js', async importOriginal => {
   }
 })
 
-const { default: VoiceSettings, momentSummary, micErrorText, recordType } = await import('./VoiceSettings.jsx')
+const { default: VoiceSettings, VoiceList, momentSummary, micErrorText, recordType } = await import('./VoiceSettings.jsx')
 
 let host, root, spoken
 beforeEach(() => {
@@ -80,59 +80,98 @@ describe('Settings → Timer alerts → Voice', () => {
     expect(mocks.S.cueStyle).toBe('hype')
     expect(spoken.at(-1).text).toBe('LET’S GO! ONE MORE, CHAMP!')
   })
-  it('the voice sheet lists this language’s voices; a pick is kept on this device', async () => {
-    await render(<VoiceSettings />)
+  it('the Voice row opens the picker page', async () => {
+    const openList = vi.fn()
+    await render(<VoiceSettings openList={openList} />)
     await act(async () => { rowTitled('Voice').click() })
-    expect(mocks.sheets).toHaveLength(1)
-    const { VoiceSheetForTest } = { VoiceSheetForTest: mocks.sheets[0] }
-    await render(VoiceSheetForTest(() => {}))
+    expect(openList).toHaveBeenCalledTimes(1)
+  })
+  it('the picker lists this language’s voices; a pick is kept on this device', async () => {
+    await render(<VoiceList />)
     expect(titles()).toEqual(['Automatic', 'Anna'])
+    expect(rowTitled('Automatic').querySelector('.lrow-k')).not.toBeNull()
     await act(async () => { rowTitled('Anna').click() })
     expect(localStorage.getItem('og_speech_voice')).toBe('anna')
     expect(spoken.at(-1).voice.name).toBe('Anna')
+    expect(rowTitled('Anna').querySelector('.lrow-k')).not.toBeNull()
+    expect(rowTitled('Automatic').querySelector('.lrow-k')).toBeNull()
   })
-  describe('the voice sheet and the iPhone hint', () => {
+  it('a voice picked before shows the check when the page opens', async () => {
+    localStorage.setItem('og_speech_voice', 'anna')
+    await render(<VoiceList />)
+    expect(rowTitled('Anna').querySelector('.lrow-k')).not.toBeNull()
+    expect(rowTitled('Automatic').querySelector('.lrow-k')).toBeNull()
+  })
+  it('the picker groups voices by language', async () => {
+    mocks.voices = { voices: [{ id: 'anna', name: 'Anna', lang: 'en-GB' }, { id: 'tom', name: 'Tom', lang: 'en-US' }, { id: 'bob', name: 'Bob', lang: 'en-GB' }], auto: null, ios: false }
+    await render(<VoiceList />)
+    expect([...host.querySelectorAll('.sect-t')].map(e => e.textContent)).toEqual(['British English', 'American English'])
+  })
+  it('cues off: a notice with Turn on, which switches them on', async () => {
+    mocks.S.spokenCues = false
+    await render(<VoiceSettings />)
+    expect(host.textContent).toContain('Spoken cues are off')
+    const turnOn = [...host.querySelectorAll('button')].find(b => b.textContent === 'Turn on')
+    await act(async () => { turnOn.click() })
+    expect(mocks.S.spokenCues).toBe(true)
+    await render(<VoiceSettings />)
+    expect(host.textContent).not.toContain('Spoken cues are off')
+  })
+  it('a Natural pick hides Pitch', async () => {
+    localStorage.setItem('og_speech_voice', 'natural:af_heart')
+    await render(<VoiceSettings />)
+    expect(titles()).not.toContain('Pitch')
+    expect(host.querySelectorAll('[role="slider"]')).toHaveLength(1)
+  })
+  describe('the picker and the iPhone hint', () => {
     const phone = (voices, auto, ios = true) => { mocks.mobile = true; mocks.voices = { voices, auto, ios } }
     const anna = { id: 'anna', name: 'Anna', lang: 'en-GB', online: false }
     const serena = { id: 'serena', name: 'Serena', lang: 'en-GB', online: false, quality: 'premium' }
-    const sheetText = async () => { await render(mocks.sheets[0](() => {})); return host.textContent }
-    const openSheet = async () => { await act(async () => { rowTitled('Voice').click() }) }
-    const hint = 'Better voices need a download. Tap Voice to see how.'
-    it('a stuck iPhone says Standard voice, points to the sheet, and the sheet says how', async () => {
+    const nicky = { id: 'nicky', name: 'Nicky', lang: 'en-GB', online: false, quality: 'enhanced' }
+    const hint = 'Better voices are free'
+    const button = text => [...host.querySelectorAll('button')].find(b => b.textContent === text)
+    it('a stuck iPhone says Standard voice and the picker says how to get better ones', async () => {
       phone([anna], null)
       await render(<VoiceSettings />)
       expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Standard voice')
+      await render(<VoiceList />)
       expect(host.textContent).toContain(hint)
-      await openSheet()
-      const text = await sheetText()
-      expect(text).toContain('British English')
-      expect(text).toContain('Settings → Accessibility → Read & Speak → Voices')
-      expect(text).toContain('Uses your phone’s standard voice.')
+      expect(host.textContent).toContain('Settings > Accessibility > Read & Speak > Voices')
+      expect(host.textContent).not.toContain('Nothing to add')
+      expect(rowTitled('Automatic').querySelector('.lrow-s').textContent).toBe('Uses your phone’s standard voice.')
+      expect(rowTitled('Anna').querySelector('.lrow-v').textContent).toBe('Standard')
     })
-    it('a premium voice is named by the Automatic row, and nothing says stuck', async () => {
+    it('Show me how opens the steps and Done closes them', async () => {
+      phone([anna], null)
+      await render(<VoiceList />)
+      await act(async () => { button('Show me how').click() })
+      expect(mocks.sheets).toHaveLength(1)
+      const close = vi.fn()
+      await render(mocks.sheets[0](close))
+      expect(host.textContent).toContain('Tap Accessibility, then Read & Speak.')
+      expect(host.querySelectorAll('li')).toHaveLength(4)
+      await act(async () => { button('Done').click() })
+      expect(close).toHaveBeenCalledTimes(1)
+    })
+    it('an Enhanced voice still gets the hint, and Automatic names it', async () => {
+      phone([nicky, anna], nicky)
+      await render(<VoiceList />)
+      expect(host.textContent).toContain(hint)
+      expect(rowTitled('Automatic').querySelector('.lrow-s').textContent).toBe('Uses Nicky (Enhanced), the best voice for your accent.')
+      expect(rowTitled('Nicky').querySelector('.lrow-v').textContent).toBe('Enhanced')
+    })
+    it('a Premium voice: nothing to add, no hint, and the Voice row names it', async () => {
       phone([serena, anna], serena)
       await render(<VoiceSettings />)
-      expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Automatic')
+      expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Automatic · Serena')
+      await render(<VoiceList />)
+      expect(host.textContent).toContain('You already have a Premium voice. Nothing to add.')
       expect(host.textContent).not.toContain(hint)
-      await openSheet()
-      await render(mocks.sheets[0](() => {}))
-      expect(rowTitled('Automatic').querySelector('.lrow-s').textContent).toBe('Uses Serena (Premium), the best British English voice on this iPhone.')
       expect(titles()).toEqual(['Automatic', 'Serena', 'Anna'])
-      expect(rowTitled('Serena').querySelector('.lrow-s').textContent).toBe('Premium · British English')
-      expect(host.textContent).toContain('More voices: Settings → Accessibility → Read & Speak → Voices.')
-      expect(host.textContent).not.toContain('only has the standard voice')
+      expect(rowTitled('Serena').querySelector('.lrow-v').textContent).toBe('Premium')
       await act(async () => { rowTitled('Automatic').click() })
       expect(mocks.opts.at(-1).voice).toBe('serena')
       expect(localStorage.getItem('og_speech_voice')).toBeNull()
-    })
-    it('an American iPhone in an English app: the hint names American English', async () => {
-      phone([{ ...anna, lang: 'en-US' }], null)
-      mocks.voices.tag = 'en-US'
-      await render(<VoiceSettings />)
-      await openSheet()
-      const text = await sheetText()
-      expect(text).toContain('American English')
-      expect(text).not.toContain('British English')
     })
     it('a voice downloaded while away shows in the Voice row when the refresh lands', async () => {
       phone([anna], null)
@@ -140,47 +179,37 @@ describe('Settings → Timer alerts → Voice', () => {
       expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Standard voice')
       mocks.voices = { voices: [serena, anna], auto: serena, ios: true }
       await act(async () => { mocks.subs.forEach(cb => cb()) })
-      expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Automatic')
+      expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Automatic · Serena')
     })
     it('before the first listing the Voice row shows no value', async () => {
       phone(null, null, false)
       await render(<VoiceSettings />)
       expect(rowTitled('Voice').querySelector('.lrow-v')).toBeNull()
     })
-    it('a listing that fails still lets the sheet open, with nothing to pick', async () => {
+    it('a listing that fails still lets the picker open, with nothing to pick', async () => {
       phone(null, null, false)
       mocks.refresh = () => Promise.reject(new Error('no list'))
-      await render(<VoiceSettings />)
-      await openSheet()
-      expect(mocks.sheets).toHaveLength(1)
-      expect(await sheetText()).toContain('No other voices')
+      await render(<VoiceList />)
+      expect(host.textContent).toContain('No other voices')
     })
-    it('Android gets no "on this iPhone" subtitle and no standard-voice note', async () => {
-      phone([anna], null, false)
-      await render(<VoiceSettings />)
-      await openSheet()
-      await render(mocks.sheets[0](() => {}))
-      expect(rowTitled('Automatic').querySelector('.lrow-s')).toBeNull()
-    })
-    it('Android and the web get no download hint', async () => {
+    it('Android and the web get no subtitle, no tier and no hint', async () => {
       for (const mobile of [true, false]) {
         phone([anna], null, false)
         mocks.mobile = mobile
         await render(<VoiceSettings />)
         expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Automatic')
+        await render(<VoiceList />)
+        expect(rowTitled('Automatic').querySelector('.lrow-s')).toBeNull()
+        expect(rowTitled('Anna').querySelector('.lrow-v')).toBeNull()
+        expect(host.textContent).not.toContain('Read & Speak')
         expect(host.textContent).not.toContain(hint)
-        await openSheet()
-        const text = await sheetText()
-        expect(text).not.toContain('Read & Speak')
-        mocks.sheets = []
       }
     })
-    it('a picked voice shows its name and no hint', async () => {
+    it('a picked voice shows its name in the Voice row', async () => {
       phone([anna], null)
       localStorage.setItem('og_speech_voice', 'anna')
       await render(<VoiceSettings />)
       expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Anna')
-      expect(host.textContent).not.toContain(hint)
     })
   })
   it('a moment says what it holds', () => {

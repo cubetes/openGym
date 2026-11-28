@@ -41,7 +41,7 @@ import { queueOf } from '../lib/queue.js'
 import { weekTargetOf } from '../lib/week-left.js'
 import { speak, speechSupported, voiceOpts, voiceState, onVoices, pickedVoice } from '../lib/speech.js'
 import { STYLE_COPY, cueStyleOf } from '../lib/voice-styles.js'
-import VoiceSettings from '../components/VoiceSettings.jsx'
+import VoiceSettings, { VoiceList } from '../components/VoiceSettings.jsx'
 import { bandsSheet } from '../components/Bands.jsx'
 import { bandsOf } from '../lib/bands.js'
 import { sampleCue } from '../lib/spoken-cues.js'
@@ -610,7 +610,8 @@ export default function Settings({ page = null, find = null, via = null, entryKe
     zepp: () => <ZeppSettingsPage />,
     gym: () => <GymReminderPage />,
     network: () => <NetworkLogPage />,
-    voice: () => <VoiceSettings />,
+    voice: () => <VoiceSettings openList={() => open('voice-list')} />,
+    'voice-list': () => <VoiceList />,
     live: () => <LiveWidgetSettings />,
     'live-custom': () => <LiveWidgetCustomise />,
     'gym-find': () => <GymFindPage />,

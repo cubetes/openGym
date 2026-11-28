@@ -300,6 +300,7 @@ describe('the search lands on a row', () => {
     'gym: Checking…', // the page loading
     'gym-find: Current location', // a search result, not a setting
     'voice: Try it', // plays a sample
+    'voice-list: Automatic', // a voice pick, not a setting
     'zepp: Install the watch app', // a link to the install guide
     'integrations: Strava', 'integrations: openNutrition', // brand names, not translated: the Integrations page's own words find them
     'live: Effort', // reads "Effort (RIR)" once effort is on; "Effort per set" answers the word

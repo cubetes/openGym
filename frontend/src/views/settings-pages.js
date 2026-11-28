@@ -45,6 +45,7 @@ export const PAGES = {
   'live-custom': { title: 'Per exercise type', icon: 'slider', tint: 'var(--grey)', parent: 'live', kw: 'live widget per exercise type strength bands holds cardio carries details buttons' },
   // How the spoken cues sound (components/VoiceSettings.jsx, v1.4.5).
   voice: { title: 'Voice', icon: 'chat', tint: 'var(--teal)', parent: 'alerts', kw: 'voice voices speak speech tts spoken cues style hype drill sergeant calm deadpan lines clip record recording microphone pitch speed speaker person accent male female' },
+  'voice-list': { title: 'Choose a voice', icon: 'chat', tint: 'var(--teal)', parent: 'voice', kw: 'voice voices choose pick automatic premium enhanced standard better free download accent' },
   // Trainers and gyms (TRAINERS=on on the server, docs/TRAINERS.md): who sees what of your training.
   // Settings → Integrations → API tokens (docs/API_TOKENS.md): scoped tokens for MCP and scripts.
   'api-tokens': { title: 'API tokens', icon: 'key', tint: 'var(--purple)', parent: 'integrations', mod: 'integrations', kw: 'api token tokens key mcp claude chatgpt cursor assistant planner script access revoke' },
