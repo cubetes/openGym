@@ -1,0 +1,120 @@
+/* The voice orb (VoiceOrb.jsx). Its place comes from --vp-b in index.css; the lines and halo are still here, Task D2 moves them. */
+/* The tier classes (VoiceTier.css) also paint a tile: this is no tile, only the colours --tier-a and --tier-b. */
+div.vo,div.vo-fx{background:none;box-shadow:none;border:0;border-radius:0}
+.vo,.vo-fx{position:fixed;inset-inline:16px;bottom:var(--vp-b);height:56px;max-width:528px;margin-inline:auto;pointer-events:none}
+.vo{z-index:65;color:var(--label);--vo-tint:color-mix(in srgb,var(--label) 11%,transparent)}
+/* The halo and the ripples sit behind the page controls (the Complete bar, the rest bar), so they only ever light the empty page. */
+.vo-fx{z-index:40}
+.vo-halo{position:absolute;inset-inline-end:-50px;bottom:-50px;width:156px;height:156px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,var(--tier-a) 0,var(--tier-b) 34%,transparent 68%);mix-blend-mode:screen;transform:scale(.62);opacity:.14;
+  transition:opacity 200ms var(--ease-out)}
+:root[data-theme="light"] .vo-halo{mix-blend-mode:normal}
+.vo-fx.off .vo-halo{opacity:0}
+
+/* The bar and its panel: glass, grown out of the orb. */
+.vo-stack{position:absolute;inset-inline:0;bottom:0}
+:where(.vo-stack) button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.vo-bar,.vo-panel,.vo-hint{
+  background:var(--surface-raised);background:color-mix(in srgb,var(--surface-raised) 90%,transparent);
+  -webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px);
+  border:.5px solid var(--raised-line);box-shadow:0 8px 24px rgba(0,0,0,.3);transform-origin:100% 100%}
+[dir="rtl"] :is(.vo-bar,.vo-panel,.vo-hint){transform-origin:0 100%}
+/* Closed it is the orb's own 56 x 56 shape (scaleX 56 / width, scaleY stays 1); open it grows to the left. */
+.vo-bar{position:relative;display:flex;min-height:56px;border-radius:28px;
+  transform:scale(.157,1);opacity:0;pointer-events:none;transition:transform 200ms var(--ease-out),opacity 150ms var(--ease-out)}
+.vo-bar.on{transform:none;opacity:1;pointer-events:auto;transition:transform 260ms var(--ease),opacity 160ms var(--ease-out)}
+@starting-style{.vo-bar.on{transform:scale(.157,1);opacity:0}}
+.vo-cap{flex:1;min-width:0;display:flex;align-items:center;text-align:start;padding:8px 62px 8px 20px;font-size:.9375rem;font-weight:500;line-height:1.25;letter-spacing:-.01em;
+  transition:transform 160ms var(--ease-out)}
+[dir="rtl"] .vo-cap{padding:8px 20px 8px 62px}
+.vo-cap:active{transform:scale(.98)}
+.vo-words{display:block;flex:1;min-width:0;opacity:0;transition:opacity 60ms var(--ease-out)}
+.vo-bar.on .vo-words{opacity:1;transition:opacity 180ms var(--ease-out) 70ms}
+.vo-tx{display:flex;flex-direction:column;min-width:0}
+.vo-meta{display:block;font-size:.75rem;line-height:1.3;color:var(--label-2);margin-top:1px}
+.vo-dim{color:var(--label-2)}
+.vo-c1,.vo-c2{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;-webkit-line-clamp:2}
+.vo-c1{-webkit-line-clamp:1}
+/* Large text: up to four lines, growing upward (the bar is anchored to the orb at the bottom). */
+.text-big .vo-c1,.text-big .vo-c2{-webkit-line-clamp:4}
+/* A new line swaps in place: the old one up and out, the new one in, by transition (a countdown would restart a keyframe every second). */
+.vo-ln{display:grid}
+.vo-ln>span{grid-area:1/1;transition:opacity 160ms var(--ease-out),filter 160ms var(--ease-out),transform 160ms var(--ease-out)}
+.vo-ln>.out{opacity:0;filter:blur(2px);transform:translateY(-4px)}
+@starting-style{.vo-ln>span{opacity:0;filter:blur(2px);transform:translateY(4px)}}
+
+.vo-panel{position:absolute;inset-inline:0;bottom:calc(100% + 8px);border-radius:22px;overflow:hidden;
+  opacity:0;transform:translateY(8px) scale(.98);pointer-events:none;transition:opacity 150ms var(--ease-out),transform 150ms var(--ease-out)}
+.vo-panel.on{opacity:1;transform:none;pointer-events:auto;transition:opacity 200ms var(--ease-out),transform 200ms var(--ease-out)}
+@starting-style{.vo-panel.on{opacity:0;transform:translateY(8px) scale(.98)}}
+.vo-acts{display:grid;grid-template-columns:repeat(3,1fr);padding:6px 8px}
+.vo-acts button{min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-radius:12px;font-size:.8125rem;font-weight:600}
+.vo-acts i{width:34px;height:34px;border-radius:50%;background:var(--vo-tint);display:grid;place-items:center;font-size:1.125rem;font-style:normal}
+.vo-card{margin:0;padding:12px 16px 2px;font-size:1rem;line-height:1.3;font-weight:500}
+.vo-row{display:flex;gap:8px;padding:8px 10px 10px;align-items:center}
+.vo-btn{flex:1;min-height:48px;border-radius:14px;background:var(--vo-tint)!important;display:flex;align-items:center;justify-content:center;gap:8px;font-size:.9375rem;font-weight:600;text-align:center;line-height:1.15}
+.vo-round{flex:none;width:48px;height:48px;border-radius:50%;background:var(--vo-tint)!important;display:grid;place-items:center;font-size:1.125rem}
+.vo-acts button,.vo-btn,.vo-round{transition:transform 160ms var(--ease-out)}
+.vo-acts button:active,.vo-btn:active,.vo-round:active{transform:scale(.97)}
+.vo-stack button:focus-visible,.vo-orb:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+/* The orb: 56 px round, the tier's gradient, three rounded lines (scaleY only). */
+.vo-orb{position:absolute;inset-inline-end:0;bottom:0;width:56px;height:56px;padding:0;border:0;background:none;border-radius:50%;
+  pointer-events:auto;color:#fff;touch-action:manipulation;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;
+  transform:scale(var(--s,1));transition:transform 200ms var(--ease-out),opacity 200ms var(--ease-out)}
+.vo-orb *{pointer-events:none}
+.vo-orb.held{--s:.92;transition-duration:160ms}
+.vo-orb.muted{--s:.86}
+.vo-orb.muted.held{--s:.79}
+.vo-body{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,var(--tier-a),var(--tier-b));
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.45),inset 0 -7px 12px rgba(0,0,0,.18),0 2px 8px rgba(0,0,0,.28)}
+.vo-body i{position:absolute;inset:0;border-radius:50%}
+.vo-b1{background:radial-gradient(circle at 24% 28%,rgba(255,255,255,.4) 0,transparent 55%)}
+.vo-b2{background:radial-gradient(circle at 78% 72%,rgba(255,255,255,.28) 0,transparent 52%)}
+.vo-core{background:radial-gradient(circle at 50% 42%,rgba(255,255,255,.95) 0,rgba(255,255,255,0) 62%);opacity:.12}
+.vo-wash{background:#8e8e93;opacity:0}
+.vo-wash.go{animation:vo-wash 240ms var(--ease-out)}
+@keyframes vo-wash{0%{opacity:0}40%{opacity:.8}100%{opacity:0}}
+.vo-lines{position:absolute;inset:16px 18px;display:flex;gap:4px;align-items:center;justify-content:center}
+.vo-lines b{width:4px;height:24px;border-radius:2px;background:currentColor;transform:scaleY(.36)}
+.vo-lines b:nth-child(2){transform:scaleY(.5)}
+.vo-orb:not(.muted):not(.sil) .vo-lines{filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.3))}
+/* White lines hold 3:1 on every tier but gold and the plain teal, which take a dark ink. */
+.tier-premium .vo-lines{color:var(--tier-ink)}
+.tier-plain .vo-lines{color:#052a31}
+.vo-orb.muted .vo-body{background:var(--surface-3);box-shadow:inset 0 0 0 1px var(--raised-line)}
+.vo-orb.sil .vo-body{background:var(--surface-raised);box-shadow:inset 0 0 0 2px var(--label-2)}
+.vo-orb.muted .vo-body i:not(.vo-wash),.vo-orb.sil .vo-body i:not(.vo-wash){display:none}
+.vo-orb.muted .vo-lines,.vo-orb.sil .vo-lines{color:var(--label-2)}
+.vo-orb.muted .vo-lines b,.vo-orb.sil .vo-lines b{transform:scaleY(.4);transition:transform 200ms var(--ease-out)}
+.vo-dot{display:none;position:absolute;inset-inline-end:1px;top:1px;width:14px;height:14px;border-radius:50%;background:var(--acc);border:2.5px solid var(--bg)}
+.vo-orb.dot .vo-dot{display:block}
+
+/* "Hold to mute": a small glass pill above the orb, shown once. */
+.vo-hint{position:absolute;inset-inline-end:0;bottom:64px;height:32px;padding:0 12px;border-radius:16px;display:flex;align-items:center;white-space:nowrap;font-size:.8125rem;font-weight:600;
+  opacity:0;transform:translateY(6px);transition:opacity 200ms var(--ease-out),transform 200ms var(--ease-out)}
+.vo-hint.on{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  .vo-orb{transition:opacity 150ms linear}
+  .vo-orb.held,.vo-orb.muted.held{opacity:.8}
+  .vo-orb.held{--s:1}
+  .vo-orb.muted.held{--s:.86}
+  .vo-wash.go{animation-duration:150ms}
+  .vo-bar,.vo-bar.on,.vo-panel,.vo-panel.on,.vo-hint{transform:none;transition:opacity 150ms linear}
+  .vo-words,.vo-bar.on .vo-words{transition:opacity 150ms linear}
+  .vo-ln>span{transition:opacity 150ms linear}
+  .vo-ln>.out{filter:none;transform:none}
+  .vo-cap,.vo-acts button,.vo-btn,.vo-round{transition:none}
+  .vo-cap:active,.vo-acts button:active,.vo-btn:active,.vo-round:active{transform:none}
+  .vo-orb.muted .vo-lines b,.vo-orb.sil .vo-lines b{transition:none}
+  @starting-style{.vo-bar.on,.vo-panel.on{transform:none}.vo-ln>span{filter:none;transform:none}}
+}
+@media (prefers-reduced-transparency:reduce){
+  .vo-bar,.vo-panel,.vo-hint{background:var(--surface-raised);-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .vo-bar,.vo-panel,.vo-hint{background:var(--surface-raised)}
+}
+/* Safari before 16.2 has no color-mix(): plain stand-ins (the minifier drops a same-rule twin). */
+@supports not (color: color-mix(in srgb, red 50%, blue)){.vo{--vo-tint:var(--label-4)}.vo-bar,.vo-panel,.vo-hint{background:var(--surface-raised)}}

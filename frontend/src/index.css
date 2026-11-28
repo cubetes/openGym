@@ -329,12 +329,12 @@ body.resting #app{padding-bottom:calc(166px + var(--sab))}
 /* The workout screen has no tab bar (App.jsx): only the docked rest bar, when it is there. */
 body.no-tabbar #app{padding-bottom:calc(24px + var(--sab))}
 body.no-tabbar.resting #app{padding-bottom:calc(96px + var(--sab))}
-/* The voice pill (components/VoicePill.jsx): --vp-b is where it sits (above Back to top, the floating
-   rest bar or the docked one: 12 px above it), --vp-h its measured height; the page scrolls clear of both. */
+/* The voice orb (components/VoiceOrb.jsx): --vp-b is where it sits (above Back to top, the floating
+   rest bar or the docked one: 12 px above it), --vp-h its measured height (the orb, or the bar and its open panel); the page scrolls clear of both. */
 body{--vp-b:calc(136px + var(--sab))}  /* above Back to top (80 px + 44 px + 12) */
 body.resting{--vp-b:calc(100px + var(--sab) + var(--vp-rb,80px))}  /* the floating rest bar, 12 px above it */
 body.no-tabbar{--vp-b:max(34px,var(--sab))}
-body.no-tabbar.resting{--vp-b:calc(var(--vp-rb,80px) + 12px)}  /* --vp-rb: the rest bar's measured height (VoicePill.jsx) */
+body.no-tabbar.resting{--vp-b:calc(var(--vp-rb,80px) + 12px)}  /* --vp-rb: the rest bar's measured height (VoiceOrb.jsx) */
 body.vpill #app,body.vpill.resting #app,body.vpill.no-tabbar #app,body.vpill.no-tabbar.resting #app{padding-bottom:calc(var(--vp-b) + var(--vp-h,0px) + 10px)}
 .workout-end-spacer{height:0}
 /* The end of a workout (Workout.jsx, P3): Add exercise and the session note as one inset list. */

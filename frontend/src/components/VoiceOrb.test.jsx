@@ -1,0 +1,522 @@
+// @vitest-environment happy-dom
+import { readFileSync } from 'node:fs'
+import { act } from 'react'
+import { createRoot } from 'react-dom/client'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
+globalThis.IS_REACT_ACT_ENVIRONMENT = true
+
+const h = vi.hoisted(() => ({ ui: { timer: null, work: null, countIn: null }, picked: 'natural:af_heart' }))
+vi.mock('../store/useStore.js', async () => {
+  const { create } = await import('zustand')
+  const useStore = create(set => ({
+    S: { active: { cur: 0, entries: [] } },
+    update: fn => set(st => { const S = JSON.parse(JSON.stringify(st.S)); fn(S); return { S } }),
+  }))
+  return { useStore }
+})
+vi.mock('../store/useUI.js', () => ({ useUI: sel => sel(h.ui) }))
+vi.mock('../lib/speech.js', () => ({
+  hush: vi.fn(), onVoices: () => () => {}, pickedVoice: () => h.picked,
+  voiceLabel: v => v.name, voiceState: () => ({ voices: [], auto: null }),
+}))
+vi.mock('../lib/rest-alert.js', () => ({ tickNative: vi.fn() }))
+vi.mock('../lib/nav.js', () => ({ nav: vi.fn() }))
+vi.mock('../lib/spoken-cues.js', async () => {
+  const { useStore } = await import('../store/useStore.js')
+  return { cues: { replay: vi.fn(), mute: vi.fn(on => useStore.getState().update(S => { if (S.active) S.active.voiceMuted = on ? true : undefined })) } }
+})
+
+const { useStore } = await import('../store/useStore.js')
+const { hush } = await import('../lib/speech.js')
+const { tickNative } = await import('../lib/rest-alert.js')
+const { nav } = await import('../lib/nav.js')
+const { cues } = await import('../lib/spoken-cues.js')
+const { useCaption, caption } = await import('../lib/voice-caption.js')
+const { default: VoiceOrb } = await import('./VoiceOrb.jsx')
+
+const SHORT = 'Next: Barbell Full Squat. 8 reps at 92.5 kilos.'
+const LONG = 'Your last two sets were identical. Stay at 92.5 and aim for a clean ninth rep next time.'
+const S0 = { active: { cur: 0, entries: [] } }
+
+let host, root
+const setS = S => act(async () => { useStore.setState({ S }) })
+const S = () => useStore.getState().S
+const mount = async () => { await act(async () => { root.render(<VoiceOrb />) }) }
+const run = async ms => { await act(async () => { vi.advanceTimersByTime(ms) }) }
+const q = sel => host.querySelector(sel)
+const byLabel = l => q(`[aria-label="${l}"]`)
+const orb = () => q('.vo-orb')
+const bar = () => q('.vo-bar')
+const ev = (el, type, init = {}) => act(async () => { el.dispatchEvent(new (globalThis.PointerEvent || Event)(type, { bubbles: true, pointerId: 1, ...init })) })
+const click = el => act(async () => { el.dispatchEvent(new MouseEvent('click', { bubbles: true })) })
+const show = (text, o) => act(async () => { caption.show(text, o) })
+// A press: down, wait, up (and the click a browser sends after it).
+const press = async (ms, { leave = false } = {}) => {
+  await ev(orb(), 'pointerdown')
+  await run(ms)
+  await ev(orb(), leave ? 'pointerout' : 'pointerup')
+  if (!leave) await click(orb())
+}
+
+beforeEach(async () => {
+  vi.useFakeTimers()
+  h.ui = { timer: null, work: null, countIn: null }
+  h.picked = 'natural:af_heart'
+  useStore.setState({ S: JSON.parse(JSON.stringify(S0)) })
+  host = document.createElement('div'); document.body.append(host)
+  root = createRoot(host)
+})
+afterEach(async () => {
+  await act(async () => { root.unmount() })
+  host.remove()
+  useCaption.setState({ text: '', kind: null, source: null, silent: false, muted: false, speaking: false, expanded: false, last: '', lastAt: 0, shownAt: 0 })
+  vi.clearAllMocks()
+  vi.useRealTimers()
+})
+
+describe('the voice orb', () => {
+  it('shows nothing without a workout, and an orb with one', async () => {
+    await setS({ active: null })
+    await mount()
+    expect(host.textContent).toBe('')
+    await setS(S0)
+    expect(orb()).toBeTruthy()
+    expect(orb().getAttribute('aria-expanded')).toBe('false')
+  })
+
+  it('takes the tier colour of the voice, and the plain one with Better voices off', async () => {
+    await mount()
+    expect(q('.vo').className).toContain('tier-natural')
+    await setS({ ...S0, modules: { voices: false } })
+    expect(q('.vo').className).toContain('tier-plain')
+  })
+
+  it('a tap toggles the bar and saves S.voiceBar', async () => {
+    await mount()
+    expect(bar().hasAttribute('inert')).toBe(true)
+    await press(100)
+    expect(S().voiceBar).toBe(true)
+    expect(bar().hasAttribute('inert')).toBe(false)
+    expect(orb().getAttribute('aria-expanded')).toBe('true')
+    await press(100)
+    expect(S().voiceBar).toBe(false)
+    expect(bar().hasAttribute('inert')).toBe(true)
+  })
+
+  it('Enter or Space (a click with no press) toggles the bar too', async () => {
+    await mount()
+    await click(orb())
+    expect(S().voiceBar).toBe(true)
+  })
+
+  it('a 300 ms press does not mute and toggles the bar once', async () => {
+    await mount()
+    await press(300)
+    expect(cues.mute).not.toHaveBeenCalled()
+    expect(S().voiceBar).toBe(true)
+    await run(600)
+    expect(cues.mute).not.toHaveBeenCalled()
+  })
+
+  it('a finger that slides off at 200 ms does not mute', async () => {
+    await mount()
+    await press(200, { leave: true })
+    await run(600)
+    expect(cues.mute).not.toHaveBeenCalled()
+    expect(tickNative).not.toHaveBeenCalled()
+    expect(orb().className).not.toContain('held')
+  })
+
+  it('a cancelled touch does not mute', async () => {
+    await mount()
+    await ev(orb(), 'pointerdown')
+    expect(orb().className).toContain('held')
+    await run(200)
+    await ev(orb(), 'pointercancel')
+    await run(600)
+    expect(cues.mute).not.toHaveBeenCalled()
+  })
+
+  it('a 500 ms hold mutes, ticks once, stops the voice, and the click after it does not toggle the bar', async () => {
+    await mount()
+    await show(SHORT)
+    await ev(orb(), 'pointerdown')
+    expect(orb().className).toContain('held')
+    await run(500)
+    expect(S().active.voiceMuted).toBe(true)
+    expect(tickNative).toHaveBeenCalledTimes(1)
+    expect(useCaption.getState().speaking).toBe(false)
+    expect(orb().className).toContain('muted')
+    expect(orb().className).not.toContain('held')
+    await ev(orb(), 'pointerup')
+    await click(orb())
+    expect(S().voiceBar).toBeUndefined()
+    // and the next plain tap works again
+    await press(100)
+    expect(S().voiceBar).toBe(true)
+  })
+
+  it('a second hold unmutes', async () => {
+    await mount()
+    await press(600)
+    expect(S().active.voiceMuted).toBe(true)
+    await press(600)
+    expect(cues.mute).toHaveBeenLastCalledWith(false)
+    expect(S().active.voiceMuted).toBeUndefined()
+    expect(tickNative).toHaveBeenCalledTimes(2)
+  })
+
+  it('the hold wash plays once per hold', async () => {
+    await mount()
+    expect(q('.vo-wash').className).not.toContain('go')
+    await press(600)
+    expect(q('.vo-wash').className).toContain('go')
+  })
+
+  it('the hidden Mute button does what the hold does, and says Unmute once muted', async () => {
+    await mount()
+    const vh = q('.vh')
+    expect(vh.textContent).toBe('Mute')
+    expect(orb().nextElementSibling).toBe(vh)
+    await click(vh)
+    expect(S().active.voiceMuted).toBe(true)
+    expect(tickNative).toHaveBeenCalledTimes(1)
+    expect(hush).not.toHaveBeenCalled() // cues.mute is mocked; it is what hushes
+    expect(q('.vh').textContent).toBe('Unmute')
+    await click(q('.vh'))
+    expect(S().active.voiceMuted).toBeUndefined()
+  })
+
+  it('the lines, hint, halo and wash are hidden from screen readers', async () => {
+    await mount()
+    expect(q('.vo-lines').getAttribute('aria-hidden')).toBe('true')
+    expect(q('.vo-hint').getAttribute('aria-hidden')).toBe('true')
+    expect(q('.vo-fx').getAttribute('aria-hidden')).toBe('true')
+    expect(q('.vo-dot').getAttribute('aria-hidden')).toBe('true')
+  })
+})
+
+describe('the hint', () => {
+  it('shows once, 600 ms in, for 4 s, and is written as seen', async () => {
+    await mount()
+    expect(q('.vo-hint').className).not.toContain('on')
+    await run(599)
+    expect(q('.vo-hint').className).not.toContain('on')
+    await run(1)
+    expect(q('.vo-hint').className).toContain('on')
+    expect(q('.vo-hint').textContent).toBe('Hold to mute')
+    expect(S().voiceHintSeen).toBe(true)
+    await run(3999)
+    expect(q('.vo-hint').className).toContain('on')
+    await run(1)
+    expect(q('.vo-hint').className).not.toContain('on')
+  })
+
+  it('goes on the first touch of the orb', async () => {
+    await mount()
+    await run(700)
+    await ev(orb(), 'pointerdown')
+    expect(q('.vo-hint').className).not.toContain('on')
+  })
+
+  it('goes when the bar opens', async () => {
+    await mount()
+    await run(700)
+    await click(orb())
+    expect(q('.vo-hint').className).not.toContain('on')
+  })
+
+  it('never shows once seen, nor muted, nor on a silent phone, nor in bar mode', async () => {
+    await setS({ ...S0, voiceHintSeen: true })
+    await mount()
+    await run(700)
+    expect(q('.vo-hint').className).not.toContain('on')
+    await setS({ active: { cur: 0, entries: [], voiceMuted: true } })
+    await run(5000)
+    expect(q('.vo-hint').className).not.toContain('on')
+    expect(S().voiceHintSeen).toBeUndefined()
+  })
+
+  it('waits for a later workout on a silent phone', async () => {
+    await act(async () => { useCaption.setState({ text: SHORT, kind: 'pill', silent: true, shownAt: Date.now() }) })
+    await mount()
+    await run(700)
+    expect(q('.vo-hint').className).not.toContain('on')
+    expect(S().voiceHintSeen).toBeUndefined()
+  })
+
+  it('is not shown in bar mode', async () => {
+    await setS({ ...S0, voiceBar: true })
+    await mount()
+    await run(700)
+    expect(q('.vo-hint').className).not.toContain('on')
+    expect(S().voiceHintSeen).toBeUndefined()
+  })
+})
+
+describe('the orb label', () => {
+  it('names the state and the tier', async () => {
+    await mount()
+    expect(orb().getAttribute('aria-label')).toBe('Voice, Natural voice. Show the words.')
+    await show(SHORT)
+    expect(orb().getAttribute('aria-label')).toBe('Voice, speaking, Natural voice. Show the words.')
+    await click(orb())
+    expect(orb().getAttribute('aria-label')).toBe('Voice, speaking, Natural voice. Hide the words.')
+  })
+
+  it('says muted, not spoken, and a new Coach line', async () => {
+    await mount()
+    await setS({ active: { cur: 0, entries: [], voiceMuted: true } })
+    expect(orb().getAttribute('aria-label')).toBe('Voice is muted. Show the words.')
+    await setS(S0)
+    await act(async () => { useCaption.setState({ text: SHORT, kind: 'pill', silent: true, shownAt: Date.now() }) })
+    expect(orb().getAttribute('aria-label')).toBe('Voice, not spoken. Show the words.')
+    await act(async () => { useCaption.setState({ text: LONG, kind: 'card', silent: false, source: 'Coach', shownAt: Date.now() }) })
+    expect(orb().getAttribute('aria-label')).toBe('Voice, new Coach line. Show the words.')
+  })
+
+  it('names the voice instead of a tier when Better voices is off', async () => {
+    h.picked = ''
+    await setS({ ...S0, modules: { voices: false } })
+    await mount()
+    expect(orb().getAttribute('aria-label')).toBe('Voice, Automatic. Show the words.')
+  })
+})
+
+describe('the bar and its words', () => {
+  const open = async () => { await setS({ ...S0, voiceBar: true }) }
+
+  it('says "Voice on" before the first line, then the last line dimmed with its age', async () => {
+    await open()
+    await mount()
+    expect(q('.vo-cap').textContent).toContain('Voice on')
+    expect(byLabel('Voice on. Voice actions')).toBeTruthy()
+    await show(SHORT)
+    await run(3900 + 1200 + 100) // the speech estimate, the 1.2 s hold
+    expect(useCaption.getState().text).toBe('')
+    expect(q('.vo-cap').textContent).toContain(SHORT)
+    expect(q('.vo-dim')).toBeTruthy()
+    expect(q('.vo-cap').textContent).toContain('10 seconds ago')
+  })
+
+  it('shows a short line, hidden from a screen reader while it is spoken', async () => {
+    await open()
+    await mount()
+    await show(SHORT)
+    expect(q('.vo-cap').textContent).toContain(SHORT)
+    expect(q('.vo-words').getAttribute('aria-hidden')).toBe('true')
+    expect(byLabel('Voice actions')).toBeTruthy()
+  })
+
+  it('swaps a new line in by transition: the old one stays a moment, marked out', async () => {
+    await open()
+    await mount()
+    await show('Three.')
+    await show('Two.')
+    expect(q('.vo-ln .out').textContent).toBe('Three.')
+    expect(q('.vo-ln > span:not(.out)').textContent).toBe('Two.')
+    await run(170)
+    expect(q('.vo-ln .out')).toBeNull()
+  })
+
+  it('the words open the actions panel: Stop, then Replay, Mute, Settings', async () => {
+    await open()
+    await mount()
+    await show(SHORT)
+    expect(q('.vo-panel').hasAttribute('inert')).toBe(true)
+    await click(byLabel('Voice actions'))
+    expect(q('.vo-panel').hasAttribute('inert')).toBe(false)
+    expect(byLabel('Voice actions').getAttribute('aria-expanded')).toBe('true')
+    expect(hush).not.toHaveBeenCalled()
+    for (const l of ['Stop speaking', 'Mute spoken cues', 'Open voice settings']) expect(byLabel(l)).toBeTruthy()
+    await click(byLabel('Stop speaking'))
+    expect(hush).toHaveBeenCalledTimes(1)
+    expect(byLabel('Stop speaking')).toBeNull()
+    await click(byLabel('Replay the last line'))
+    expect(cues.replay).toHaveBeenCalledTimes(1)
+  })
+
+  it('the panel stays while open, and the line goes when it is closed after its time', async () => {
+    await open()
+    await mount()
+    await show(SHORT)
+    await click(byLabel('Voice actions'))
+    await run(20000)
+    expect(useCaption.getState().text).toBe(SHORT)
+    await click(q('.vo-cap'))
+    expect(useCaption.getState().text).toBe('')
+  })
+
+  it('Mute from the panel mutes, and the bar says so with Unmute and Settings', async () => {
+    await open()
+    await mount()
+    await show(SHORT)
+    await click(byLabel('Voice actions'))
+    await click(byLabel('Mute spoken cues'))
+    expect(cues.mute).toHaveBeenCalledWith(true)
+    expect(q('.vo-cap').textContent).toContain('Voice is muted for this workout')
+    expect(byLabel('Unmute spoken cues')).toBeTruthy()
+    expect(byLabel('Open voice settings')).toBeTruthy()
+    await run(60000)
+    expect(q('.vo-cap').textContent).toContain('Voice is muted for this workout')
+    await click(byLabel('Unmute spoken cues'))
+    expect(cues.mute).toHaveBeenLastCalledWith(false)
+    expect(q('.vo-cap').textContent).not.toContain('muted')
+  })
+
+  it('Settings opens the voice settings', async () => {
+    await open()
+    await mount()
+    await show(SHORT)
+    await click(byLabel('Voice actions'))
+    await click(byLabel('Open voice settings'))
+    expect(nav).toHaveBeenCalledWith('/settings/voice')
+  })
+
+  it('a silent line says it was not spoken, with its age, and offers only Settings', async () => {
+    await open()
+    await mount()
+    await act(async () => { useCaption.setState({ text: SHORT, kind: 'pill', silent: true, shownAt: Date.now() - 20000 }) })
+    await run(10000) // a tick re-reads the age
+    expect(q('.vo-cap').textContent).toContain('Not spoken, 30 seconds ago')
+    expect(q('.vo-cap').textContent).toContain(SHORT)
+    expect(orb().className).toContain('sil')
+    await click(byLabel(`${SHORT} Not spoken, 30 seconds ago. Voice actions`))
+    expect(q('.vo-panel').querySelectorAll('button')).toHaveLength(1)
+    expect(byLabel('Open voice settings')).toBeTruthy()
+  })
+
+  it('a 13-word line is a card: the voice row in the bar, the card above it, until Dismiss', async () => {
+    await open()
+    await mount()
+    await show(LONG, { source: 'Coach' })
+    expect(q('.vo-cap').textContent).toContain('Coach')
+    expect(q('.vo-cap').textContent).toContain('Heart · Natural voice')
+    expect(q('.vo-panel').hasAttribute('inert')).toBe(false)
+    expect(q('.vo-card').textContent).toBe(LONG)
+    for (const l of ['Stop speaking', 'Mute spoken cues', 'Open voice settings']) expect(byLabel(l)).toBeTruthy()
+    await run(60000)
+    expect(q('.vo-card').textContent).toBe(LONG)
+    await click([...host.querySelectorAll('button')].find(b => b.textContent === 'Dismiss'))
+    expect(useCaption.getState().text).toBe('')
+    expect(q('.vo-panel').hasAttribute('inert')).toBe(true)
+  })
+
+  it('a card line with Better voices off names only the voice', async () => {
+    h.picked = ''
+    await setS({ ...S0, voiceBar: true, modules: { voices: false } })
+    await mount()
+    await show(LONG)
+    expect(q('.vo-cap').textContent).toBe('Automatic')
+  })
+
+  it('in orb mode a card adds the dot, and opening the bar opens the card and clears the dot', async () => {
+    await mount()
+    await show(LONG, { source: 'Coach' })
+    await act(async () => { useCaption.setState({ speaking: false }) })
+    expect(orb().className).toContain('dot')
+    expect(q('.vo-panel').hasAttribute('inert')).toBe(true)
+    await click(orb())
+    expect(q('.vo-panel').hasAttribute('inert')).toBe(false)
+    expect(q('.vo-card')).toBeTruthy()
+    expect(orb().className).not.toContain('dot')
+    await click(orb()) // closing the bar does not bring the dot back
+    expect(orb().className).not.toContain('dot')
+  })
+
+  it('a card goes when the rest ends', async () => {
+    await open()
+    h.ui = { timer: { left: 30 }, work: null, countIn: null }
+    await mount()
+    await show(LONG)
+    expect(q('.vo-card')).toBeTruthy()
+    h.ui = { timer: null, work: null, countIn: null }
+    await mount()
+    expect(useCaption.getState().text).toBe('')
+  })
+
+  it('muted: says so and offers Unmute and Settings from the panel', async () => {
+    await setS({ active: { cur: 0, entries: [], voiceMuted: true }, voiceBar: true })
+    await mount()
+    expect(q('.vo-cap').textContent).toBe('Voice is muted for this workout')
+    await click(q('.vo-cap'))
+    expect(byLabel('Unmute spoken cues')).toBeTruthy()
+    await click(byLabel('Unmute spoken cues'))
+    expect(S().active.voiceMuted).toBeUndefined()
+  })
+
+  it('the voice is gone with the workout, even a muted line', async () => {
+    await open()
+    await mount()
+    await show(SHORT, { muted: true })
+    await act(async () => { root.unmount() })
+    expect(useCaption.getState().text).toBe('')
+    expect(useCaption.getState().last).toBe('')
+    root = createRoot(host)
+  })
+})
+
+describe('the place', () => {
+  it('keeps the page clear of itself while it shows, with the panel too', async () => {
+    await mount()
+    expect(document.body.classList.contains('vpill')).toBe(true)
+    expect(document.body.style.getPropertyValue('--vp-h')).toBe('56px')
+    await act(async () => { root.unmount() })
+    expect(document.body.classList.contains('vpill')).toBe(false)
+    root = createRoot(host)
+  })
+
+  it('sits on the rest bar as measured', async () => {
+    const el = document.createElement('div'); el.id = 'timer'
+    Object.defineProperty(el, 'offsetHeight', { value: 140 })
+    document.body.append(el)
+    h.ui = { timer: { left: 30 }, work: null, countIn: null }
+    await mount()
+    expect(document.body.style.getPropertyValue('--vp-rb')).toBe('140px')
+    h.ui = { timer: null, work: null, countIn: null }
+    await mount()
+    expect(document.body.style.getPropertyValue('--vp-rb')).toBe('')
+    el.remove()
+  })
+
+  it('slides from the old place when it moves (FLIP), never by animating bottom', async () => {
+    const animate = vi.fn()
+    Element.prototype.animate = animate
+    let top = 700
+    await mount()
+    Object.defineProperty(q('.vo'), 'offsetTop', { get: () => top, configurable: true })
+    // the observer's first reading is taken at mount (0 here); read it again at the old place
+    window.dispatchEvent(new Event('resize'))
+    top = 640
+    await act(async () => { document.body.classList.add('resting') })
+    await act(async () => { await Promise.resolve() })
+    document.body.classList.remove('resting')
+    expect(animate).toHaveBeenCalledWith([{ transform: 'translateY(60px)' }, { transform: 'none' }], expect.objectContaining({ duration: 300 }))
+    delete Element.prototype.animate
+  })
+})
+
+describe('the style', () => {
+  const css = readFileSync('src/components/VoiceOrb.css', 'utf8')
+
+  it('has a reduced-motion block, and never animates a layout property', () => {
+    expect(css).toMatch(/@media \(prefers-reduced-motion:reduce\)/)
+    const lists = [...css.matchAll(/transition:([^;}]+)/g)].map(m => m[1])
+    expect(lists.length).toBeGreaterThan(5)
+    for (const l of lists) expect(l).not.toMatch(/\b(width|height|bottom|left|top|right|all)\b/)
+  })
+
+  it('allows four lines at large text, and keeps the color-mix and backdrop-filter stand-ins', () => {
+    expect(css).toMatch(/\.text-big \.vo-c1,\.text-big \.vo-c2\{-webkit-line-clamp:4\}/)
+    expect(css).toMatch(/@supports not \(color: color-mix/)
+    expect(css).toMatch(/@supports not \(\(backdrop-filter/)
+  })
+
+  it('uses the shared curves and the hold and press values of the design', () => {
+    expect(css).toMatch(/\.vo-bar\.on\{[^}]*260ms var\(--ease\)/)
+    expect(css).toMatch(/\.vo-orb\.held\{--s:\.92/)
+    expect(css).toMatch(/\.vo-orb\.muted\.held\{--s:\.79/)
+    expect(css).toMatch(/:active\{transform:scale\(\.97\)\}/)
+  })
+})
