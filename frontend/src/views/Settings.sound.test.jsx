@@ -8,7 +8,7 @@ import { chime, unlock } from '../lib/sound.js'
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
 const mocks = vi.hoisted(() => {
-  const state = { S: null, openSheet: null }
+  const state = { S: null, openSheet: null, webAndroid: false }
   state.snapshot = () => ({
     S: state.S,
     user: null,
@@ -35,7 +35,7 @@ vi.mock('../store/useUI.js', () => {
 })
 vi.mock('react-router-dom', () => ({ useNavigate: () => () => {} }))
 vi.mock('../lib/api.js', () => ({
-  api: vi.fn(), webauthnOK: () => false, passkeyLogin: vi.fn(), passkeyRegister: vi.fn(), IS_ANDROID: false,
+  api: vi.fn(), webauthnOK: () => false, passkeyLogin: vi.fn(), passkeyRegister: vi.fn(), get IS_ANDROID() { return mocks.webAndroid },
 }))
 vi.mock('../lib/push.js', () => ({ pushSupported: () => false, enablePush: vi.fn(), disablePush: vi.fn(), sendTestPush: vi.fn() }))
 vi.mock('../lib/wakelock.js', () => ({ wakeLockSupported: () => false }))
@@ -57,6 +57,7 @@ globalThis.__APP_VERSION__ ??= 'test'
 let host, root
 const setAudioSession = value => Object.defineProperty(navigator, 'audioSession', { value, configurable: true, writable: true })
 beforeEach(() => {
+  mocks.webAndroid = false
   mocks.S = {
     unit: 'kg', restSec: 90, restPauseSec: 15, sound: true, soundOnSilent: false, effort: 'none',
     gifSize: 'full', workouts: [], routines: [], exWeights: {},
@@ -174,6 +175,7 @@ describe('Settings — vibrate', () => {
   const names = () => [...host.querySelectorAll('.at .nm')].map(e => e.textContent)
 
   it('is a tile where the browser can vibrate, on by default, between Sound and Flash', () => {
+    mocks.webAndroid = true
     setVibrateApi(() => true)
     mount()
     expect(names()).toEqual(['Sound', 'Vibrate', 'Flash the screen', 'Spoken cues'])
@@ -183,6 +185,7 @@ describe('Settings — vibrate', () => {
   })
 
   it('stays on offer with Sound off: the buzz does not depend on the sound', () => {
+    mocks.webAndroid = true
     setVibrateApi(() => true)
     mocks.S.sound = false
     mount()
@@ -190,6 +193,7 @@ describe('Settings — vibrate', () => {
   })
 
   it('writes vibrate to the store, off and back on', () => {
+    mocks.webAndroid = true
     setVibrateApi(() => true)
     mount()
     act(() => { topOf('Vibrate').click() })
@@ -208,6 +212,14 @@ describe('Settings — vibrate', () => {
     expect(tileNamed('Vibrate')).toBeUndefined()
     const foot = [...host.querySelectorAll('.sect-f')].find(p => p.textContent.startsWith('iPhone doesn’t let openGym vibrate'))
     expect(foot.dataset.find).toBe('Vibrate')
+  })
+
+  // Desktop Chrome and Edge have navigator.vibrate but no motor: no tile, and search does not list it.
+  it('desktop Chrome (navigator.vibrate exists) shows no Vibrate tile', () => {
+    setVibrateApi(() => true)
+    Object.defineProperty(navigator, 'userAgent', { value: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36', configurable: true })
+    mount()
+    expect(names()).toEqual(['Sound', 'Flash the screen', 'Spoken cues'])
   })
 
   it('a desktop browser without vibration shows no tile and no iPhone footer', () => {

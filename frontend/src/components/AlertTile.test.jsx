@@ -51,6 +51,15 @@ describe('AlertTile', () => {
     expect(host.querySelector('.at').classList.contains('wide')).toBe(true)
   })
 
+  it('right-to-left: the knob and the word sit at the inline end and the knob slides the other way', () => {
+    const css = readFileSync('src/components/AlertTile.css', 'utf8')
+    expect(css).not.toMatch(/\bright:|\bleft:/)
+    expect(css).toMatch(/\.at \.mini\s*\{[^}]*inset-inline-end:\s*12px/)
+    expect(css).toMatch(/\.at \.st\s*\{[^}]*inset-inline-end:\s*58px/)
+    expect(css).toMatch(/\.at \.mini::after\s*\{[^}]*inset-inline-start:\s*2px/)
+    expect(css).toMatch(/\[dir="rtl"\] \.at\.on \.mini::after\s*\{\s*transform:\s*translateX\(-14px\)/)
+  })
+
   it('has a reduced-motion block, one column at large text and 44 pt strips', () => {
     const css = readFileSync('src/components/AlertTile.css', 'utf8')
     expect(css).toMatch(/prefers-reduced-motion/)

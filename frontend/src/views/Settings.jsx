@@ -484,7 +484,8 @@ export default function Settings({ page = null, find = null, via = null, entryKe
 
   /* ---------------- what the pages and the search need to know about this device ---------------- */
   const nfcOK = useNfcSupported()
-  const canVibrate = vibrateSupported()
+  // Desktop Chrome and Edge have navigator.vibrate but no motor: no tile there, and search skips it.
+  const canVibrate = vibrateSupported() && (MOBILE || IS_ANDROID)
   const ctx = {
     user, mobile: MOBILE, offline, android, ios: MOBILE && ios, appIcons: MOBILE && !!platformNow(), demo: DEMO, wakeOK, hasMedia, pwOn, webauthn: webauthnOK(),
     sound: !!S.sound, playOnSilent: playOnSilentSupported(), canVibrate, iPhone: appleTouchDevice(), vibrate: S.vibrate !== false,

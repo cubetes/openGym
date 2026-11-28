@@ -32,7 +32,7 @@ vi.mock('../store/useUI.js', () => {
   return { useUI }
 })
 vi.mock('react-router-dom', () => ({ useNavigate: () => (...a) => mocks.navs.push(a), useLocation: () => ({ pathname: '/settings', search: '' }) }))
-vi.mock('../lib/api.js', () => ({ api: vi.fn(path => Promise.resolve(path === '/api/account/passkeys' ? { passkeys: [] } : {})), webauthnOK: () => false, passkeyLogin: vi.fn(), passkeyRegister: vi.fn(), IS_ANDROID: false }))
+vi.mock('../lib/api.js', () => ({ api: vi.fn(path => Promise.resolve(path === '/api/account/passkeys' ? { passkeys: [] } : {})), webauthnOK: () => false, passkeyLogin: vi.fn(), passkeyRegister: vi.fn(), IS_ANDROID: true }))
 vi.mock('../lib/push.js', () => ({ pushSupported: () => mocks.push, enablePush: vi.fn(), disablePush: vi.fn(), sendTestPush: vi.fn(), syncPushSubscription: vi.fn(() => Promise.resolve(mocks.pushOn)) }))
 vi.mock('../lib/wakelock.js', () => ({ wakeLockSupported: () => true }))
 vi.mock('../lib/mobile.js', () => ({ get MOBILE() { return mocks.MOBILE }, isAndroid: () => Promise.resolve(false), shareExport: vi.fn(), shareExportBlob: vi.fn(), syncReminder: vi.fn() }))
@@ -272,7 +272,7 @@ describe('the search lands on a row', () => {
     'phone paired with a server': () => { mocks.MOBILE = true; mocks.user = { id: 'u1', name: 'Dana' }; mocks.sync = { status: 'ok', server: 'https://gym.example' } },
   }
   const ctxNow = () => ({
-    ...guestWeb, user: mocks.user, mobile: mocks.MOBILE, pushOK: !mocks.MOBILE && mocks.push,
+    ...guestWeb, androidWeb: true, desktopWeb: false, user: mocks.user, mobile: mocks.MOBILE, pushOK: !mocks.MOBILE && mocks.push,
     reminderOn: !!mocks.S.reminder?.on, nudge: !!mocks.S.reminder?.nudge, autoBackup: !!mocks.S.autoBackup,
     synced: !!mocks.sync, installTip: !mocks.MOBILE, hasMedia: false, wakeOK: true,
   })
@@ -443,7 +443,9 @@ describe('the search query', () => {
 describe('the pages', () => {
   it('each search entry is a row on its page (guest in a browser)', () => {
     const byPage = {}
-    for (const e of SEARCH) if (pageVisible(PAGES[e.page].parent || e.page, guestWeb) && (!e.when || e.when(guestWeb))) (byPage[e.page] ||= []).push(e.title)
+    // an Android browser: it can vibrate, a desktop one cannot (Settings.jsx canVibrate)
+    const web = { ...guestWeb, androidWeb: true, desktopWeb: false }
+    for (const e of SEARCH) if (pageVisible(PAGES[e.page].parent || e.page, web) && (!e.when || e.when(web))) (byPage[e.page] ||= []).push(e.title)
     expect(Object.keys(byPage).sort()).toEqual(['about', 'account', 'advanced', 'alerts', 'data', 'equipment', 'integrations', 'live', 'look', 'modules', 'plan', 'themes', 'units', 'voice', 'workout'])
     for (const [page, want] of Object.entries(byPage)) {
       mount(page)

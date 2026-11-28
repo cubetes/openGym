@@ -9,7 +9,7 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true
 // #375: "Vibrate when the phone is on silent" is an Android-app setting — only there can the
 // native side buzz as an alarm — and it belongs to Vibrate, so it shows only with Vibrate on.
 const mocks = vi.hoisted(() => {
-  const state = { S: null, MOBILE: false, android: false, sheets: [] }
+  const state = { S: null, MOBILE: false, android: false, sheets: [], webAndroid: false }
   state.snapshot = () => ({
     S: state.S,
     user: null,
@@ -38,7 +38,7 @@ vi.mock('../store/useUI.js', () => {
 })
 vi.mock('react-router-dom', () => ({ useNavigate: () => () => {} }))
 vi.mock('../lib/api.js', () => ({
-  api: vi.fn(), webauthnOK: () => false, passkeyLogin: vi.fn(), passkeyRegister: vi.fn(), IS_ANDROID: false,
+  api: vi.fn(), webauthnOK: () => false, passkeyLogin: vi.fn(), passkeyRegister: vi.fn(), get IS_ANDROID() { return mocks.webAndroid },
 }))
 vi.mock('../lib/push.js', () => ({ pushSupported: () => false, enablePush: vi.fn(), disablePush: vi.fn(), sendTestPush: vi.fn() }))
 vi.mock('../lib/wakelock.js', () => ({ wakeLockSupported: () => false }))
@@ -69,6 +69,7 @@ beforeEach(() => {
   mocks.MOBILE = false
   mocks.android = false
   mocks.sheets = []
+  mocks.webAndroid = false
   mocks.checkForUpdate.mockClear()
   mocks.confirmSheet.mockClear()
   Object.defineProperty(navigator, 'vibrate', { value: () => true, configurable: true, writable: true })
@@ -126,6 +127,7 @@ describe('Settings — vibrate when the phone is on silent', () => {
   })
 
   it('not offered on the web or in the iOS app', async () => {
+    mocks.webAndroid = true // an Android browser: the Vibrate tile, with no options
     await mount()
     expect(tileNamed('Vibrate').querySelector('button.at-op')).toBeNull()
     act(() => root.unmount())
