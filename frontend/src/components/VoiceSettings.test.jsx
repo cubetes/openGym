@@ -548,7 +548,7 @@ describe('Settings → Timer alerts → Voice', () => {
     expect(mocks.S.cueLines.restOver).toEqual(['Break’s over. Move it!', 'Back on the bar. That was not a request.'])
   })
   it('reduced motion: the waveform and the presses stop, the check only fades', async () => {
-    const css = (await import('node:fs')).readFileSync(new URL('./VoiceSettings.css', import.meta.url), 'utf8')
+    const css = (await import('node:fs')).readFileSync('src/components/VoiceSettings.css', 'utf8')
     const block = css.slice(css.indexOf('@media (prefers-reduced-motion: reduce)'))
     expect(block).toMatch(/vhero-wave i[^}]*animation: none/)
     expect(block).toMatch(/\.vs-tile:active[^}]*transform: none/)
