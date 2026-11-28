@@ -103,7 +103,7 @@ function Orb() {
 
   // The one animation loop: runs while the voice speaks (or a real curve is still playing) and ends when the level is back to nothing.
   const gate = useRef({})
-  gate.current = { ok: !muted && !silent, speaking }
+  gate.current = { ok: !muted && !silent, speaking, bar }
   const endLoop = () => {
     const l = loop.current
     cancelAnimationFrame(l.raf)
@@ -117,7 +117,7 @@ function Orb() {
     const s = l.s = smooth(was, live ? v.now() : 0)
     if (!live && s < 0.01) { endLoop(); return }
     const calm = l.calm
-    if (!calm && was < 0.7 && s >= 0.7 && at - l.ripple > 300) { l.ripple = at; ripple() }
+    if (!calm && !st.bar && was < 0.7 && s >= 0.7 && at - l.ripple > 300) { l.ripple = at; ripple() }
     l.hist.push(s)
     if (l.hist.length > 6) l.hist.shift()
     const light = l.light
@@ -233,12 +233,14 @@ function Orb() {
   useLayoutEffect(() => {
     const b = document.body
     const size = () => {
+      const w = barEl.current?.offsetWidth
+      if (w) barEl.current.style.setProperty('--vo-x', (56 / w).toFixed(4)) // closed, the bar is exactly the orb's 56 px
       const bh = bar ? Math.max(56, barEl.current?.offsetHeight || 0) : 56
       b.style.setProperty('--vp-h', (bh + (panelOpen ? 8 + (panel.current?.offsetHeight || 0) : 0)) + 'px')
     }
     size()
     b.classList.add('vpill')
-    const ro = bar && typeof ResizeObserver === 'function' ? new ResizeObserver(size) : null
+    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(size) : null
     if (barEl.current) ro?.observe(barEl.current)
     if (panelOpen && panel.current) ro?.observe(panel.current)
     return () => { ro?.disconnect(); b.classList.remove('vpill'); b.style.removeProperty('--vp-h') }
@@ -249,16 +251,21 @@ function Orb() {
     const b = document.body
     // What --vp-b depends on (index.css): only a change here can move the orb, so only then read layout.
     const where = () => [b.classList.contains('resting'), b.classList.contains('no-tabbar'), b.style.getPropertyValue('--vp-rb')].join()
+    let slide = [] // the running FLIP animations; a second move starts from where the orb is drawn
     let last = root.current.offsetTop, key = where()
     const sync = () => { last = root.current.offsetTop }
     const move = () => {
       const k = where()
       if (k === key) return
       key = k
-      const now = root.current.offsetTop, d = last - now
+      const before = root.current.getBoundingClientRect().top // drawn, with the running slide's transform
+      slide.forEach(a => a.cancel?.())
+      slide = []
+      const now = root.current.offsetTop
+      const d = last - now + (before - root.current.getBoundingClientRect().top) // plus what the running slide still added
       last = now
       if (!d || reduced()) return
-      for (const el of [root.current, fx.current]) el.animate?.([{ transform: `translateY(${d}px)` }, { transform: 'none' }], { duration: 300, easing: EASE })
+      for (const el of [root.current, fx.current]) { const a = el.animate?.([{ transform: `translateY(${d}px)` }, { transform: 'none' }], { duration: 300, easing: EASE }); if (a) slide.push(a) }
     }
     const mo = new MutationObserver(move)
     mo.observe(document.body, { attributes: true, attributeFilter: ['class', 'style'] })

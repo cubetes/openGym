@@ -540,6 +540,33 @@ describe('the place', () => {
     delete Element.prototype.animate
   })
 
+  it("closed, the bar is the orb's width on any phone", async () => {
+    Object.defineProperty(HTMLElement.prototype, 'offsetWidth', { configurable: true, get() { return this.classList.contains('vo-bar') ? 398 : 0 } })
+    try {
+      await mount()
+      expect(q('.vo-bar').style.getPropertyValue('--vo-x')).toBe('0.1407')
+    } finally { delete HTMLElement.prototype.offsetWidth }
+  })
+
+  it('a second move cancels the running slide', async () => {
+    const cancel = vi.fn()
+    Element.prototype.animate = vi.fn(() => ({ cancel }))
+    let top = 700
+    await mount()
+    Object.defineProperty(q('.vo'), 'offsetTop', { get: () => top, configurable: true })
+    window.dispatchEvent(new Event('resize'))
+    top = 640
+    await act(async () => { document.body.classList.add('resting') })
+    await act(async () => { await Promise.resolve() })
+    expect(cancel).not.toHaveBeenCalled()
+    top = 700
+    await act(async () => { document.body.classList.remove('resting') })
+    await act(async () => { await Promise.resolve() })
+    document.body.classList.remove('resting')
+    expect(cancel).toHaveBeenCalled()
+    delete Element.prototype.animate
+  })
+
   it('a body change that cannot move the orb reads no layout', async () => {
     await mount()
     let reads = 0
@@ -573,6 +600,14 @@ describe('the motion', () => {
     expect(Number(q('.vo-body').style.transform.match(/scale\(([\d.]+)\)/)[1])).toBeGreaterThan(1.1)
     expect(Number(q('.vo-halo').style.opacity)).toBeGreaterThan(0.9)
     expect(Number(q('.vo-core').style.opacity)).toBeGreaterThan(0.45)
+  })
+
+  it('no ripple in bar mode', async () => {
+    await setS({ ...S0, voiceBar: true })
+    await mount()
+    await show(SHORT)
+    await frames(6)
+    expect(host.querySelectorAll('.vo-rp').length).toBe(0)
   })
 
   it('runs no loop when quiet, muted or silent', async () => {

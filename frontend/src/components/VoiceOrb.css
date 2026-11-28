@@ -48,9 +48,9 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 [dir="rtl"] :is(.vo-bar,.vo-panel,.vo-hint){transform-origin:0 100%}
 /* Closed it is the orb's own 56 x 56 shape (scaleX 56 / width, scaleY stays 1); open it grows to the left. */
 .vo-bar{position:relative;display:flex;min-height:56px;border-radius:28px;
-  transform:scale(.157,1);opacity:0;pointer-events:none;transition:transform 200ms var(--ease-out),opacity 150ms var(--ease-out)}
+  transform:scale(var(--vo-x,.157),1);opacity:0;pointer-events:none;transition:transform 200ms var(--ease-out),opacity 150ms var(--ease-out)}
 .vo-bar.on{transform:none;opacity:1;pointer-events:auto;transition:transform 260ms var(--ease),opacity 160ms var(--ease-out)}
-@starting-style{.vo-bar.on{transform:scale(.157,1);opacity:0}}
+@starting-style{.vo-bar.on{transform:scale(var(--vo-x,.157),1);opacity:0}}
 .vo-cap{flex:1;min-width:0;display:flex;align-items:center;text-align:start;padding:8px 62px 8px 20px;font-size:.9375rem;font-weight:500;line-height:1.25;letter-spacing:-.01em;
   transition:transform 160ms var(--ease-out)}
 [dir="rtl"] .vo-cap{padding:8px 20px 8px 62px}
@@ -93,6 +93,8 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 .vo-orb.held{--s:.92;transition-duration:160ms}
 .vo-orb.muted{--s:.86}
 .vo-orb.muted.held{--s:.79}
+/* The orb's entrance: from .95 and clear, on its own transition. */
+@starting-style{.vo-orb{opacity:0;--s:.95}}
 .vo-body{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,var(--tier-a),var(--tier-b));
   box-shadow:inset 0 1.5px 0 rgba(255,255,255,.45),inset 0 -7px 12px rgba(0,0,0,.18),0 2px 8px rgba(0,0,0,.28)}
 .vo-body i{position:absolute;inset:0;border-radius:50%}
@@ -118,7 +120,8 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 .vo-orb.muted .vo-lines,.vo-orb.sil .vo-lines{color:var(--label-2)}
 .vo-orb.muted .vo-lines b,.vo-orb.sil .vo-lines b{transform:scaleY(.4);transition:transform 200ms var(--ease-out)}
 .vo-dot{display:none;position:absolute;inset-inline-end:1px;top:1px;width:14px;height:14px;border-radius:50%;background:var(--acc);border:2.5px solid var(--bg)}
-.vo-orb.dot .vo-dot{display:block}
+.vo-orb.dot .vo-dot{display:block;animation:vo-pop 160ms var(--ease-out) both}
+@keyframes vo-pop{from{transform:scale(.8);opacity:0}}
 
 /* "Hold to mute": a small glass pill above the orb, shown once. */
 .vo-hint{position:absolute;inset-inline-end:0;bottom:64px;height:32px;padding:0 12px;border-radius:16px;display:flex;align-items:center;white-space:nowrap;font-size:.8125rem;font-weight:600;
