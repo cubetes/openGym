@@ -6,9 +6,8 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 /* The halo, the ripples and the edge glow sit at z 0, under the page (#app is lifted to 1 while the orb shows, index.css; the status-bar strip and seasonal decor stay above) and the rest bar, so they only ever light the empty page. */
 .vo-fx{z-index:0;transition:opacity 200ms var(--ease-out)}
 .vo-halo{position:absolute;inset-inline-end:-50px;bottom:-50px;width:156px;height:156px;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,var(--tier-a) 0,var(--tier-b) 34%,transparent 68%);mix-blend-mode:screen;transform:scale(.62);opacity:.14;
+  background:radial-gradient(circle,var(--tier-a) 0,var(--tier-b) 34%,transparent 68%);transform:scale(.62);opacity:.14;
   will-change:transform,opacity}
-:root[data-theme="light"] .vo-halo{mix-blend-mode:normal}
 /* Muted, silent or bar mode: no halo. The whole layer fades both ways; the loop's inline values on the halo stay untouched. */
 .vo-fx.off{opacity:0}
 /* One ring per word peak, spawned and removed by the component (WAAPI). */
@@ -21,10 +20,9 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 :root[data-theme="light"] .vo-glow.on{opacity:.6}
 @starting-style{.vo-glow.on{opacity:0}}
 .vo-glow.rest{transform:translateY(-72px)}
-.vo-glow i{position:absolute;inset:0;transform-origin:50% 100%;mix-blend-mode:screen;
+.vo-glow i{position:absolute;inset:0;transform-origin:50% 100%;
   background:radial-gradient(60% 100% at 50% 100%,var(--tier-a),transparent 70%),radial-gradient(45% 80% at 12% 100%,var(--tier-b),transparent 70%),radial-gradient(40% 70% at 92% 100%,var(--tier-a),transparent 70%);
   animation:vo-breathe 2.6s cubic-bezier(.77,0,.175,1) infinite paused}
-:root[data-theme="light"] .vo-glow i{mix-blend-mode:normal}
 /* Paused, not removed, when the voice stops: the glow fades out from the frame it was on. */
 .vo-glow.sp i{animation-play-state:running}
 @keyframes vo-breathe{0%,100%{opacity:.62;transform:scaleY(.86)}50%{opacity:1;transform:scaleY(1.08)}}
@@ -36,7 +34,7 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 .vo-ge{display:none;position:absolute;left:30px;right:30px;bottom:0;height:2px;opacity:.9;background:linear-gradient(90deg,transparent,var(--tier-a) 30%,var(--tier-a) 70%,transparent)}
 :root[data-theme="light"] .vo-ge{display:block}
 .vo-glow.mut .vo-ge{background:linear-gradient(90deg,transparent,rgba(150,150,160,.7) 30%,rgba(150,150,160,.7) 70%,transparent)}
-.vo-glow.mut i{mix-blend-mode:normal;animation:none;background:radial-gradient(70% 100% at 50% 100%,rgba(150,150,160,.5),transparent 72%)}
+.vo-glow.mut i{animation:none;background:radial-gradient(70% 100% at 50% 100%,rgba(150,150,160,.5),transparent 72%)}
 
 /* The bar and its panel: glass, grown out of the orb. */
 .vo-stack{position:absolute;inset-inline:0;bottom:0}
@@ -116,6 +114,8 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 .tier-plain .vo-lines{color:#052a31}
 .vo-orb.muted .vo-body{background:var(--surface-3);box-shadow:inset 0 0 0 1px var(--raised-line)}
 .vo-orb.sil .vo-body{background:var(--surface-raised);box-shadow:inset 0 0 0 2px var(--label-2)}
+/* Muted or silent the loop has stopped: the swollen body eases back instead of snapping. */
+.vo-orb.muted .vo-body,.vo-orb.sil .vo-body{transition:transform 200ms var(--ease-out)}
 .vo-orb.muted .vo-body i:not(.vo-wash),.vo-orb.sil .vo-body i:not(.vo-wash){display:none}
 .vo-orb.muted .vo-lines,.vo-orb.sil .vo-lines{color:var(--label-2)}
 .vo-orb.muted .vo-lines b,.vo-orb.sil .vo-lines b{transform:scaleY(.4);transition:transform 200ms var(--ease-out)}

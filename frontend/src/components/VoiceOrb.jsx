@@ -221,7 +221,7 @@ function Orb() {
     const el = rest && document.getElementById('timer')
     if (!el) return undefined
     const b = document.body
-    const size = () => b.style.setProperty('--vp-rb', el.offsetHeight + 'px')
+    const size = () => { const h = el.offsetHeight + 'px'; if (b.style.getPropertyValue('--vp-rb') !== h) b.style.setProperty('--vp-rb', h) }
     size()
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(size) : null
     ro?.observe(el)
@@ -236,7 +236,8 @@ function Orb() {
       const w = barEl.current?.offsetWidth
       if (w) barEl.current.style.setProperty('--vo-x', (56 / w).toFixed(4)) // closed, the bar is exactly the orb's 56 px
       const bh = bar ? Math.max(56, barEl.current?.offsetHeight || 0) : 56
-      b.style.setProperty('--vp-h', (bh + (panelOpen ? 8 + (panel.current?.offsetHeight || 0) : 0)) + 'px')
+      const h = (bh + (panelOpen ? 8 + (panel.current?.offsetHeight || 0) : 0)) + 'px'
+      if (b.style.getPropertyValue('--vp-h') !== h) b.style.setProperty('--vp-h', h) // a same-value write still re-styles the page
     }
     size()
     b.classList.add('vpill')
