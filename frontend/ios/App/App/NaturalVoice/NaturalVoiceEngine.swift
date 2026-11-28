@@ -7,7 +7,10 @@ import UIKit
 /// The one place the model folder is named, readable on every iOS the plugin runs on.
 enum NaturalVoicePaths {
     static let revision = "4ef656f5"
-    static var copiedDir: URL { NaturalVoicePaths.copiedDir }
+    static var copiedDir: URL {
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("NaturalVoice/\(revision)", isDirectory: true)
+    }
 }
 
 @available(iOS 16.0, *)
