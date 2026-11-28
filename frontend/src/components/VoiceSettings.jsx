@@ -31,6 +31,7 @@ import Icon from './Icon.jsx'
 import TierTile, { tierKey, tierName, useEnding } from './VoiceTier.jsx'
 import { isOn } from '../lib/modules.js'
 import { speakMs } from '../lib/voice-caption.js'
+import { onVoiceLine } from '../lib/rest-alert.js'
 import './VoiceSettings.css'
 
 const toast = m => useUI.getState().toast(m)
@@ -45,6 +46,18 @@ const announcePlaying = () => {
 let celebrated = 0 // the Natural install the picker has already shown arriving
 let endPlaying = null // the hero's Playing state; anything else that speaks ends it
 const sayIt = (text, extra = {}) => { endPlaying?.(); announcePlaying(); hush(); speak(text, { ...voiceOpts(S_()), queue: false, ...extra }) }
+let offLine = () => {}
+/** Calls `done` once `last` has been said: when the Natural voice reports the line's real length, else after the word-count estimate for `all` (Apple voices report none). */
+const endAfter = (timer, all, last, speed, done) => {
+  clearTimeout(timer.current)
+  offLine()
+  timer.current = setTimeout(done, speakMs(all, speed))
+  offLine = onVoiceLine(ev => {
+    if (ev?.text !== last || !(ev.ms > 0)) return
+    clearTimeout(timer.current)
+    timer.current = setTimeout(done, ev.ms)
+  })
+}
 const fmtX = n => `${Math.round(n * 100) / 100}×`
 
 /** Why the microphone could not be used, as a sentence. */
@@ -129,7 +142,7 @@ export function VoiceList() {
   const [, redraw] = useState(0)
   const [playKey, setPlayKey] = useState(null) // the row whose sample plays: its voice id, or 'auto'
   const timer = useRef(0)
-  useEffect(() => () => clearTimeout(timer.current), [])
+  useEffect(() => () => { clearTimeout(timer.current); offLine() }, [])
   const [before] = useState(() => celebrated)
   const fresh = nat.state === 'ready' && nat.installedAt > before // an install this picker has not shown yet; stays true for this visit
   useEffect(() => { if (nat.state === 'ready') celebrated = Math.max(celebrated, nat.installedAt || 0) }, [nat.state, nat.installedAt]) // shown now: the next visit starts calm
@@ -142,9 +155,8 @@ export function VoiceList() {
     redraw(n => n + 1)
     const text = sampleLine(S_()) || sampleCue(S_().unit)
     sayIt(text, { voice: say, ...(isNatural(id) ? { fallback: auto?.id || '' } : {}) })
-    clearTimeout(timer.current)
     setPlayKey(id || 'auto')
-    timer.current = setTimeout(() => setPlayKey(null), speakMs(text, speechRateNum(S_())))
+    endAfter(timer, text, text, speechRateNum(S_()), () => setPlayKey(null))
   }
   const tile = (key, id, glyph) => on ? <TierTile tier={key} glyph={glyph} playing={playKey === (id || 'auto')} /> : null
   const rowCls = id => 'vp-voice' + (playKey === (id || 'auto') ? ' vp-pick' : '') // the check pops on a pick, not on a visit
@@ -432,7 +444,7 @@ function VoiceHero({ vs, cur, openList }) {
   const on = isOn(S, 'voices')
   useEffect(() => {
     endPlaying = () => { clearTimeout(timer.current); setPlaying(false) }
-    return () => { endPlaying = null; clearTimeout(timer.current) }
+    return () => { endPlaying = null; clearTimeout(timer.current); offLine() }
   }, [])
   const nat = NATURAL_VOICES.find(v => v.id === cur)
   const apple = nat ? null : vs.voices?.find(v => v.id === cur)
@@ -445,9 +457,8 @@ function VoiceHero({ vs, cur, openList }) {
     const cue = sampleCue(S.unit), line = sampleLine(S)
     sayIt(cue)
     speak(line, { ...voiceOpts(S) })
-    clearTimeout(timer.current)
     setPlaying(true)
-    timer.current = setTimeout(() => setPlaying(false), speakMs(`${cue}. ${line}`, speechRateNum(S)))
+    endAfter(timer, `${cue}. ${line}`, line, speechRateNum(S), () => setPlaying(false))
   }
   const ending = useEnding(playing)
   return <div className={`vhero tier-${key}${playing ? ' play' : ''}${ending ? ' end' : ''}`}>

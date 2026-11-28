@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
 const mocks = vi.hoisted(() => {
-  const state = { S: null, sheets: [], opts: [], mobile: false, voices: { voices: [], auto: null, ios: false }, subs: [], refresh: () => Promise.resolve(), nat: null, natCalls: [], natSubs: [], loc: 'en-GB' }
+  const state = { S: null, sheets: [], opts: [], mobile: false, voices: { voices: [], auto: null, ios: false }, subs: [], refresh: () => Promise.resolve(), nat: null, natCalls: [], natSubs: [], lineCbs: [], loc: 'en-GB' }
   state.snapshot = () => ({ S: state.S, update: mut => { const next = structuredClone(state.S); mut(next); state.S = next } })
   return state
 })
@@ -33,6 +33,8 @@ vi.mock('../lib/natural-voice.js', async importOriginal => ({
   cancelNatural: () => { mocks.natCalls.push(['cancel']); return Promise.resolve() },
   removeNatural: () => { mocks.natCalls.push(['remove']); return Promise.resolve(true) },
 }))
+// The phone tells how long a Natural line really is (rest-alert.js onVoiceLine); here the test says it.
+vi.mock('../lib/rest-alert.js', async importOriginal => ({ ...(await importOriginal()), onVoiceLine: cb => { mocks.lineCbs.push(cb); return () => {} } }))
 vi.mock('../lib/i18n-core.js', async importOriginal => ({ ...(await importOriginal()), dateLocale: () => mocks.loc }))
 // The phone's voice list is the lib's business (speech.test.js); here it is whatever the test says.
 vi.mock('../lib/speech.js', async importOriginal => {
@@ -65,6 +67,7 @@ beforeEach(() => {
   mocks.nat = idleNat
   mocks.natCalls = []
   mocks.natSubs = []
+  mocks.lineCbs = []
   mocks.loc = 'en-GB'
   mocks.voices = { voices: [{ id: 'anna', name: 'Anna', lang: 'en-GB', online: false }], auto: null, ios: false }
   host = document.createElement('div')
@@ -140,6 +143,18 @@ describe('Settings → Timer alerts → Voice', () => {
       expect(host.querySelector('.vhero.end')).not.toBeNull()
       await act(async () => { vi.advanceTimersByTime(120) })
       expect(host.querySelector('.vhero.end')).toBeNull()
+    } finally { vi.useRealTimers() }
+  })
+  it('Try it ends on the real length of the line when the Natural voice reports it', async () => {
+    await render(<VoiceSettings />)
+    vi.useFakeTimers()
+    try {
+      const btn = () => [...host.querySelectorAll('.btn')].find(b => /^(Try it|Playing)$/.test(b.textContent))
+      await act(async () => { btn().click() })
+      mocks.lineCbs.at(-1)({ text: sampleLine(mocks.S), ms: 1000 })
+      await act(async () => { vi.advanceTimersByTime(1010) })
+      expect(btn().textContent).toBe('Try it')
+      expect(speakMs(`${sampleCue('kg')}. ${sampleLine(mocks.S)}`, 1)).toBeGreaterThan(1010) // the estimate alone would still be playing
     } finally { vi.useRealTimers() }
   })
   it('anything else that speaks ends Playing', async () => {
@@ -607,6 +622,20 @@ describe('Settings → Timer alerts → Voice', () => {
         expect(tiles(rowTitled('Ava'))[0].classList.contains('playing')).toBe(true)
         await act(async () => { vi.advanceTimersByTime(speakMs(sampleLine(mocks.S) || sampleCue('kg'), 1) + 50) })
         expect(tiles(rowTitled('Ava'))[0].classList.contains('playing')).toBe(false)
+      } finally { vi.useRealTimers() }
+    })
+    it('on: a Natural pick ends its playing look on the real length, not the estimate', async () => {
+      phone({ state: 'ready', bytes: 88e6 })
+      await render(<VoiceList />)
+      vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+      try {
+        await act(async () => { rowTitled('Heart').click() })
+        const text = sampleLine(mocks.S) || sampleCue('kg')
+        mocks.lineCbs.at(-1)({ text: 'another line', ms: 100 })
+        mocks.lineCbs.at(-1)({ text, ms: 400 })
+        await act(async () => { vi.advanceTimersByTime(410) })
+        expect(tiles(rowTitled('Heart'))[0].classList.contains('playing')).toBe(false)
+        expect(speakMs(text, 1)).toBeGreaterThan(410)
       } finally { vi.useRealTimers() }
     })
     it('on: Natural rows that arrive after a download enter in a stagger; ones that were there do not', async () => {
