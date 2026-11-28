@@ -6,7 +6,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
-const h = vi.hoisted(() => ({ loading: null, ui: { timer: null, work: null, countIn: null }, picked: 'natural:af_heart', speech: true }))
+const h = vi.hoisted(() => ({ loading: null, ui: { timer: null, work: null, countIn: null }, picked: 'natural:af_heart', speech: true, nat: { state: 'none' }, natCbs: [] }))
+vi.mock('../lib/natural-voice.js', async o => ({ ...(await o()), naturalState: () => h.nat, onNatural: cb => { h.natCbs.push(cb); return () => {} } }))
 vi.mock('../store/useStore.js', async () => {
   const { create } = await import('zustand')
   const useStore = create(set => ({
@@ -314,6 +315,19 @@ describe('the orb label', () => {
     await setS({ ...S0, modules: { voices: false } })
     await mount()
     expect(orb().getAttribute('aria-label')).toBe('Voice, Automatic. Show the words.')
+  })
+})
+
+describe('Automatic as the Natural voice', () => {
+  it('the name follows the model at once', async () => {
+    h.picked = ''
+    await setS(S0)
+    await mount()
+    expect(orb().getAttribute('aria-label')).toBe('Voice, Automatic. Show the words.')
+    h.nat = { state: 'ready' }
+    await act(async () => { h.natCbs.forEach(cb => cb()) })
+    expect(orb().getAttribute('aria-label')).toBe('Voice, Natural voice. Show the words.')
+    h.nat = { state: 'none' }
   })
 })
 

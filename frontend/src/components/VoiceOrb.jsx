@@ -5,7 +5,7 @@ import { useCaption, caption, ageText, agoText, speakMs } from '../lib/voice-cap
 import { useVoiceLevel, smooth, lineLevels, curveMs } from '../lib/voice-level.js'
 import { cues } from '../lib/spoken-cues.js'
 import { hush, onVoices, pickedVoice, speechLang, speechSupported, voiceLabel, voiceState } from '../lib/speech.js'
-import { NATURAL_VOICES, autoNatural, naturalState } from '../lib/natural-voice.js'
+import { NATURAL_VOICES, autoNatural, naturalState, onNatural } from '../lib/natural-voice.js'
 import { onVoiceLoading, tickNative } from '../lib/rest-alert.js'
 import { isOn } from '../lib/modules.js'
 import { nav } from '../lib/nav.js'
@@ -27,6 +27,7 @@ const reduced = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce
 function useVoiceInfo(on) {
   const [, bump] = useState(0)
   useEffect(() => onVoices(() => bump(n => n + 1)), [])
+  useEffect(() => onNatural(() => bump(n => n + 1)), []) // the model arrives, or the module switches
   const { voices, auto } = voiceState()
   const id = pickedVoice()
   const nat = NATURAL_VOICES.find(v => v.id === (id || autoNatural(speechLang(), naturalState())))

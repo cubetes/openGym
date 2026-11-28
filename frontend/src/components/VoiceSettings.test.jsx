@@ -619,7 +619,7 @@ describe('Settings → Timer alerts → Voice', () => {
     })
     it('Automatic with the model ready is Heart in en-US and Emma in en-GB: row, note, hero, no Pitch; not ready, the Apple voice', async () => {
       const apple = { id: 'anna', name: 'Anna', lang: 'en-GB', quality: 'enhanced' }
-      for (const [loc, name, region] of [['en-US', 'Heart', 'US'], ['en-GB', 'Emma', 'UK']]) {
+      for (const [loc, name, accent] of [['en-US', 'Heart', 'heart'], ['en-GB', 'Emma', 'emma']]) {
         mocks.loc = loc
         phone(ready); mocks.voices.auto = apple
         await render(<VoiceList />)
@@ -629,13 +629,34 @@ describe('Settings → Timer alerts → Voice', () => {
         expect(heroSub()).toBe(`${name} · Natural voice`)
         expect(host.querySelector('.vhero').className).toContain('tier-natural')
         expect(host.querySelectorAll('[role="slider"]')).toHaveLength(1)
-        expect(region).toBeTruthy()
+        expect(host.querySelector('.vhero').className).toContain('nv-' + accent)
       }
       mocks.loc = 'en-GB'
       phone({ state: 'none' }); mocks.voices.auto = apple
       await render(<VoiceSettings />)
       expect(heroSub()).toBe('Anna · Enhanced')
       expect(host.querySelectorAll('[role="slider"]')).toHaveLength(2)
+    })
+    it('Automatic with the module off shows the Apple voice even with the model ready', async () => {
+      mocks.S.modules = { voices: false }
+      phone(ready); mocks.voices.auto = { id: 'anna', name: 'Anna', lang: 'en-GB', quality: 'enhanced' }
+      await render(<VoiceList />)
+      expect(rowTitled('Automatic').textContent).not.toContain('Emma')
+      await render(<VoiceSettings />)
+      expect(heroSub()).not.toContain('Emma')
+      expect(host.querySelector('.vhero').className).not.toContain('tier-natural')
+    })
+    it('the Automatic row waits like a Natural row when it speaks Natural', async () => {
+      phone(ready)
+      await render(<VoiceList />)
+      vi.useFakeTimers()
+      try {
+        await tap(rowTitled('Automatic'))
+        await act(async () => { vi.advanceTimersByTime(301) })
+        expect(rowTitled('Automatic').querySelector('.lrow-s').textContent).toBe('Loading, please wait…')
+        await act(async () => { say({ ms: 2000 }) })
+        expect(rowTitled('Automatic').querySelector('.lrow-s').textContent).toContain('Uses Emma')
+      } finally { vi.useRealTimers() }
     })
     it('the hero reads Heart with the model ready, and Pitch is gone', async () => {
       phone(ready)

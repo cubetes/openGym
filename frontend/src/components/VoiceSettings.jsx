@@ -235,7 +235,7 @@ export function VoiceList() {
       <span className="vh">{t('Voice types: {0}', kinds.map(legendName).join(', '))}</span>
     </>}
     <Section footer={voices.length ? null : t('No other voices for this language here. Your device’s settings can add more.')}>
-      <Row icon={tile(autoN ? 'natural' : 'plain', '', 'bolt', autoN?.id)} className={rowCls('')} title={t('Automatic')} subtitle={autoNote} ariaLabel={t('Automatic') + sel(!cur)} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', autoN?.id || auto?.id || '')} />
+      <Row icon={tile(autoN ? 'natural' : 'plain', '', 'bolt', autoN?.id)} className={rowCls('')} title={t('Automatic')} subtitle={w === 2 && playKey === 'auto' ? t('Loading, please wait…') : autoNote} ariaLabel={t('Automatic') + sel(!cur)} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', autoN?.id || auto?.id || '')} />
     </Section>
     {natural && nat.state === 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} tile={tile} rowCls={rowCls} fresh={fresh} wait={id => (w === 2 && playKey === id ? t('Loading, please wait…') : null)} />}
     {folded
