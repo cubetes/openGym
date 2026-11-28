@@ -86,6 +86,7 @@ const rowTitled = title => [...host.querySelectorAll('.lrow')].find(r => r.query
 const tileNamed = name => [...host.querySelectorAll('.at')].find(a => a.querySelector('.nm')?.textContent === name)
 const topOf = name => tileNamed(name)?.querySelector('[role="switch"]')
 const stripOf = name => tileNamed(name)?.querySelector('.at-op')
+const openStripOf = name => tileNamed(name)?.querySelector('.at-fold.open .at-op')
 // The Sound sheet, as the strip opens it.
 const mountSheet = () => act(() => root.render(<RestSoundSheet close={() => {}} />))
 const switchIn = row => row.querySelector('[role="switch"]') || row.querySelector('input[type="checkbox"]') || row.querySelector('button')
@@ -200,7 +201,7 @@ describe('Settings — vibrate', () => {
     expect(mocks.S.vibrate).toBe(false)
     mount()
     expect(topOf('Vibrate').getAttribute('aria-checked')).toBe('false')
-    expect(stripOf('Vibrate')).toBeFalsy()
+    expect(openStripOf('Vibrate')).toBeFalsy() // a folded strip may stay in the tree, inert
     act(() => { topOf('Vibrate').click() })
     expect(mocks.S.vibrate).toBe(true)
   })
@@ -240,7 +241,7 @@ describe('Settings — which sound', () => {
     expect(stripOf('Sound').textContent).toBe('Classic beeps')
     mocks.S.sound = false
     mount()
-    expect(stripOf('Sound')).toBeFalsy()
+    expect(openStripOf('Sound')).toBeFalsy()
   })
 
   // #306: a few sounds to pick from, each heard as it is picked.

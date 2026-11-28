@@ -1,25 +1,29 @@
 /* Timer alerts tiles (flow-studio.md Round 4). The top part is the switch, the strip the options. */
 .alert-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 8px }
-.at { --at-l2: var(--label-2); display: flex; flex-direction: column; overflow: hidden; border-radius: 20px; background: var(--surface); box-shadow: inset 0 0 0 .5px var(--sep) }
+.at { --at-l2: var(--label-2); display: flex; flex-direction: column; overflow: hidden; border-radius: 20px; background: var(--surface); box-shadow: inset 0 0 0 .5px var(--sep); transition: background var(--med) var(--ease), box-shadow var(--med) var(--ease), transform 160ms var(--ease-out) }
 :root[data-theme="light"] .at { --at-l2: rgba(60,60,67,.86) }
 .at.wide { grid-column: 1 / -1 }
 .at.on { background: var(--surface-2, var(--surface)); background: color-mix(in srgb, var(--c) 18%, var(--surface)); box-shadow: inset 0 0 0 1.5px var(--c) }
-.at-sw { position: relative; flex: 1; min-height: 92px; padding: 12px 14px 10px; text-align: start; color: var(--label); background: none; border: 0; font: inherit; cursor: pointer; transition: transform 160ms var(--ease-out) }
-.at-sw:active { transform: scale(.97) }
-.at .chip { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 11px; background: var(--c); color: #fff }
+.at-sw { position: relative; flex: 1; min-height: 92px; padding: 12px 14px 10px; text-align: start; color: var(--label); background: none; border: 0; font: inherit; cursor: pointer }
+.at:has(.at-sw:active) { transform: scale(.97) }
+.at .chip { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 11px; background: var(--c); color: #fff; transition: background var(--med) var(--ease), color var(--med) var(--ease) }
 .at[style*="yellow"] .chip { color: #3a2400 }
 .at .chip svg { width: 22px; height: 22px }
 .at.off .chip { background: var(--surface-2); color: var(--at-l2) }
-.at .mini { position: absolute; inset-inline-end: 12px; top: 14px; width: 36px; height: 22px; border-radius: 11px; background: var(--surface-3) }
+.at .mini { position: absolute; inset-inline-end: 12px; top: 14px; width: 36px; height: 22px; border-radius: 11px; background: var(--surface-3); transition: background var(--med) var(--ease) }
 .at .mini::after { content: ""; position: absolute; inset-inline-start: 2px; top: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.3); transition: transform 200ms var(--ease-out) }
 .at.on .mini { background: var(--c) }
 .at.on .mini::after { transform: translateX(14px) }
 [dir="rtl"] .at.on .mini::after { transform: translateX(-14px) }
 .at[style*="yellow"].on .mini { background: #c99700 }
-.at .st { position: absolute; inset-inline-end: 58px; top: 19px; font-size: var(--fs-caption); font-weight: 600; color: var(--at-l2) }
+.at .st { position: absolute; inset-inline-end: 58px; top: 19px; font-size: var(--fs-caption); font-weight: 600; color: var(--at-l2); transition: color var(--med) var(--ease) }
 .at.on .st { color: var(--label) }
 .at .nm { display: block; margin-top: 10px; font-size: var(--fs-body); font-weight: 600; line-height: 1.2 }
-.at-op { display: flex; align-items: center; justify-content: space-between; gap: 6px; width: 100%; min-height: 44px; padding: 0 14px; margin-top: auto; border: 0; border-top: .5px solid var(--sep); background: none; font: inherit; font-size: var(--fs-footnote); text-align: start; color: var(--at-l2) }
+.at-op { display: flex; align-items: center; justify-content: space-between; gap: 6px; width: 100%; min-height: 44px; padding: 0 14px; border: 0; border-top: .5px solid var(--sep); background: none; font: inherit; font-size: var(--fs-footnote); text-align: start; color: var(--at-l2) }
+.at-fold { display: grid; grid-template-rows: 0fr; margin-top: auto; opacity: 0; transition: grid-template-rows var(--med) var(--ease), opacity var(--fast) var(--ease-out) }
+.at-fold.open { grid-template-rows: 1fr; opacity: 1 }
+@starting-style { .at-fold.open { grid-template-rows: 0fr; opacity: 0 } }
+.at-fold > div { min-height: 0; overflow: hidden }
 .at.on .at-op { border-top-color: var(--sep, rgba(128,128,128,.3)); border-top-color: color-mix(in srgb, var(--c) 45%, transparent) }
 .at.on .at-op { color: var(--label) }
 button.at-op { cursor: pointer }
@@ -35,6 +39,6 @@ button.at-op:active { background: var(--press-fill, rgba(128,128,128,.2)); backg
 .text-big .at .st { top: 22px }
 .text-big .at-op { min-height: 56px }
 @media (prefers-reduced-motion: reduce) {
-  .at-sw, .at .mini::after { transition: none }
-  .at-sw:active { transform: none }
+  .at, .at .mini::after { transition: none }
+  .at:has(.at-sw:active) { transform: none }
 }

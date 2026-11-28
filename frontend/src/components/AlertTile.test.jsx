@@ -46,6 +46,17 @@ describe('AlertTile', () => {
     expect(host.querySelector('.at-op').textContent).toBe('Screen blinks')
   })
 
+  it('turning a tile off folds its strip: inert, plain text, out of search', () => {
+    show({ on: true, value: 'Chime', onStrip: () => {}, stripFind: 'Sound' })
+    show({ on: false })
+    const fold = host.querySelector('.at-fold')
+    expect(fold.classList.contains('open')).toBe(false)
+    expect(fold.hasAttribute('inert')).toBe(true)
+    expect(host.querySelector('button.at-op')).toBeNull()
+    expect(host.querySelector('[data-find="Sound"]')).toBeNull()
+    expect(host.querySelector('.at-op').textContent).toBe('Chime')
+  })
+
   it('wide spans the row', () => {
     show({ on: true, wide: true })
     expect(host.querySelector('.at').classList.contains('wide')).toBe(true)
@@ -63,6 +74,8 @@ describe('AlertTile', () => {
   it('has a reduced-motion block, one column at large text and 44 pt strips', () => {
     const css = readFileSync('src/components/AlertTile.css', 'utf8')
     expect(css).toMatch(/prefers-reduced-motion/)
+    expect(css).toMatch(/\.at:has\(\.at-sw:active\)\s*\{\s*transform:\s*scale\(\.97\)/)
+    expect(css).toMatch(/\.at\s*\{[^}]*transition:\s*background var\(--med\) var\(--ease\)/)
     expect(css).toMatch(/\.text-big \.alert-grid\s*\{\s*grid-template-columns:\s*1fr\s*\}/)
     expect(css).toMatch(/\.at-op\s*\{[^}]*min-height:\s*44px/)
   })
