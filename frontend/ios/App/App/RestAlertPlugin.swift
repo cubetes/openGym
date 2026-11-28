@@ -34,6 +34,7 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
         CAPPluginMethod(name: "hush", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "voices", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "prepare", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "tick", returnType: CAPPluginReturnPromise),
     ]
 
     static let requestId = "opengym.rest"
@@ -181,6 +182,12 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
      * own length and no patterns, so each pulse of 100 ms or more is that vibration at its moment
      * in the pattern, and a shorter one (a set tick) is a tap of the haptic engine.
      */
+    /// A light tap for the long press on the orb.
+    @objc func tick(_ call: CAPPluginCall) {
+        DispatchQueue.main.async { UIImpactFeedbackGenerator(style: .light).impactOccurred() }
+        call.resolve()
+    }
+
     @objc func buzz(_ call: CAPPluginCall) {
         let pattern = (call.getArray("pattern") as? [NSNumber])?.map { $0.doubleValue } ?? [400]
         DispatchQueue.main.async {
@@ -360,6 +367,9 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
         p.delegate = self
         line.player = p
         guard p.play() else { return fallBack(line) }
+        // The screen's orb follows this curve; an unreadable file sends an empty one and the page estimates.
+        let levels = NaturalVoiceMath.loudness(NaturalVoiceMath.pcm16Samples(wav: (try? Data(contentsOf: url)) ?? Data()), rate: 24000)
+        notifyListeners("voiceLine", data: ["text": line.text, "levels": levels, "ms": Int(p.duration * 1000)])
         // The player's delegate can stay silent: let go at the sound's end plus a little.
         DispatchQueue.main.asyncAfter(deadline: .now() + p.duration + 0.5) { self.finish(line) }
     }

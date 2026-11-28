@@ -36,4 +36,33 @@ public enum NaturalVoiceMath {
     public static func isCompleteCopy(expected: [String: Int], found: [String: Int]) -> Bool {
         expected.allSatisfy { found[$0.key] == $0.value }
     }
+
+    /// The samples of a 16-bit mono PCM WAV, -1...1. Walks the chunks to `data` (the header is not always 44 bytes); [] for anything unreadable.
+    public static func pcm16Samples(wav: Data) -> [Float] {
+        let b = [UInt8](wav)
+        func u32(_ at: Int) -> Int { Int(b[at]) | Int(b[at + 1]) << 8 | Int(b[at + 2]) << 16 | Int(b[at + 3]) << 24 }
+        guard b.count >= 12, b[0..<4].elementsEqual("RIFF".utf8), b[8..<12].elementsEqual("WAVE".utf8) else { return [] }
+        var at = 12
+        while at + 8 <= b.count {
+            let size = u32(at + 4)
+            if b[at..<at + 4].elementsEqual("data".utf8) {
+                let end = min(at + 8 + size, b.count)
+                return stride(from: at + 8, to: end - 1, by: 2).map { Float(Int16(bitPattern: UInt16(b[$0]) | UInt16(b[$0 + 1]) << 8)) / 32768 }
+            }
+            at += 8 + size + (size & 1) // chunks are padded to an even size
+        }
+        return []
+    }
+
+    /// RMS per window (the last partial one too), lifted so the loudest window sits at 0.9 (at most 8x), 2 decimals.
+    public static func loudness(_ samples: [Float], rate: Int, windowMs: Int = 50) -> [Double] {
+        let n = max(rate * windowMs / 1000, 1)
+        let rms = stride(from: 0, to: samples.count, by: n).map { i -> Double in
+            let w = samples[i..<min(i + n, samples.count)]
+            return (w.reduce(0.0) { $0 + Double($1) * Double($1) } / Double(w.count)).squareRoot()
+        }
+        let peak = rms.max() ?? 0
+        let gain = peak > 0 ? min(0.9 / peak, 8) : 0
+        return rms.map { (min(1, $0 * gain) * 100).rounded() / 100 }
+    }
 }

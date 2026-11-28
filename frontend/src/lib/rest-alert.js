@@ -230,6 +230,25 @@ export function voicesNative() {
     .catch(() => null)
 }
 
+/** The loudness of the Natural line that just started ({ text, levels, ms }). Returns the way to stop listening; nothing off the phones. */
+export function onVoiceLine(cb) {
+  if (!MOBILE) return () => {}
+  let off = false
+  let handle = null
+  restPlugin()
+    .then(p => p && p.RestAlert.addListener('voiceLine', ev => { if (!off) cb(ev) }))
+    .then(h => { handle = h; if (off && h) h.remove() })
+    .catch(() => {})
+  return () => { off = true; if (handle) handle.remove() }
+}
+
+/** A light tap: the phone's own where there is one, else a short buzz. Never throws. */
+export function tickNative() {
+  const buzz = () => { try { navigator.vibrate?.(8) } catch { /* no haptics here */ } }
+  if (!MOBILE) return buzz()
+  restPlugin().then(p => (p ? p.RestAlert.tick() : buzz())).catch(buzz)
+}
+
 /** Stops whatever the phone is saying. */
 export function hushNative() {
   if (!MOBILE) return Promise.resolve(false)

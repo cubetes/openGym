@@ -478,6 +478,30 @@ describe('spoken cues through the phone', () => {
     expect(h.calls).not.toContain('prepare')
   })
 
+  it('onVoiceLine listens on the phone and tickNative taps, falling back to navigator.vibrate', async () => {
+    h.platform = 'ios'
+    let alert = await import('./rest-alert.js')
+    const off = alert.onVoiceLine(() => {})
+    expect(typeof off).toBe('function')
+    alert.tickNative()
+    await new Promise(r => setTimeout(r, 0))
+    expect(h.calls).toContain('tick')
+    vi.resetModules()
+    h.platform = 'web'
+    h.calls = []
+    const vibrate = vi.fn()
+    vi.stubGlobal('navigator', { vibrate })
+    alert = await import('./rest-alert.js')
+    expect(typeof alert.onVoiceLine(() => {})).toBe('function')
+    alert.tickNative()
+    await new Promise(r => setTimeout(r, 0))
+    expect(vibrate).toHaveBeenCalledWith(8)
+    expect(h.calls).not.toContain('tick')
+    vi.stubGlobal('navigator', {})
+    expect(() => alert.tickNative()).not.toThrow()
+    await new Promise(r => setTimeout(r, 0))
+  })
+
   it('Android ducks for a line and lets go when nothing is left to say', () => {
     const java = readFileSync(new URL('../../android/app/src/main/java/ch/duartesantos/opengym/SpeechCue.java', import.meta.url), 'utf8')
     expect(java).toMatch(/AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK|RestAlert\.duck\(/)

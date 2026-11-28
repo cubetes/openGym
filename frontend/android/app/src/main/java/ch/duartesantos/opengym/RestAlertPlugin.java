@@ -2,6 +2,7 @@ package ch.duartesantos.opengym;
 
 import android.content.Context;
 import android.content.Intent;
+import android.view.HapticFeedbackConstants;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
@@ -248,6 +249,13 @@ public class RestAlertPlugin extends Plugin {
         i.putExtra("leftMs", number(call, "leftMs", 0));
         i.putExtra("totalMs", number(call, "totalMs", 0));
         try { app.startService(i); } catch (Exception ignored) { /* no countdown on screen to hold */ }
+        call.resolve();
+    }
+
+    /** A light tap for the long press on the orb. */
+    @PluginMethod
+    public void tick(PluginCall call) {
+        getActivity().runOnUiThread(() -> bridge.getWebView().performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK));
         call.resolve();
     }
 
