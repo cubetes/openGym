@@ -4478,8 +4478,6 @@ export const PT_BR_OVERRIDES = {
   "Tap Voices, then {0}.": "Toque em Vozes e depois em {0}.",
   "Download a voice marked Premium or Enhanced.": "Baixe uma voz marcada como Premium ou Aprimorada.",
   "Playing": "Reproduzindo",
-  "Spoken cues are off": "Os avisos falados estão desativados",
-  "Switch them on to hear any of this.": "Ative para ouvir algo disso.",
   "Turn on": "Ativar",
   "Choose a voice": "Escolha uma voz",
   "Settings > Accessibility > Read & Speak > Voices": "Ajustes > Acessibilidade > Ler e Falar > Vozes",

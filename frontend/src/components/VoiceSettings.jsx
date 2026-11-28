@@ -28,6 +28,10 @@ import { unlock, chime } from '../lib/sound.js'
 import { soundErrorText } from './OwnSounds.jsx'
 import { Section, Row, Slider, Switch, Button, TextField } from './ui.jsx'
 import Icon from './Icon.jsx'
+import TierTile, { tierKey, tierName } from './VoiceTier.jsx'
+import { isOn } from '../lib/modules.js'
+import { speakMs } from '../lib/voice-caption.js'
+import './VoiceSettings.css'
 
 const toast = m => useUI.getState().toast(m)
 const S_ = () => useStore.getState().S
@@ -38,7 +42,8 @@ const announcePlaying = () => {
   live.textContent = ''
   setTimeout(() => { live.textContent = t('Playing') }, 50)
 }
-const sayIt = (text, extra = {}) => { announcePlaying(); hush(); speak(text, { ...voiceOpts(S_()), queue: false, ...extra }) }
+let endPlaying = null // the hero's Playing state; anything else that speaks ends it
+const sayIt = (text, extra = {}) => { endPlaying?.(); announcePlaying(); hush(); speak(text, { ...voiceOpts(S_()), queue: false, ...extra }) }
 const fmtX = n => `${Math.round(n * 100) / 100}×`
 
 /** Why the microphone could not be used, as a sentence. */
@@ -245,6 +250,23 @@ function SliderRow({ icon, title, value, set, low, high }) {
   </div>
 }
 
+/** "Edit these lines": a pack's lines become your own. A second tap confirms when you already wrote some. */
+function useEditLines(onStart) {
+  const S = useStore(s => s.S)
+  const update = useStore(s => s.update)
+  const style = cueStyleOf(S)
+  const [replace, setReplace] = useState(false)
+  const go = () => {
+    if (hasOwnLines(S) && !replace) { setReplace(true); return }
+    update(s => { startOwnFrom(s, style) })
+    onStart?.(style)
+    setReplace(false)
+  }
+  return [replace, go]
+}
+const EditLinesRow = ({ replace, go }) => <Row icon="pencil" iconTint="var(--acc)" title={replace ? t('Replace my lines') : t('Edit these lines')} subtitle={t('They become your own lines, for every moment.')} onClick={go} />
+const REPLACE_NOTE = () => t('This replaces the lines you wrote before. Tap again to go ahead.')
+
 /** A moment's lines: read and heard in a pack, written and heard when the style is your own. */
 function MomentLines({ moment }) {
   const S = useStore(s => s.S)
@@ -252,21 +274,15 @@ function MomentLines({ moment }) {
   const style = cueStyleOf(S)
   const own = style === 'own'
   const [draft, setDraft] = useState(() => (own ? ownLines(S, moment) : []))
-  const [replace, setReplace] = useState(false)
+  const [replace, makeOwn] = useEditLines(from => setDraft(linesFor({ cueStyle: from }, moment)))
   useEffect(() => { if (own) setDraft(d => (d.length ? d : ownLines(useStore.getState().S, moment))) }, [own, moment])
 
   if (!own) {
     const lines = linesFor(S, moment)
-    const makeOwn = () => {
-      if (hasOwnLines(S) && !replace) { setReplace(true); return }
-      update(s => { startOwnFrom(s, style) })
-      setDraft(linesFor({ cueStyle: style }, moment))
-      setReplace(false)
-    }
-    return <Section title={t('Lines')} footer={replace ? t('This replaces the lines you wrote before. Tap again to go ahead.') : t('One is picked at random each time.')}>
+    return <Section title={t('Lines')} footer={replace ? REPLACE_NOTE() : t('One is picked at random each time.')}>
       {lines.map((l, i) => <Row key={i} icon="play" iconTint="var(--teal)" title={l} onClick={() => sayIt(l)} />)}
       {!lines.length && <Row icon="chat" iconTint="var(--grey)" title={t('Nothing said here in this style.')} />}
-      <Row icon="pencil" iconTint="var(--acc)" title={replace ? t('Replace my lines') : t('Edit these lines')} subtitle={t('They become your own lines, for every moment.')} onClick={makeOwn} />
+      <EditLinesRow replace={replace} go={makeOwn} />
     </Section>
   }
 
@@ -380,15 +396,92 @@ export function momentSummary(S, moment) {
   return linesFor(S, moment)[0] || t('Quiet')
 }
 
+// The waveform is decoration: 28 bars of fixed height and period, moving only while a sample plays.
+const WAVE = Array.from({ length: 28 }, (_, i) => ({ '--h': (0.35 + 0.6 * Math.abs(Math.sin(i * 1.7))).toFixed(2), '--d': [0.8, 0.9, 1.1, 1.3][i % 4] + 's', '--dl': `-${((i * 0.37) % 1).toFixed(2)}s` }))
+
+/** The voice in use: its tile, its name, Change (opens the picker), a waveform and Try it. */
+function VoiceHero({ vs, cur, openList }) {
+  const S = useStore(s => s.S)
+  const [playing, setPlaying] = useState(false)
+  const timer = useRef(0)
+  const on = isOn(S, 'voices')
+  useEffect(() => {
+    endPlaying = () => { clearTimeout(timer.current); setPlaying(false) }
+    return () => { endPlaying = null; clearTimeout(timer.current) }
+  }, [])
+  const nat = NATURAL_VOICES.find(v => v.id === cur)
+  const apple = nat ? null : vs.voices?.find(v => v.id === cur)
+  const used = nat || apple ? null : vs.auto // what Automatic speaks with
+  const key = !on ? 'plain' : nat ? 'natural' : apple ? tierKey(apple) : used ? tierKey(used) : 'plain'
+  const name = nat ? nat.name : apple ? voiceLabel(apple) : t('Automatic')
+  const tier = !on ? null : nat ? `${tierName('natural')} · ${nat.region}` : apple ? tierName(key) : used ? tierName(key) : vs.ios && vs.voices ? t('Standard voice') : null
+  const sub = used ? [voiceLabel(used), on && tierName(key)].filter(Boolean).join(' · ') : tier
+  const tryIt = () => {
+    const cue = sampleCue(S.unit), line = sampleLine(S)
+    sayIt(cue)
+    speak(line, { ...voiceOpts(S) })
+    clearTimeout(timer.current)
+    setPlaying(true)
+    timer.current = setTimeout(() => setPlaying(false), speakMs(`${cue}. ${line}`, speechRateNum(S)))
+  }
+  return <div className={`vhero tier-${key}${playing ? ' play' : ''}`}>
+    <button type="button" className="vhero-main" aria-label={`${t('Using now')}, ${[name, sub].filter(Boolean).join(', ')}. ${t('Change voice')}`} onClick={openList}>
+      <TierTile tier={key} size="xl" playing={playing} />
+      <span className="vhero-tx">
+        <span className="vhero-k">{t('Using now')}</span>
+        <span className="vhero-n">{name}</span>
+        {sub && <span className="vhero-s">{sub}</span>}
+      </span>
+      <span className="vhero-chg">{t('Change')}<Icon name="chevronRight" aria-hidden="true" /></span>
+    </button>
+    <div className="vhero-wave" aria-hidden="true">{WAVE.map((st, i) => <i key={i} style={st} />)}</div>
+    <Button variant="primary" className="vhero-try" icon="play" onClick={tryIt}>{playing ? t('Playing') : t('Try it')}</Button>
+  </div>
+}
+
+const STYLE_LOOK = { hype: ['bolt', '#f97316'], plain: ['list', '#8e8e93'], calm: ['heart', '#14a3a8'], drill: ['flag', '#e5484d'], deadpan: ['smile', '#7c7cf0'], own: ['pencil', '#8e8e93'] }
+const BUBBLES = ['restStart', 'restOver']
+
+/** The six styles as tiles, then the picked style's first line for two moments, then "Edit these lines". */
+function StyleGrid({ S, style, pickStyle }) {
+  const [replace, makeOwn] = useEditLines()
+  const own = style === 'own'
+  const [, color] = STYLE_LOOK[style]
+  return <section className="sect">
+    <h2 className="sect-t" id="vp-style-h">{t('Style')}</h2>
+    <div className="vs-grid" role="radiogroup" aria-labelledby="vp-style-h">
+      {STYLE_IDS.map((id, i) => {
+        const [icon, c] = STYLE_LOOK[id], nm = t(STYLE_COPY[id][0])
+        return <button key={id} type="button" role="radio" aria-checked={style === id} aria-label={`${nm}, ${t('{0} of {1}', i + 1, STYLE_IDS.length)}`} data-find={nm}
+          className={'vs-tile' + (style === id ? ' sel' : '') + (id === 'own' ? ' own' : '')} style={{ '--c': c }} onClick={() => pickStyle(id)}>
+          <span className="vs-ch"><span className="vs-ico"><Icon name={icon} aria-hidden="true" /></span><span className="vs-nn">{nm}</span></span>
+          {style === id && <span className="vs-ok"><Icon name="check" aria-hidden="true" /></span>}
+          <span className="vs-dd">{t(STYLE_COPY[id][1])}</span>
+        </button>
+      })}
+    </div>
+    <div className="vs-smp" style={{ '--c': color }}>
+      {BUBBLES.map(m => {
+        const line = linesFor(S, m)[0]
+        return line ? <button key={m} type="button" className="vs-bub" aria-label={t('Play: {0}, {1}', t(MOMENT_COPY[m]), line)} onClick={() => sayIt(line)}>
+          <small><Icon name="play" aria-hidden="true" />{t(MOMENT_COPY[m])}</small>{line}
+        </button> : null
+      })}
+    </div>
+    {/* "How much it says" (#1602) goes here, between Style and Moments. */}
+    {!own && <div className="sect-b vs-edit"><EditLinesRow replace={replace} go={makeOwn} /></div>}
+    <p className="sect-f">{replace ? REPLACE_NOTE() : t('Only the words change. Your own lines live here too.')}</p>
+  </section>
+}
+
 export default function VoiceSettings({ openList }) {
   const S = useStore(s => s.S)
   const update = useStore(s => s.update)
   const vs = useVoices()
-  useNatural() // redraws the Voice row when the model arrives or goes
-  const { voices } = vs
-  const stuck = vs.ios && !vs.auto
+  useNatural() // redraws the hero when the model arrives or goes
   const style = cueStyleOf(S)
   const cur = pickedVoice()
+  const off = S.spokenCues !== true
   const pickStyle = id => {
     update(s => { s.cueStyle = id })
     const after = { ...S_(), cueStyle: id }
@@ -399,25 +492,33 @@ export default function VoiceSettings({ openList }) {
   const footer = !speechSupported() ? t('This browser can’t speak. Try another one.') : null
   return <>
     <span id="vp-live" className="vh" role="status" aria-live="polite" />
-    {S.spokenCues !== true && <section className="sect"><div className="sect-b vp-card">
-      <div className="vp-off"><b>{t('Spoken cues are off')}</b><span>{t('Switch them on to hear any of this.')}</span></div>
+    {off && <section className="sect"><div className="sect-b vp-card">
+      <div className="vp-off"><span>{t('Spoken cues are off. Switch them on to hear your next set and the countdown.')}</span></div>
       <Button variant="primary" className="vp-how" onClick={() => { update(s => { s.spokenCues = true }); sayIt(sampleCue(S.unit)) }}>{t('Turn on')}</Button>
     </div></section>}
-    <Section footer={footer}>
-      <Row icon="personCircle" iconTint="var(--teal)" title={t('Voice')} value={voiceRowValue({ ...vs, stuck }, cur)} accessory="chevron" onClick={openList} />
-      <SliderRow icon="gauge" title={t('Speed')} value={speechRateNum(S)} set={setSpeechRate} low={t('Slower')} high={t('Faster')} />
-      {/* Kokoro has no pitch, and shifting it afterwards spoils the sound (Ruling 2). */}
-      {!isNatural(cur) && <SliderRow icon="speaker" title={t('Pitch')} value={speechPitchNum(S)} set={setSpeechPitch} low={t('Lower')} high={t('Higher')} />}
-      <Row icon="play" iconTint="var(--green)" title={t('Try it')} onClick={() => { sayIt(sampleCue(S.unit)); speak(sampleLine(S), { ...voiceOpts(S) }) }} />
-    </Section>
-    <Section title={t('Style')} footer={t('Only the words change. Your own lines live here too.')}>
-      {STYLE_IDS.map(id => <Row key={id} icon="chat" iconTint="var(--teal)" title={t(STYLE_COPY[id][0])} subtitle={t(STYLE_COPY[id][1])}
-        accessory={style === id ? 'check' : 'none'} onClick={() => pickStyle(id)} />)}
-    </Section>
-    {/* Where your own voice goes in (TestFlight 11-08: "upload my own voice, or a file"): said
-        up front, since the clips sit one tap down, in each moment's sheet. */}
-    <Section title={t('Moments')} footer={<>{t('Tap a moment to record your own voice for it or pick an audio file, up to {0} seconds.', CLIP_SEC)} {t('Your next set is still said first when a rest starts. The count of a hold stays a count.')}</>}>
-      {MOMENTS.map(m => <Row key={m} icon="bell" iconTint="var(--orange)" title={t(MOMENT_COPY[m])} subtitle={momentSummary(S, m)} accessory="chevron" onClick={() => momentSheet(m)} />)}
-    </Section>
+    <div className={off ? 'vp-body vp-off-dim' : 'vp-body'} inert={off}>
+      <VoiceHero vs={vs} cur={cur} openList={openList} />
+      {footer && <p className="sect-f">{footer}</p>}
+      <StyleGrid S={S} style={style} pickStyle={pickStyle} />
+      {/* Where your own voice goes in (TestFlight 11-08: "upload my own voice, or a file"): said
+          up front, since the clips sit one tap down, in each moment's sheet. */}
+      <Section title={t('Moments')} footer={<>{t('Tap a moment to record your own voice for it or pick an audio file, up to {0} seconds.', CLIP_SEC)} {t('Your next set is still said first when a rest starts. The count of a hold stays a count.')}</>}>
+        <div className="vm-tl" aria-hidden="true">
+          <span className="vm-tl-t">{t('One rest, in order')}</span>
+          <div className="vm-trk">
+            {[[8, t('Starts')], [60, t('10 s')], [92, t('Over')]].map(([x, l]) => <span key={x}><b style={{ left: x + '%' }} /><u style={{ left: x + '%' }}>{l}</u></span>)}
+          </div>
+          <div className="vm-tags"><span>{t(MOMENT_COPY.lastSet)}</span><span>{t(MOMENT_COPY.record)}</span></div>
+        </div>
+        {MOMENTS.map(m => <Row key={m} icon="bell" iconTint="var(--orange)" title={t(MOMENT_COPY[m])} subtitle={momentSummary(S, m)} accessory="chevron" onClick={() => momentSheet(m)} />)}
+      </Section>
+      <Section title={t('Fine tune')}>
+        <SliderRow icon="gauge" title={t('Speed')} value={speechRateNum(S)} set={setSpeechRate} low={t('Slower')} high={t('Faster')} />
+        {/* Kokoro has no pitch, and shifting it afterwards spoils the sound (Ruling 2). */}
+        {isNatural(cur)
+          ? <div className="lrow vp-nopitch" data-find={t('Pitch')}><span className="lrow-i" style={{ '--tint': 'var(--teal)' }}><Icon name="speaker" /></span><span className="lrow-m"><span className="lrow-s">{t('No pitch for Natural voices.')}</span></span></div>
+          : <SliderRow icon="speaker" title={t('Pitch')} value={speechPitchNum(S)} set={setSpeechPitch} low={t('Lower')} high={t('Higher')} />}
+      </Section>
+    </div>
   </>
 }

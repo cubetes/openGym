@@ -46,7 +46,9 @@ vi.mock('../lib/speech.js', async importOriginal => {
   }
 })
 
-const { cues } = await import('../lib/spoken-cues.js')
+const { cues, sampleCue } = await import('../lib/spoken-cues.js')
+const { sampleLine, linesFor } = await import('../lib/voice-styles.js')
+const { speakMs } = await import('../lib/voice-caption.js')
 const { default: VoiceSettings, VoiceList, voiceRowValue, momentSummary, micErrorText, recordType } = await import('./VoiceSettings.jsx')
 
 let host, root, spoken
@@ -79,29 +81,108 @@ afterEach(() => {
 
 const render = async el => { await act(async () => { root.render(el) }); await act(async () => { await new Promise(r => setTimeout(r, 0)) }) }
 const titles = () => [...host.querySelectorAll('.lrow .lrow-t')].map(e => e.textContent)
+const heroName = () => host.querySelector('.vhero-n')?.textContent
+const heroSub = () => host.querySelector('.vhero-s')?.textContent ?? null
+const radio = name => [...host.querySelectorAll('[role="radio"]')].find(r => r.getAttribute('aria-label').startsWith(name + ','))
 const rowTitled = title => [...host.querySelectorAll('.lrow')].find(r => r.querySelector('.lrow-t')?.textContent === title)
 
 describe('Settings → Timer alerts → Voice', () => {
-  it('shows the voice, speed, pitch, the styles and the moments', async () => {
+  it('shows the hero, the six styles, the moments, then speed and pitch', async () => {
     await render(<VoiceSettings />)
-    expect(titles()).toEqual(['Voice', 'Speed', 'Pitch', 'Try it', 'Just the facts', 'Calm coach', 'Drill sergeant', 'Hype man', 'Deadpan', 'Your own lines',
-      'When a rest starts', '10 seconds left', 'When the rest is over', 'Before the last set', 'New record'])
-    expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Automatic')
-    expect(rowTitled('Just the facts').querySelector('.lrow-k')).not.toBeNull()
+    expect(titles()).toEqual(['Edit these lines', 'When a rest starts', '10 seconds left', 'When the rest is over', 'Before the last set', 'New record', 'Speed', 'Pitch'])
+    expect(heroName()).toBe('Automatic')
+    expect(host.querySelectorAll('[role="radio"]')).toHaveLength(6)
     expect(host.querySelectorAll('[role="slider"]')).toHaveLength(2)
     expect(host.querySelector('[role="slider"]').getAttribute('aria-valuetext')).toBe('1×')
+    const at = txt => host.textContent.indexOf(txt)
+    expect(at('Using now')).toBeLessThan(at('Style'))
+    expect(at('Style')).toBeLessThan(at('One rest, in order'))
+    expect(at('One rest, in order')).toBeLessThan(at('Fine tune'))
+    expect(host.querySelector('.vm-tl').getAttribute('aria-hidden')).toBe('true')
   })
-  it('picking a style says one of its lines and keeps it', async () => {
-    await render(<VoiceSettings />)
-    await act(async () => { rowTitled('Hype man').click() })
-    expect(mocks.S.cueStyle).toBe('hype')
-    expect(spoken.at(-1).text).toBe('LET’S GO! ONE MORE, CHAMP!')
-  })
-  it('the Voice row opens the picker page', async () => {
+  it('the hero: Using now, the Natural name and tier, one button that opens the picker', async () => {
+    localStorage.setItem('og_speech_voice', 'natural:af_heart')
+    mocks.nat = { ...idleNat, available: true, state: 'ready', bytes: 90e6 }
     const openList = vi.fn()
     await render(<VoiceSettings openList={openList} />)
-    await act(async () => { rowTitled('Voice').click() })
+    expect(host.textContent).toContain('Using now')
+    expect(heroName()).toBe('Heart')
+    expect(heroSub()).toBe('Natural voice · US')
+    expect(host.querySelector('.vhero .tier-natural.tier-xl')).not.toBeNull()
+    const main = host.querySelector('.vhero-main')
+    expect(main.getAttribute('aria-label')).toBe('Using now, Heart, Natural voice · US. Change voice')
+    expect(main.textContent).toContain('Change')
+    await act(async () => { main.click() })
     expect(openList).toHaveBeenCalledTimes(1)
+  })
+  it('Better voices off: a plain tile and no tier name', async () => {
+    localStorage.setItem('og_speech_voice', 'anna')
+    mocks.S.modules = { voices: false }
+    await render(<VoiceSettings />)
+    expect(heroName()).toBe('Anna')
+    expect(heroSub()).toBeNull()
+    expect(host.querySelector('.vhero .tier-tile').classList.contains('tier-plain')).toBe(true)
+    expect(host.querySelector('.vhero-main').getAttribute('aria-label')).toBe('Using now, Anna. Change voice')
+  })
+  it('Try it is a .btn that reads Playing while the sample plays, then Try it again', async () => {
+    await render(<VoiceSettings />) // render waits on a real timer, so fake them after
+    vi.useFakeTimers()
+    try {
+      const btn = () => [...host.querySelectorAll('.btn')].find(b => /^(Try it|Playing)$/.test(b.textContent))
+      expect(btn().textContent).toBe('Try it')
+      await act(async () => { btn().click() })
+      expect(btn().textContent).toBe('Playing')
+      expect(host.querySelector('.vhero .tier-tile.playing')).not.toBeNull()
+      expect(document.getElementById('vp-live')).not.toBeNull()
+      await act(async () => { vi.advanceTimersByTime(speakMs(`${sampleCue('kg')}. ${sampleLine(mocks.S)}`, 1) + 10) })
+      expect(btn().textContent).toBe('Try it')
+      expect(host.querySelector('.vhero .tier-tile.playing')).toBeNull()
+    } finally { vi.useRealTimers() }
+  })
+  it('anything else that speaks ends Playing', async () => {
+    await render(<VoiceSettings />)
+    const btn = () => host.querySelector('.vhero-try')
+    await act(async () => { btn().click() })
+    expect(btn().textContent).toBe('Playing')
+    await act(async () => { host.querySelector('.vs-bub').click() })
+    expect(btn().textContent).toBe('Try it')
+  })
+  it('the styles are a radiogroup; a pick keeps the style and says a line', async () => {
+    await render(<VoiceSettings />)
+    expect(host.querySelector('[role="radiogroup"]').getAttribute('aria-labelledby')).toBe('vp-style-h')
+    expect(radio('Just the facts').getAttribute('aria-checked')).toBe('true')
+    expect(radio('Calm coach').getAttribute('aria-label')).toBe('Calm coach, 2 of 6')
+    expect(radio('Your own lines').classList.contains('own')).toBe(true)
+    await act(async () => { radio('Hype man').click() })
+    expect(mocks.S.cueStyle).toBe('hype')
+    expect(spoken.at(-1).text).toBe('LET’S GO! ONE MORE, CHAMP!')
+    await render(<VoiceSettings />)
+    expect(radio('Hype man').getAttribute('aria-checked')).toBe('true')
+    expect(radio('Hype man').querySelector('.vs-ok')).not.toBeNull()
+    expect(radio('Hype man').dataset.find).toBe('Hype man')
+  })
+  it('the two bubbles play the picked style’s lines', async () => {
+    mocks.S.cueStyle = 'hype'
+    await render(<VoiceSettings />)
+    const bubs = [...host.querySelectorAll('.vs-bub')]
+    const [start, over] = [linesFor(mocks.S, 'restStart')[0], linesFor(mocks.S, 'restOver')[0]]
+    expect(bubs.map(b => b.getAttribute('aria-label'))).toEqual([`Play: When a rest starts, ${start}`, `Play: When the rest is over, ${over}`])
+    await act(async () => { bubs[0].click() })
+    expect(spoken.at(-1).text).toBe(start)
+    await act(async () => { bubs[1].click() })
+    expect(spoken.at(-1).text).toBe(over)
+  })
+  it('Your own lines has no Edit row; a pack asks twice to replace lines you wrote', async () => {
+    mocks.S.cueStyle = 'own'
+    await render(<VoiceSettings />)
+    expect(titles()).not.toContain('Edit these lines')
+    mocks.S = { ...mocks.S, cueStyle: 'calm', cueLines: { restStart: ['mine'] } }
+    await render(<VoiceSettings />)
+    await act(async () => { rowTitled('Edit these lines').click() })
+    expect(mocks.S.cueStyle).toBe('calm')
+    expect(host.textContent).toContain('This replaces the lines you wrote before. Tap again to go ahead.')
+    await act(async () => { rowTitled('Replace my lines').click() })
+    expect(mocks.S.cueStyle).toBe('own')
   })
   it('the picker lists this language’s voices; a pick is kept on this device', async () => {
     await render(<VoiceList />)
@@ -127,19 +208,22 @@ describe('Settings → Timer alerts → Voice', () => {
   it('cues off: a notice with Turn on, which switches them on', async () => {
     mocks.S.spokenCues = false
     await render(<VoiceSettings />)
-    expect(host.textContent).toContain('Spoken cues are off')
+    expect(host.textContent).toContain('Spoken cues are off. Switch them on to hear your next set and the countdown.')
+    expect(host.querySelector('.vp-body').hasAttribute('inert')).toBe(true)
     const turnOn = [...host.querySelectorAll('button')].find(b => b.textContent === 'Turn on')
     await act(async () => { turnOn.click() })
     expect(mocks.S.spokenCues).toBe(true)
     await render(<VoiceSettings />)
     expect(host.textContent).not.toContain('Spoken cues are off')
+    expect(host.querySelector('.vp-body').hasAttribute('inert')).toBe(false)
   })
   it('a Natural pick hides Pitch', async () => {
     localStorage.setItem('og_speech_voice', 'natural:af_heart')
     mocks.nat = { ...idleNat, available: true, state: 'ready', bytes: 90e6 }
     await render(<VoiceSettings />)
-    expect(titles()).not.toContain('Pitch')
     expect(host.querySelectorAll('[role="slider"]')).toHaveLength(1)
+    expect(host.textContent).toContain('No pitch for Natural voices.')
+    expect(host.querySelector('.vp-nopitch').dataset.find).toBe('Pitch')
   })
   describe('the picker and the iPhone hint', () => {
     const phone = (voices, auto, ios = true) => { mocks.mobile = true; mocks.voices = { voices, auto, ios } }
@@ -151,7 +235,8 @@ describe('Settings → Timer alerts → Voice', () => {
     it('a stuck iPhone says Standard voice and the picker says how to get better ones', async () => {
       phone([anna], null)
       await render(<VoiceSettings />)
-      expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Standard voice')
+      expect(heroName()).toBe('Automatic')
+      expect(heroSub()).toBe('Standard voice')
       await render(<VoiceList />)
       expect(host.textContent).toContain(hint)
       expect(host.textContent).toContain('Settings > Accessibility > Read & Speak > Voices')
@@ -190,10 +275,11 @@ describe('Settings → Timer alerts → Voice', () => {
       expect(rowTitled('Automatic').querySelector('.lrow-s').textContent).toBe('Uses Nicky (Enhanced), the best voice for your accent.')
       expect(rowTitled('Nicky').querySelector('.lrow-v').textContent).toBe('Enhanced')
     })
-    it('a Premium voice: nothing to add, no hint, and the Voice row names it', async () => {
+    it('a Premium voice: nothing to add, no hint, and the hero names it', async () => {
       phone([serena, anna], serena)
       await render(<VoiceSettings />)
-      expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Automatic · Serena')
+      expect(heroName()).toBe('Automatic')
+      expect(heroSub()).toBe('Serena · Premium')
       await render(<VoiceList />)
       expect(host.textContent).toContain('You already have a Premium voice. Nothing to add.')
       expect(host.textContent).not.toContain(hint)
@@ -203,18 +289,19 @@ describe('Settings → Timer alerts → Voice', () => {
       expect(mocks.opts.at(-1).voice).toBe('serena')
       expect(localStorage.getItem('og_speech_voice')).toBeNull()
     })
-    it('a voice downloaded while away shows in the Voice row when the refresh lands', async () => {
+    it('a voice downloaded while away shows in the hero when the refresh lands', async () => {
       phone([anna], null)
       await render(<VoiceSettings />)
-      expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Standard voice')
+      expect(heroSub()).toBe('Standard voice')
       mocks.voices = { voices: [serena, anna], auto: serena, ios: true }
       await act(async () => { mocks.subs.forEach(cb => cb()) })
-      expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Automatic · Serena')
+      expect(heroSub()).toBe('Serena · Premium')
     })
-    it('before the first listing the Voice row shows no value', async () => {
+    it('before the first listing the hero shows no voice', async () => {
       phone(null, null, false)
       await render(<VoiceSettings />)
-      expect(rowTitled('Voice').querySelector('.lrow-v')).toBeNull()
+      expect(heroName()).toBe('Automatic')
+      expect(heroSub()).toBeNull()
     })
     it('a listing that fails still lets the picker open, with nothing to pick', async () => {
       phone(null, null, false)
@@ -227,7 +314,8 @@ describe('Settings → Timer alerts → Voice', () => {
         phone([anna], null, false)
         mocks.mobile = mobile
         await render(<VoiceSettings />)
-        expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Automatic')
+        expect(heroName()).toBe('Automatic')
+        expect(heroSub()).toBeNull()
         await render(<VoiceList />)
         expect(rowTitled('Automatic').querySelector('.lrow-s')).toBeNull()
         expect(rowTitled('Anna').querySelector('.lrow-v')).toBeNull()
@@ -235,11 +323,12 @@ describe('Settings → Timer alerts → Voice', () => {
         expect(host.textContent).not.toContain(hint)
       }
     })
-    it('a picked voice shows its name in the Voice row', async () => {
+    it('a picked voice shows its name in the hero', async () => {
       phone([anna], null)
       localStorage.setItem('og_speech_voice', 'anna')
       await render(<VoiceSettings />)
-      expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Anna')
+      expect(heroName()).toBe('Anna')
+      expect(heroSub()).toBe('Standard')
     })
   })
   describe('Natural voice in the picker', () => {
@@ -396,16 +485,17 @@ describe('Settings → Timer alerts → Voice', () => {
       await render(<VoiceList />)
       expect(rowTitled('Automatic').querySelector('.lrow-k')).not.toBeNull()
       await render(<VoiceSettings />)
-      expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Automatic · Anna')
-      expect(titles()).toContain('Pitch')
+      expect(heroName()).toBe('Automatic')
+      expect(heroSub()).toBe('Anna · Enhanced')
+      expect(host.querySelectorAll('[role="slider"]')).toHaveLength(2)
       expect(localStorage.getItem('og_speech_voice')).toBe('natural:af_heart')
     })
-    it('the Voice row reads Natural voice · Heart with the model ready, and Pitch is gone', async () => {
+    it('the hero reads Heart with the model ready, and Pitch is gone', async () => {
       phone(ready)
       localStorage.setItem('og_speech_voice', 'natural:af_heart')
       await render(<VoiceSettings />)
-      expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Natural voice · Heart')
-      expect(titles()).not.toContain('Pitch')
+      expect(heroName()).toBe('Heart')
+      expect(host.querySelectorAll('[role="slider"]')).toHaveLength(1)
     })
     it('a German app gets the note, no Download and no Natural voices', async () => {
       mocks.loc = 'de-DE'
