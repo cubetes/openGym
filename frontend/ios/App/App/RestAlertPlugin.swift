@@ -368,6 +368,8 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
             line.speaking = true
             let a = line.apple
             speakApple(line.text, lang: a.lang, rate: a.rate, pitch: a.pitch, voiceId: a.fallback, onSilent: a.onSilent, flush: false, cover: line)
+            // The page stops waiting for this line (Settings' "Loading" text) and times it by its own estimate.
+            notifyListeners("voiceLine", data: ["text": line.text, "levels": [], "ms": 0, "cover": true])
             return
         }
         guard line.player == nil, let url = line.wav else { return }
