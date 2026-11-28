@@ -4512,6 +4512,8 @@ export const PT_BR_OVERRIDES = {
   "Your Apple voice keeps speaking.": "Sua voz da Apple continua falando.",
   "{0} of {1} MB": "{0} de {1} MB",
   "{0} of {1} MB · Wi-Fi only": "{0} de {1} MB · Só com Wi-Fi",
+  "Voice, speaking. Open voice actions.": "Voz, falando. Abrir ações de voz.",
+  "Open voice settings": "Abrir as configurações de voz",
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

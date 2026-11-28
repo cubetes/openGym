@@ -328,6 +328,13 @@ body.resting #app{padding-bottom:calc(166px + var(--sab))}
 /* The workout screen has no tab bar (App.jsx): only the docked rest bar, when it is there. */
 body.no-tabbar #app{padding-bottom:calc(24px + var(--sab))}
 body.no-tabbar.resting #app{padding-bottom:calc(96px + var(--sab))}
+/* The voice pill (components/VoicePill.jsx): --vp-b is where it sits (above the tab bar, the floating
+   rest bar or the docked one), --vp-h its measured height; the page scrolls clear of both. */
+body{--vp-b:calc(96px + var(--sab))}
+body.resting{--vp-b:calc(180px + var(--sab))}
+body.no-tabbar{--vp-b:calc(34px + var(--sab))}
+body.no-tabbar.resting{--vp-b:calc(122px + var(--sab))}
+body.vpill #app,body.vpill.resting #app,body.vpill.no-tabbar #app,body.vpill.no-tabbar.resting #app{padding-bottom:calc(var(--vp-b) + var(--vp-h,0px) + 10px)}
 .workout-end-spacer{height:0}
 /* The end of a workout (Workout.jsx, P3): Add exercise and the session note as one inset list. */
 .wk-end{margin-top:2px}
