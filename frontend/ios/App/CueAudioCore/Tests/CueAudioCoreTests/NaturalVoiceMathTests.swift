@@ -12,8 +12,12 @@ final class NaturalVoiceMathTests: XCTestCase {
     }
 
     func testSpeakable() {
-        XCTAssertEqual(NaturalVoiceMath.speakable("92.5 kilos for 8"), "92 point 5 kilos for 8")
-        XCTAssertEqual(NaturalVoiceMath.speakable("Set 3"), "Set 3")
+        XCTAssertEqual(NaturalVoiceMath.speakable("92.5 kilos for 8"), "ninety two point five kilos for eight")
+        XCTAssertEqual(NaturalVoiceMath.speakable("Set 3"), "Set three")
+        XCTAssertEqual(NaturalVoiceMath.speakable("1"), "one")
+        XCTAssertEqual(NaturalVoiceMath.speakable("Set 2, 125 pounds, 12 reps."), "Set two, one hundred twenty five pounds, twelve reps.")
+        XCTAssertEqual(NaturalVoiceMath.speakable("12,500 kilos"), "twelve thousand five hundred kilos")
+        XCTAssertEqual(NaturalVoiceMath.speakable("Go!"), "Go!")
     }
 
     func testUsableLengthAndGap() {

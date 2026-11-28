@@ -9,9 +9,20 @@ public enum NaturalVoiceMath {
         return SHA256.hash(data: Data(raw.utf8)).map { String(format: "%02x", $0) }.joined()
     }
 
-    /// "92.5" is read "92 point 5" so the voice does not say "ninety-two five".
+    /// Numbers as English words ("92.5" -> "ninety two point five"): the Kokoro phonemizer has no number rules and
+    /// guesses a digit as a wrong sound. Hyphens go, so the phonemizer sees whole words.
     public static func speakable(_ text: String) -> String {
-        text.replacingOccurrences(of: #"(\d+)\.(\d+)"#, with: "$1 point $2", options: .regularExpression)
+        let words = NumberFormatter()
+        words.locale = Locale(identifier: "en_US")
+        words.numberStyle = .spellOut
+        var out = text
+        let re = try! NSRegularExpression(pattern: #"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?"#)
+        for m in re.matches(in: text, range: NSRange(text.startIndex..., in: text)).reversed() {
+            guard let r = Range(m.range, in: out), let n = Double(out[r].replacingOccurrences(of: ",", with: "")),
+                  let spoken = words.string(from: NSNumber(value: n)) else { continue }
+            out.replaceSubrange(r, with: spoken.replacingOccurrences(of: "-", with: " "))
+        }
+        return out
     }
 
     /// The model's reported length when it is in 1...capacity, else the whole window (never cut speech on a bad value).
