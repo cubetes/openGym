@@ -10,7 +10,7 @@
 // Everything here happens on the device: the voices are the phone's or the browser's, a clip is
 // recorded and trimmed in the page (lib/sound-ingest.js), and a clip stays with the account that
 // made it (never in the community library). Nothing imitates a real person.
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { useStore } from '../store/useStore.js'
 import { savePrefs } from '../lib/device-prefs-sync.js'
 import { useUI } from '../store/useUI.js'
@@ -37,26 +37,48 @@ import './VoiceSettings.css'
 const toast = m => useUI.getState().toast(m)
 const S_ = () => useStore.getState().S
 // A sample is audible only: this tells a screen reader it started (the live region sits in the picker and the settings page).
-const announcePlaying = () => {
+const announce = msg => {
   const live = document.getElementById('vp-live')
   if (!live) return
   live.textContent = ''
-  setTimeout(() => { live.textContent = t('Playing') }, 50)
+  setTimeout(() => { live.textContent = msg }, 50)
 }
+const announcePlaying = () => announce(t('Playing'))
+// A Natural sample waits for the model: 0 = not waiting, 1 = waiting (nothing plays yet), 2 = waiting and the text shows (after 300 ms, so cached lines never flash it).
+let wait = 0, waitT = 0, offWait = () => {}
+const waitSubs = new Set()
+const setWait = v => { wait = v; waitSubs.forEach(f => f()) }
+const stopWait = () => { clearTimeout(waitT); offWait(); if (wait) setWait(0) }
+const startWait = () => {
+  stopWait()
+  setWait(1)
+  offWait = onVoiceLine(ev => { if (ev?.ms > 0) stopWait() })
+  waitT = setTimeout(() => {
+    setWait(2); announce(t('Loading, please wait…'))
+    waitT = setTimeout(stopWait, 15000) // lean: if the Natural render fails the phone covers with the Apple voice and sends no event; the text stays until this cap
+  }, 300)
+}
+const useWait = () => useSyncExternalStore(f => { waitSubs.add(f); return () => waitSubs.delete(f) }, () => wait)
 let celebrated = 0 // the Natural install the picker has already shown arriving
 let endPlaying = null // the hero's Playing state; anything else that speaks ends it
-const sayIt = (text, extra = {}) => { endPlaying?.(); announcePlaying(); hush(); speak(text, { ...voiceOpts(S_()), queue: false, patient: true, ...extra }) }
+const sayIt = (text, extra = {}) => {
+  const o = { ...voiceOpts(S_()), queue: false, patient: true, ...extra }
+  endPlaying?.(); announcePlaying(); hush(); stopWait()
+  if (isNatural(o.voice)) startWait()
+  speak(text, o)
+}
 let offLine = () => {}
 /** Calls `done` once `last` has been said: when the Natural voice reports the line's real length, else after the word-count estimate for `all` (Apple voices report none). */
 // A Natural sample may wait up to 15 s for the model (RestAlertPlugin patient wait): the estimate must not end it before it starts.
 const endAfter = (timer, all, last, speed, done, natural = false) => {
   clearTimeout(timer.current)
   offLine()
-  timer.current = setTimeout(done, speakMs(all, speed) + (natural ? 15000 : 0))
+  const end = () => { stopWait(); done() }
+  timer.current = setTimeout(end, speakMs(all, speed) + (natural ? 15000 : 0))
   offLine = onVoiceLine(ev => {
     if (ev?.text !== last || !(ev.ms > 0)) return
     clearTimeout(timer.current)
-    timer.current = setTimeout(done, ev.ms)
+    timer.current = setTimeout(end, ev.ms)
   })
 }
 const fmtX = n => `${Math.round(n * 100) / 100}×`
@@ -143,7 +165,8 @@ export function VoiceList() {
   const [, redraw] = useState(0)
   const [playKey, setPlayKey] = useState(null) // the row whose sample plays: its voice id, or 'auto'
   const timer = useRef(0)
-  useEffect(() => () => { clearTimeout(timer.current); offLine() }, [])
+  const w = useWait()
+  useEffect(() => () => { clearTimeout(timer.current); offLine(); stopWait() }, [])
   const [before] = useState(() => celebrated)
   const fresh = nat.state === 'ready' && nat.installedAt > before // an install this picker has not shown yet; stays true for this visit
   useEffect(() => { if (nat.state === 'ready') celebrated = Math.max(celebrated, nat.installedAt || 0) }, [nat.state, nat.installedAt]) // shown now: the next visit starts calm
@@ -159,7 +182,7 @@ export function VoiceList() {
     setPlayKey(id || 'auto')
     endAfter(timer, text, text, speechRateNum(S_()), () => setPlayKey(null), isNatural(say))
   }
-  const tile = (key, id, glyph) => on ? <TierTile tier={key} glyph={glyph} accent={accentClass(id)} playing={playKey === (id || 'auto')} /> : null
+  const tile = (key, id, glyph) => on ? <TierTile tier={key} glyph={glyph} accent={accentClass(id)} playing={playKey === (id || 'auto') && !w} /> : null
   const rowCls = id => 'vp-voice' + (playKey === (id || 'auto') ? ' vp-pick' : '') // the check pops on a pick, not on a visit
   // Opening the page with a Natural pick, or picking one, has the model make the fixed lines ahead.
   useEffect(() => { if (isNatural(cur)) cues.prepareFixed() }, [cur])
@@ -205,7 +228,7 @@ export function VoiceList() {
     <Section footer={voices.length ? null : t('No other voices for this language here. Your device’s settings can add more.')}>
       <Row icon={tile('plain', '', 'bolt')} className={rowCls('')} title={t('Automatic')} subtitle={autoNote} ariaLabel={t('Automatic') + sel(!cur)} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', auto?.id || '')} />
     </Section>
-    {natural && nat.state === 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} tile={tile} rowCls={rowCls} fresh={fresh} />}
+    {natural && nat.state === 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} tile={tile} rowCls={rowCls} fresh={fresh} wait={id => (w === 2 && playKey === id ? t('Loading, please wait…') : null)} />}
     {folded
       ? <Section title={t('Apple voices')}><Row title={names} ariaLabel={t('Apple voices') + ', ' + names} accessory="chevron" className={fresh ? 'vp-in' : ''} style={fresh ? { '--i': NATURAL_VOICES.length + 3 } : null} onClick={() => setShowApple(true)} /></Section>
       : apple}
@@ -215,7 +238,7 @@ export function VoiceList() {
 }
 
 /** Natural voice in the picker: the offer, the download, a stop, and the installed voices with Remove. */
-function NaturalGroup({ nat, cur, pick, tile, rowCls, fresh }) {
+function NaturalGroup({ nat, cur, pick, tile, rowCls, fresh, wait }) {
   const [wifi, setWifi] = useState(() => readPrefs().wifiOnly)
   const lastMb = useRef(0) // where a download was when it stopped; the state forgets it
   const total = nat.total > 0 ? mbOf(nat.total) : NATURAL_MB
@@ -234,7 +257,7 @@ function NaturalGroup({ nat, cur, pick, tile, rowCls, fresh }) {
     return <>
       <Section title={<span className={'vp-head' + (fresh ? ' vp-in' : '')} style={fresh ? { '--i': 0 } : null}>{t('Natural voice · English')}<span className="vp-pill">{t('Installed')}</span></span>}
         footer={<span className={fresh ? 'vp-in' : undefined} style={fresh ? { '--i': n + 1 } : null}>{t('Lines are made during the rest, so you do not hear a delay. Where it has no voice for your language, the Apple voice speaks.')}</span>}>
-        {NATURAL_VOICES.map((v, i) => <Row key={v.id} icon={tile('natural', v.id)} title={v.name} value={v.region} className={rowCls(v.id) + (fresh ? ' vp-in' : '')} style={fresh ? { '--i': i + 1 } : null}
+        {NATURAL_VOICES.map((v, i) => <Row key={v.id} icon={tile('natural', v.id)} title={v.name} value={v.region} subtitle={wait?.(v.id)} className={rowCls(v.id) + (fresh ? ' vp-in' : '')} style={fresh ? { '--i': i + 1 } : null}
           ariaLabel={[v.name, t('Natural voice'), v.region].join(', ') + sel(v.id)} accessory={cur === v.id ? 'check' : 'none'} onClick={() => pick(v.id)} />)}
       </Section>
       {!nat.debugModel && <Section><Row danger className={fresh ? 'vp-in' : ''} style={fresh ? { '--i': n + 2 } : null} title={t('Remove download')} subtitle={t('Frees {0} MB', mb)} onClick={() => confirmSheet({
@@ -441,11 +464,13 @@ const WAVE = Array.from({ length: 28 }, (_, i) => ({ '--h': (0.35 + 0.6 * Math.a
 function VoiceHero({ vs, cur, openList }) {
   const S = useStore(s => s.S)
   const [playing, setPlaying] = useState(false)
+  const w = useWait()
+  const lit = playing && !w // the look starts with the line, not the tap
   const timer = useRef(0)
   const on = isOn(S, 'voices')
   useEffect(() => {
     endPlaying = () => { clearTimeout(timer.current); setPlaying(false) }
-    return () => { endPlaying = null; clearTimeout(timer.current); offLine() }
+    return () => { endPlaying = null; clearTimeout(timer.current); offLine(); stopWait() }
   }, [])
   const nat = NATURAL_VOICES.find(v => v.id === cur)
   const apple = nat ? null : vs.voices?.find(v => v.id === cur)
@@ -461,14 +486,14 @@ function VoiceHero({ vs, cur, openList }) {
     setPlaying(true)
     endAfter(timer, `${cue}. ${line}`, line, speechRateNum(S), () => setPlaying(false), isNatural(voiceOpts(S).voice))
   }
-  const ending = useEnding(playing)
-  return <div className={`vhero tier-${key}${nat ? accentClass(cur) : ''}${playing ? ' play' : ''}${ending ? ' end' : ''}`}>
+  const ending = useEnding(lit)
+  return <div className={`vhero tier-${key}${nat ? accentClass(cur) : ''}${lit ? ' play' : ''}${ending ? ' end' : ''}`}>
     <button type="button" className="vhero-main" aria-label={`${t('Using now')}, ${[name, sub].filter(Boolean).join(', ')}. ${t('Change voice')}`} onClick={openList}>
-      <TierTile tier={key} size="xl" accent={accentClass(cur)} playing={playing} />
+      <TierTile tier={key} size="xl" accent={accentClass(cur)} playing={lit} />
       <span className="vhero-tx">
         <span className="vhero-k">{t('Using now')}</span>
         <span className="vhero-n">{name}</span>
-        {sub && <span className="vhero-s">{sub}</span>}
+        {(w === 2 || sub) && <span className="vhero-s">{w === 2 ? t('Loading, please wait…') : sub}</span>}
       </span>
       <span className="vhero-chg">{t('Change')}<Icon name="chevronRight" aria-hidden="true" /></span>
     </button>

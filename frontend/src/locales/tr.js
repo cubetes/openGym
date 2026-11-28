@@ -6148,6 +6148,7 @@ export default {
   "Change voice": "Sesi değiştir",
   "Fine tune": "İnce ayar",
   "No pitch for Natural voices.": "Doğal seslerde perde ayarı yok.",
+  "Loading, please wait…": "Yükleniyor, lütfen bekleyin…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "Sesli uyarılar kapalı. Sonraki setini ve geri sayımı duymak için aç.",
   "One rest, in order": "Tek bir dinlenme, sırayla",
   "Starts": "Başlar",

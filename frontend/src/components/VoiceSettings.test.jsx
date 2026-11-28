@@ -511,6 +511,51 @@ describe('Settings → Timer alerts → Voice', () => {
       await act(async () => { await new Promise(r => setTimeout(r, 80)) })
       expect(live.textContent).toBe('Playing')
     })
+    it('a Natural sample waits: no playing look, the text after 300 ms, both end with the line', async () => {
+      phone(ready)
+      await render(<VoiceList />)
+      vi.useFakeTimers()
+      try {
+        await tap(rowTitled('Heart'))
+        const sub = () => rowTitled('Heart').querySelector('.lrow-s')?.textContent ?? null
+        expect(sub()).toBeNull()
+        expect(rowTitled('Heart').querySelector('.tier-tile.playing')).toBeNull()
+        await act(async () => { vi.advanceTimersByTime(299) })
+        expect(sub()).toBeNull()
+        await act(async () => { vi.advanceTimersByTime(2) })
+        expect(sub()).toBe('Loading, please wait…')
+        expect(rowTitled('Heart').querySelector('.tier-tile.playing')).toBeNull()
+        await act(async () => { vi.advanceTimersByTime(60) })
+        expect(host.querySelector('#vp-live').textContent).toBe('Loading, please wait…')
+        await act(async () => { mocks.lineCbs.forEach(cb => cb({ text: 'x', ms: 2000 })) })
+        expect(sub()).toBeNull()
+        expect(rowTitled('Heart').querySelector('.tier-tile.playing')).not.toBeNull()
+      } finally { vi.useRealTimers() }
+    })
+    it('a line that starts at once never shows the text', async () => {
+      phone(ready)
+      await render(<VoiceList />)
+      vi.useFakeTimers()
+      try {
+        await tap(rowTitled('Heart'))
+        await act(async () => { mocks.lineCbs.forEach(cb => cb({ text: 'x', ms: 2000 })) })
+        await act(async () => { vi.advanceTimersByTime(400) })
+        expect(rowTitled('Heart').querySelector('.lrow-s')).toBeNull()
+        expect(rowTitled('Heart').querySelector('.tier-tile.playing')).not.toBeNull()
+      } finally { vi.useRealTimers() }
+    })
+    it('an Apple voice plays at the tap and never shows the text', async () => {
+      phone(ready)
+      await render(<VoiceList />)
+      await tap(rowTitled('Anna')) // the folded Apple voices open on a tap
+      vi.useFakeTimers()
+      try {
+        await tap(rowTitled('Anna'))
+        expect(rowTitled('Anna').querySelector('.tier-tile.playing')).not.toBeNull()
+        await act(async () => { vi.advanceTimersByTime(400) })
+        expect(host.textContent).not.toContain('Loading, please wait…')
+      } finally { vi.useRealTimers() }
+    })
     it('a stored Heart pick with no model reads as Automatic, checked, and keeps what is stored', async () => {
       phone({ state: 'none' })
       mocks.voices.auto = { id: 'anna', name: 'Anna', lang: 'en-GB', quality: 'enhanced' }

@@ -6114,6 +6114,7 @@ export default {
   "Change voice": "تغییر صدا",
   "Fine tune": "تنظیم دقیق",
   "No pitch for Natural voices.": "صداهای طبیعی زیر و بمی ندارند.",
+  "Loading, please wait…": "در حال بارگذاری، لطفاً صبر کنید…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "اعلان‌های صوتی خاموش است. روشنشان کن تا ست بعدی و شمارش معکوس را بشنوی.",
   "One rest, in order": "یک استراحت، به ترتیب",
   "Starts": "شروع",

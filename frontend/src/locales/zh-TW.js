@@ -6141,6 +6141,7 @@ export default {
   "Change voice": "更換聲音",
   "Fine tune": "微調",
   "No pitch for Natural voices.": "自然語音沒有音高。",
+  "Loading, please wait…": "載入中，請稍候…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "語音提示已關閉。開啟後可聽到下一組與倒數。",
   "One rest, in order": "一次休息，依序",
   "Starts": "開始",

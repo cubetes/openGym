@@ -6159,6 +6159,7 @@ export default {
   "Change voice": "เปลี่ยนเสียง",
   "Fine tune": "ปรับละเอียด",
   "No pitch for Natural voices.": "เสียงธรรมชาติไม่มีระดับเสียงสูงต่ำ",
+  "Loading, please wait…": "กำลังโหลด โปรดรอสักครู่…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "เสียงแจ้งเตือนปิดอยู่ เปิดเพื่อฟังเซ็ตถัดไปและการนับถอยหลัง",
   "One rest, in order": "พักหนึ่งครั้ง ตามลำดับ",
   "Starts": "เริ่ม",

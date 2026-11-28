@@ -6227,6 +6227,7 @@ export default {
   "Change voice": "ভয়েস বদলান",
   "Fine tune": "সূক্ষ্ম সমন্বয়",
   "No pitch for Natural voices.": "প্রাকৃতিক ভয়েসে পিচ নেই।",
+  "Loading, please wait…": "লোড হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "কথার সংকেত বন্ধ আছে। পরের সেট ও কাউন্টডাউন শুনতে চালু করুন।",
   "One rest, in order": "একটি বিশ্রাম, ক্রমানুসারে",
   "Starts": "শুরু",

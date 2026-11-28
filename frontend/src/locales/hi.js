@@ -6148,6 +6148,7 @@ export default {
   "Change voice": "आवाज़ बदलें",
   "Fine tune": "बारीक सेटिंग",
   "No pitch for Natural voices.": "प्राकृतिक आवाज़ों में पिच नहीं होती।",
+  "Loading, please wait…": "लोड हो रहा है, कृपया प्रतीक्षा करें…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "बोलकर सूचनाएँ बंद हैं। अगला सेट और उलटी गिनती सुनने के लिए इन्हें चालू करें।",
   "One rest, in order": "एक विश्राम, क्रम से",
   "Starts": "शुरू",

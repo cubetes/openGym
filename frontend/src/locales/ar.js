@@ -6203,6 +6203,7 @@ export default {
   "Change voice": "تغيير الصوت",
   "Fine tune": "ضبط دقيق",
   "No pitch for Natural voices.": "لا نبرة للأصوات الطبيعية.",
+  "Loading, please wait…": "جارٍ التحميل، يُرجى الانتظار…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "التنبيهات الصوتية متوقفة. شغّلها لتسمع مجموعتك التالية والعدّ التنازلي.",
   "One rest, in order": "راحة واحدة بالترتيب",
   "Starts": "تبدأ",

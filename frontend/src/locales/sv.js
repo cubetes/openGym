@@ -6195,6 +6195,7 @@ export default {
   "Change voice": "Byt röst",
   "Fine tune": "Finjustera",
   "No pitch for Natural voices.": "Naturliga röster har ingen tonhöjd.",
+  "Loading, please wait…": "Laddar, vänta lite…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "Talade tillrop är av. Slå på dem för att höra ditt nästa set och nedräkningen.",
   "One rest, in order": "En vila, i ordning",
   "Starts": "Start",

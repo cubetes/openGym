@@ -6080,6 +6080,7 @@ export default {
   "Change voice": "声を変更",
   "Fine tune": "細かく調整",
   "No pitch for Natural voices.": "ナチュラルボイスにはピッチがありません。",
+  "Loading, please wait…": "読み込み中です。しばらくお待ちください…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "音声ガイドがオフです。次のセットとカウントダウンを聞くにはオンにしてください。",
   "One rest, in order": "1回の休憩を順に",
   "Starts": "開始",

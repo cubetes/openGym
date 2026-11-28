@@ -6088,6 +6088,7 @@ export default {
   "Change voice": "Skift stemme",
   "Fine tune": "Finjustering",
   "No pitch for Natural voices.": "Naturlige stemmer har ingen tonehøjde.",
+  "Loading, please wait…": "Indlæser, vent venligst…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "Talte beskeder er slået fra. Slå dem til for at høre dit næste sæt og nedtællingen.",
   "One rest, in order": "Én pause, i rækkefølge",
   "Starts": "Starter",

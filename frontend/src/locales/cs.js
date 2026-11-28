@@ -6114,6 +6114,7 @@ export default {
   "Change voice": "Změnit hlas",
   "Fine tune": "Jemné ladění",
   "No pitch for Natural voices.": "Přirozené hlasy nemají výšku tónu.",
+  "Loading, please wait…": "Načítá se, počkejte prosím…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "Mluvené pokyny jsou vypnuté. Zapněte je, abyste slyšeli další sérii a odpočet.",
   "One rest, in order": "Jedna pauza, popořadě",
   "Starts": "Začátek",

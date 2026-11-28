@@ -6148,6 +6148,7 @@ export default {
   "Change voice": "음성 변경",
   "Fine tune": "세부 조정",
   "No pitch for Natural voices.": "자연스러운 음성에는 음높이가 없습니다.",
+  "Loading, please wait…": "불러오는 중입니다. 잠시만 기다려 주세요…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "음성 안내가 꺼져 있습니다. 다음 세트와 카운트다운을 들으려면 켜세요.",
   "One rest, in order": "휴식 한 번, 순서대로",
   "Starts": "시작",

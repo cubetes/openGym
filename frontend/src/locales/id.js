@@ -6113,6 +6113,7 @@ export default {
   "Change voice": "Ganti suara",
   "Fine tune": "Atur halus",
   "No pitch for Natural voices.": "Suara alami tidak punya nada.",
+  "Loading, please wait…": "Memuat, mohon tunggu…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "Isyarat suara mati. Nyalakan untuk mendengar set berikutnya dan hitung mundur.",
   "One rest, in order": "Satu istirahat, berurutan",
   "Starts": "Mulai",

@@ -6158,6 +6158,7 @@ export default {
   "Change voice": "Cambia voce",
   "Fine tune": "Regolazione fine",
   "No pitch for Natural voices.": "Le voci naturali non hanno tono.",
+  "Loading, please wait…": "Caricamento, attendi…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "Gli avvisi vocali sono spenti. Accendili per sentire la serie successiva e il conto alla rovescia.",
   "One rest, in order": "Un recupero, in ordine",
   "Starts": "Inizio",

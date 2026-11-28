@@ -6144,6 +6144,7 @@ export default {
   "Change voice": "Keisti balsą",
   "Fine tune": "Tikslus derinimas",
   "No pitch for Natural voices.": "Natūralūs balsai neturi tono aukščio.",
+  "Loading, please wait…": "Kraunama, palaukite…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "Balso signalai išjungti. Įjunkite, kad išgirstumėte kitą seriją ir atgalinį skaičiavimą.",
   "One rest, in order": "Viena pertrauka eilės tvarka",
   "Starts": "Pradžia",

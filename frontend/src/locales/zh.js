@@ -6148,6 +6148,7 @@ export default {
   "Change voice": "更换声音",
   "Fine tune": "微调",
   "No pitch for Natural voices.": "自然语音没有音高。",
+  "Loading, please wait…": "正在加载，请稍候…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "语音提示已关闭。打开后可听到下一组和倒计时。",
   "One rest, in order": "一次休息，按顺序",
   "Starts": "开始",

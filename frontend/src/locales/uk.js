@@ -6145,6 +6145,7 @@ export default {
   "Change voice": "Змінити голос",
   "Fine tune": "Точне налаштування",
   "No pitch for Natural voices.": "У природних голосів немає висоти тону.",
+  "Loading, please wait…": "Завантаження, зачекайте…",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "Голосові підказки вимкнено. Увімкніть їх, щоб чути наступний підхід і зворотний відлік.",
   "One rest, in order": "Один відпочинок по порядку",
   "Starts": "Старт",
