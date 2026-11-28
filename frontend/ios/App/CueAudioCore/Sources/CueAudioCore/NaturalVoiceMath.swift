@@ -32,6 +32,19 @@ public enum NaturalVoiceMath {
     public static let gapMs = 80
     public static func gapSamples(rate: Int) -> Int { rate * gapMs / 1000 }
 
+    /// Silence between two sentences, and between two lines said back to back: the model's own
+    /// pause at a full stop is too short, so sentences ran into each other.
+    public static let sentencePauseMs = 300
+    public static func sentencePauseSamples(rate: Int) -> Int { rate * sentencePauseMs / 1000 }
+    /// Sentences rendered one by one, joined with the pause (an empty one adds none).
+    public static func joinSentences(_ parts: [[Float]], rate: Int) -> [Float] {
+        let gap = [Float](repeating: 0, count: sentencePauseSamples(rate: rate))
+        return parts.filter { !$0.isEmpty }.enumerated().reduce(into: [Float]()) { out, p in
+            if p.offset > 0 { out += gap }
+            out += p.element
+        }
+    }
+
     /// Names to delete so only `keep` files remain, oldest first.
     public static func prune(_ files: [(name: String, modified: Double)], keep: Int) -> [String] {
         files.sorted { $0.modified < $1.modified }.prefix(max(files.count - keep, 0)).map { $0.name }

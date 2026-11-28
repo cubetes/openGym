@@ -137,14 +137,17 @@ actor NaturalVoiceEngine {
     func render(text: String, voice: String, speed: Double) async throws -> URL {
         let spoken = NaturalVoiceMath.speakable(text)  // keyed on what is said, so audio made before a reading fix is never reused
         let url = Self.cacheDir.appendingPathComponent(
-            NaturalVoiceMath.cacheKey(text: spoken, voice: voice, speed: speed, revision: Self.revision) + ".wav")
+            NaturalVoiceMath.cacheKey(text: spoken, voice: voice, speed: speed, revision: Self.revision + "-s1") + ".wav")  // -s1: sentence pauses
         restartIdleTimer()  // a cached line said counts as use, or the model unloads mid-rest
         if FileManager.default.fileExists(atPath: url.path) { return url }
 
         let m = try await loadedModel()
         restartIdleTimer()
         useDictionary(british: voice == "bf_emma", for: m)
-        let samples = try m.synthesize(text: spoken, voice: voice, language: "en", speed: Float(speed))
+        // One sentence at a time, so each gets a clear pause after it (the model's own pause at a full stop is too short).
+        let sentences = KokoroTextChunker.splitUnits(spoken, isEnd: KokoroTextChunker.isSentenceEnd)
+        let samples = NaturalVoiceMath.joinSentences(
+            try sentences.map { try m.synthesize(text: $0, voice: voice, language: "en", speed: Float(speed)) }, rate: 24000)
         guard !samples.isEmpty else { throw NaturalVoiceError.empty }
 
         try FileManager.default.createDirectory(at: Self.cacheDir, withIntermediateDirectories: true)

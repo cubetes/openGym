@@ -83,6 +83,8 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
     }
     /// Natural lines in the order asked: the first one plays once its sound is there, the rest wait behind it.
     private var naturalQueue: [NaturalLine] = []
+    /// The beat between two Natural lines: nothing starts during it (a flush clears it).
+    private var pausing = false
     /// Apple-voice utterances that cover a Natural line, to that line (it ends when they do).
     private var covers: [ObjectIdentifier: NaturalLine] = [:]
     /// Whether a spoken cue is talking, without making the synthesizer just to ask.
@@ -362,7 +364,7 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
 
     /// The first line in the queue plays when its sound is there (or is said by the Apple voice if it missed); one at a time.
     private func playNext() {
-        guard let line = naturalQueue.first, !line.speaking else { return }
+        guard !pausing, let line = naturalQueue.first, !line.speaking else { return }
         if line.fallBack {
             line.player?.stop()
             line.speaking = true
@@ -391,13 +393,21 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
         line.player?.stop()
         naturalQueue.removeAll { $0 === line }
         endSound(line.id)
-        playNext()
+        // A line said right after another waits a beat, so the two do not run together.
+        if naturalQueue.isEmpty { return }
+        pausing = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(NaturalVoiceMath.sentencePauseMs) / 1000) {
+            guard self.pausing else { return }  // a flush ended the pause and started its own line
+            self.pausing = false
+            self.playNext()
+        }
     }
 
     /// Everything Natural stops. `endingSounds` is false where the ledger is ended as a whole right after.
     private func stopNatural(endingSounds: Bool) {
         let all = naturalQueue
         naturalQueue = []
+        pausing = false
         covers = [:]
         for line in all where !line.done {
             line.done = true

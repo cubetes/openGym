@@ -27,6 +27,15 @@ final class NaturalVoiceMathTests: XCTestCase {
         XCTAssertEqual(NaturalVoiceMath.gapSamples(rate: 24000), 1920)
     }
 
+    func testSentencesJoinWithAPause() {
+        let gap = NaturalVoiceMath.sentencePauseSamples(rate: 24000)
+        XCTAssertEqual(gap, 7200) // 300 ms
+        XCTAssertEqual(NaturalVoiceMath.joinSentences([[1, 1], [2]], rate: 24000), [1, 1] + Array(repeating: 0, count: gap) + [2])
+        XCTAssertEqual(NaturalVoiceMath.joinSentences([[1], [], [2]], rate: 24000), [1] + Array(repeating: 0, count: gap) + [2])
+        XCTAssertEqual(NaturalVoiceMath.joinSentences([[3]], rate: 24000), [3])
+        XCTAssertEqual(NaturalVoiceMath.joinSentences([], rate: 24000), [])
+    }
+
     func testPrune() {
         let files = (0..<302).map { (name: "f\($0)", modified: Double(301 - $0)) }
         XCTAssertEqual(NaturalVoiceMath.prune(files, keep: 300), ["f301", "f300"])
