@@ -10,10 +10,11 @@ import './AlertTile.css'
 // stays, inert and out of search, while it does.
 export default function AlertTile({ tint, icon, name, on, onToggle, label, value, find, stripFind, onStrip, stripLabel, wide }) {
   const last = useRef(null)
+  const born = useRef(value != null) // a strip there at mount does not unfold
   if (value != null) last.current = { value, chev: !!onStrip }
   const open = value != null
   const shown = last.current
-  const strip = !shown ? null : <div className={'at-fold' + (open ? ' open' : '')} inert={!open}><div>
+  const strip = !shown ? null : <div className={'at-fold' + (open ? ' open' : '') + (born.current ? '' : ' grow')} inert={!open}><div>
     {open && onStrip
       ? <button type="button" className="at-op" aria-label={stripLabel} data-find={stripFind} onClick={onStrip}>
         <span>{value}</span><Icon name="chevronRight" className="chev" />

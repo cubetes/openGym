@@ -22,7 +22,7 @@
 .at-op { display: flex; align-items: center; justify-content: space-between; gap: 6px; width: 100%; min-height: 44px; padding: 0 14px; border: 0; border-top: .5px solid var(--sep); background: none; font: inherit; font-size: var(--fs-footnote); text-align: start; color: var(--at-l2) }
 .at-fold { display: grid; grid-template-rows: 0fr; margin-top: auto; opacity: 0; transition: grid-template-rows var(--med) var(--ease), opacity var(--fast) var(--ease-out) }
 .at-fold.open { grid-template-rows: 1fr; opacity: 1 }
-@starting-style { .at-fold.open { grid-template-rows: 0fr; opacity: 0 } }
+@starting-style { .at-fold.open.grow { grid-template-rows: 0fr; opacity: 0 } }
 .at-fold > div { min-height: 0; overflow: hidden }
 .at.on .at-op { border-top-color: var(--sep, rgba(128,128,128,.3)); border-top-color: color-mix(in srgb, var(--c) 45%, transparent) }
 .at.on .at-op { color: var(--label) }
@@ -39,7 +39,9 @@ button.at-op:active { background: var(--press-fill, rgba(128,128,128,.2)); backg
 .text-big .at .st { top: 22px }
 .text-big .at-op { min-height: 56px }
 @media (prefers-reduced-motion: reduce) {
-  .at, .at .mini::after { transition: none }
+  .at, .at .chip, .at .mini, .at .st { transition-property: background, box-shadow, color !important; transition-duration: 150ms !important; transition-timing-function: linear !important }
+  .at .mini::after { transition: none }
+  .at-fold { transition: opacity 150ms linear !important }
   /* No press scale: an instant dim says the press landed. */
   .at:has(.at-sw:active) { transform: none }
   .at-sw:active { opacity: .6 }

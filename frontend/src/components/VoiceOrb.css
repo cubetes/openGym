@@ -52,7 +52,7 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 .vo-cap{flex:1;min-width:0;display:flex;align-items:center;text-align:start;padding:8px 62px 8px 20px;font-size:.9375rem;font-weight:500;line-height:1.25;letter-spacing:-.01em;
   transition:transform 160ms var(--ease-out)}
 [dir="rtl"] .vo-cap{padding:8px 20px 8px 62px}
-.vo-cap:active{transform:scale(.98)}
+.vo-cap:active{transform:scale(var(--press-scale-card))}
 .vo-words{display:block;flex:1;min-width:0;opacity:0;transition:opacity 60ms var(--ease-out)}
 .vo-bar.on .vo-words{opacity:1;transition:opacity 180ms var(--ease-out) 70ms}
 .vo-tx{display:flex;flex-direction:column;min-width:0}
