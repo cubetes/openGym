@@ -149,11 +149,11 @@ function Orb() {
     el.animate([{ transform: 'scale(1)', opacity: 0.5 }, { transform: 'scale(1.9)', opacity: 0 }], { duration: 650, easing: ease('--ease-out') }).onfinish = () => el.remove()
   }
   useEffect(() => {
-    if (!speaking || loop.current.raf) return
+    if (!speaking || loading || loop.current.raf) return
     // Read once per line, not per frame: the motion setting, the theme and the three lines.
     Object.assign(loop.current, { calm: reduced(), light: document.documentElement.dataset.theme === 'light', bars: [...lines.current.children] })
     loop.current.raf = requestAnimationFrame(frame)
-  }, [speaking])
+  }, [speaking, loading])
   useEffect(() => { if (settled || silent || loading) endLoop() }, [settled, silent, loading])
   useEffect(() => () => { cancelAnimationFrame(loop.current.raf); fx.current?.querySelectorAll('.vo-rp').forEach(r => r.remove()) }, [])
 

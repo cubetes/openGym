@@ -604,6 +604,18 @@ describe('the motion', () => {
     expect(Number(q('.vo-core').style.opacity)).toBeGreaterThan(0.45)
   })
 
+  it('the lines move again when loading ends while the line is still speaking', async () => {
+    await mount()
+    await show(SHORT)
+    await frames(3)
+    await act(async () => { h.loading({ on: true }) })
+    await run(301)
+    expect(orb().classList.contains('loading')).toBe(true)
+    expect(rafs.length).toBe(0)
+    await act(async () => { h.loading({ on: false }) })
+    expect(rafs.length).toBe(1)
+  })
+
   it('no ripple in bar mode', async () => {
     await setS({ ...S0, voiceBar: true })
     await mount()
