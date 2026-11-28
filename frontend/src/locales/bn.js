@@ -6154,6 +6154,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "অ্যাক্সেসিবিলিটি-এ ট্যাপ করুন, তারপর পড়া ও বলা-এ।",
   "Tap Voices, then {0}.": "ভয়েস।-এ ট্যাপ করুন, তারপর {0}-এ।",
   "Download a voice marked Premium or Enhanced.": "প্রিমিয়াম বা উন্নত চিহ্নিত একটি কণ্ঠ ডাউনলোড করুন।",
+  "Playing": "চলছে",
   "Spoken cues are off": "কথা বলা সংকেত বন্ধ আছে",
   "Switch them on to hear any of this.": "এর কিছু শুনতে সেগুলো চালু করুন।",
   "Turn on": "চালু করুন",

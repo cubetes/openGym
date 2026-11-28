@@ -6086,6 +6086,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "แตะ การช่วยการเข้าถึง แล้วแตะ อ่านและพูด",
   "Tap Voices, then {0}.": "แตะ เสียง แล้วแตะ {0}",
   "Download a voice marked Premium or Enhanced.": "ดาวน์โหลดเสียงที่มีป้าย พรีเมียม หรือ ปรับปรุงแล้ว",
+  "Playing": "กำลังเล่น",
   "Spoken cues are off": "การแจ้งด้วยเสียงปิดอยู่",
   "Switch them on to hear any of this.": "เปิดเพื่อฟังสิ่งเหล่านี้",
   "Turn on": "เปิด",

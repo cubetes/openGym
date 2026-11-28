@@ -165,7 +165,7 @@ the repo, so it is built on the release machine and uploaded here.
    `4ef656f55554ceb242ed11febbdbbffd60dd5938`
    from Hugging Face into one folder. Take only what the app uses: `kokoro_5s.mlmodelc/`,
    `G2PEncoder.mlmodelc/`, `G2PDecoder.mlmodelc/`, `us_gold.json`, `us_silver.json`,
-   `vocab_index.json`, `g2p_vocab.json`, `config.json`, and `voices/af_heart.json`,
+   `vocab_index.json`, `g2p_vocab.json`, and `voices/af_heart.json`,
    `voices/am_michael.json`, `voices/bf_emma.json`.
 2. Add the British dictionaries from `hexgrad/misaki` (`misaki/data/`): `gb_gold.json` and
    `gb_silver.json`, next to the US ones.

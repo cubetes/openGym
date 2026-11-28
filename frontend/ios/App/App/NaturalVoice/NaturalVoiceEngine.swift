@@ -132,6 +132,7 @@ actor NaturalVoiceEngine {
     func render(text: String, voice: String, speed: Double) async throws -> URL {
         let url = Self.cacheDir.appendingPathComponent(
             NaturalVoiceMath.cacheKey(text: text, voice: voice, speed: speed, revision: Self.revision) + ".wav")
+        restartIdleTimer()  // a cached line said counts as use, or the model unloads mid-rest
         if FileManager.default.fileExists(atPath: url.path) { return url }
 
         let m = try await loadedModel()
@@ -149,6 +150,8 @@ actor NaturalVoiceEngine {
 
     /// Makes the lines ahead of time. A miss that fails is skipped: the line is then said by the Apple voice when it is due.
     func prepare(_ texts: [String], voice: String, speed: Double) async {
+        // Load first, even when every line is cached: the next miss then renders at once. Also warms the model when the picker opens.
+        if (try? await loadedModel()) != nil { restartIdleTimer() }
         for text in texts {
             if Task.isCancelled { return }
             _ = try? await render(text: text, voice: voice, speed: speed)

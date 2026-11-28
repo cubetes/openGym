@@ -139,6 +139,7 @@ describe('the voice pill', () => {
     expect(q('[role="group"]').getAttribute('aria-label')).toBe('Not spoken, 30 seconds ago')
     expect(host.querySelectorAll('button')).toHaveLength(1)
     expect(byLabel('Open voice settings')).toBeTruthy()
+    expect(q('.vcap-meta').getAttribute('aria-hidden')).toBe('true') // the group label already says the age
   })
 
   it('a silent line reads "20 seconds ago" at 20 s', async () => {

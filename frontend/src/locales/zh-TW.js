@@ -6068,6 +6068,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "點一下「輔助使用」，再點一下「朗讀與說話」。",
   "Tap Voices, then {0}.": "點一下「聲音」，再點一下「{0}」。",
   "Download a voice marked Premium or Enhanced.": "下載標示為「高級音質」或「增強音質」的語音。",
+  "Playing": "播放中",
   "Spoken cues are off": "語音提示已關閉",
   "Switch them on to hear any of this.": "開啟後才聽得到這些。",
   "Turn on": "開啟",

@@ -6041,6 +6041,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "Chạm vào Trợ năng, rồi chạm vào Đọc & Nói.",
   "Tap Voices, then {0}.": "Chạm vào Giọng nói, rồi chạm vào {0}.",
   "Download a voice marked Premium or Enhanced.": "Tải giọng có nhãn Cao cấp hoặc Nâng cao.",
+  "Playing": "Đang phát",
   "Spoken cues are off": "Lời nhắc bằng giọng nói đang tắt",
   "Switch them on to hear any of this.": "Bật lên để nghe những phần này.",
   "Turn on": "Bật",

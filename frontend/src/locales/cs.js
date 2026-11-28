@@ -6041,6 +6041,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "Klepni na Zpřístupnění a pak na Čtení a mluvení.",
   "Tap Voices, then {0}.": "Klepni na Hlasy a pak na {0}.",
   "Download a voice marked Premium or Enhanced.": "Stáhni hlas označený Prémiový nebo Vylepšený.",
+  "Playing": "Přehrává se",
   "Spoken cues are off": "Mluvené pokyny jsou vypnuté",
   "Switch them on to hear any of this.": "Zapni je, abys je slyšel.",
   "Turn on": "Zapnout",

@@ -6007,6 +6007,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "「アクセシビリティ」をタップし、次に「読み上げコンテンツ」をタップします。",
   "Tap Voices, then {0}.": "「声」をタップし、次に「{0}」をタップします。",
   "Download a voice marked Premium or Enhanced.": "「プレミアム」または「拡張」と表示された音声をダウンロードします。",
+  "Playing": "再生中",
   "Spoken cues are off": "音声の通知はオフです",
   "Switch them on to hear any of this.": "オンにすると、ここでの音声が聞こえます。",
   "Turn on": "オンにする",

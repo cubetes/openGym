@@ -6075,6 +6075,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "Stuknij Dostępność, potem Czytanie i mówienie.",
   "Tap Voices, then {0}.": "Stuknij Głosy, potem {0}.",
   "Download a voice marked Premium or Enhanced.": "Pobierz głos oznaczony jako Premium lub Ulepszony.",
+  "Playing": "Odtwarzanie",
   "Spoken cues are off": "Komunikaty głosowe są wyłączone",
   "Switch them on to hear any of this.": "Włącz je, żeby cokolwiek z tego usłyszeć.",
   "Turn on": "Włącz",

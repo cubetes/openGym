@@ -6078,6 +6078,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "Koppints erre: Kisegítő lehetőségek, majd erre: Olvasás és beszéd.",
   "Tap Voices, then {0}.": "Koppints erre: Hangok, majd erre: {0}.",
   "Download a voice marked Premium or Enhanced.": "Tölts le egy Prémium vagy Továbbfejlesztett jelölésű hangot.",
+  "Playing": "Lejátszás",
   "Spoken cues are off": "A kimondott jelzések ki vannak kapcsolva",
   "Switch them on to hear any of this.": "Kapcsold be őket, hogy halld ezeket.",
   "Turn on": "Bekapcsolás",

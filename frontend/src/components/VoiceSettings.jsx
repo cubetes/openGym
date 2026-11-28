@@ -31,7 +31,14 @@ import Icon from './Icon.jsx'
 
 const toast = m => useUI.getState().toast(m)
 const S_ = () => useStore.getState().S
-const sayIt = (text, extra = {}) => { hush(); speak(text, { ...voiceOpts(S_()), queue: false, ...extra }) }
+// A sample is audible only: this tells a screen reader it started (the live region sits in the picker and the settings page).
+const announcePlaying = () => {
+  const live = document.getElementById('vp-live')
+  if (!live) return
+  live.textContent = ''
+  setTimeout(() => { live.textContent = t('Playing') }, 50)
+}
+const sayIt = (text, extra = {}) => { announcePlaying(); hush(); speak(text, { ...voiceOpts(S_()), queue: false, ...extra }) }
 const fmtX = n => `${Math.round(n * 100) / 100}×`
 
 /** Why the microphone could not be used, as a sentence. */
@@ -149,14 +156,16 @@ export function VoiceList() {
   </>
   const natural = ios && (nat.available || nat.debugModel)
   // With the model installed the Natural voices lead and the Apple voices fold into one row (frame 6); a pick among them keeps them open.
-  const folded = natural && isEnglish() && nat.state === 'ready' && !showApple && !(cur && !isNatural(cur))
+  const folded = natural && isEnglish() && nat.state === 'ready' && !showApple && !(cur && !isNatural(cur)) && voices.length > 0
+  const names = voices.slice(0, 3).map(voiceLabel).join(', ')
   return <>
+    <span id="vp-live" className="vh" role="status" aria-live="polite" />
     <Section footer={voices.length ? null : t('No other voices for this language here. Your device’s settings can add more.')}>
       <Row icon={cur ? 'play' : 'speaker'} iconTint="var(--teal)" title={t('Automatic')} subtitle={autoNote} ariaLabel={t('Automatic') + sel(!cur)} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', auto?.id || '')} />
     </Section>
     {natural && nat.state === 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} />}
     {folded
-      ? <Section title={t('Apple voices')}><Row title={voices.slice(0, 3).map(voiceLabel).join(', ')} accessory="chevron" onClick={() => setShowApple(true)} /></Section>
+      ? <Section title={t('Apple voices')}><Row title={names} ariaLabel={t('Apple voices') + ', ' + names} accessory="chevron" onClick={() => setShowApple(true)} /></Section>
       : apple}
     {natural && nat.state !== 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} />}
     {!ios && list !== null && MOBILE && <p className="sect-f vp-note"><Icon name="info" aria-hidden="true" />{t('Natural voice is on iPhone first. Android uses your phone’s voices for now.')}</p>}
@@ -389,6 +398,7 @@ export default function VoiceSettings({ openList }) {
   // devices that can, and the footer says why nothing is heard here.
   const footer = !speechSupported() ? t('This browser can’t speak. Try another one.') : null
   return <>
+    <span id="vp-live" className="vh" role="status" aria-live="polite" />
     {S.spokenCues !== true && <section className="sect"><div className="sect-b vp-card">
       <div className="vp-off"><b>{t('Spoken cues are off')}</b><span>{t('Switch them on to hear any of this.')}</span></div>
       <Button variant="primary" className="vp-how" onClick={() => { update(s => { s.spokenCues = true }); sayIt(sampleCue(S.unit)) }}>{t('Turn on')}</Button>

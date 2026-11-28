@@ -6071,6 +6071,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "Bakstelėkite Prieinamumas, tada Skaitymas ir kalbėjimas.",
   "Tap Voices, then {0}.": "Bakstelėkite Balsai, tada {0}.",
   "Download a voice marked Premium or Enhanced.": "Atsisiųskite balsą, pažymėtą Premium arba Patobulintas.",
+  "Playing": "Grojama",
   "Spoken cues are off": "Šnekamieji signalai išjungti",
   "Switch them on to hear any of this.": "Įjunkite juos, kad tai išgirstumėte.",
   "Turn on": "Įjungti",

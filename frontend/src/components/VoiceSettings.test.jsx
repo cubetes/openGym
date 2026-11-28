@@ -369,6 +369,26 @@ describe('Settings → Timer alerts → Voice', () => {
       await tap(rowTitled('Anna'))
       expect(headers()).toContain('English (UK)')
     })
+    it('the Apple voices row names the voices for a screen reader', async () => {
+      phone(ready)
+      await render(<VoiceList />)
+      expect(host.querySelector('[aria-label="Apple voices, Anna"]')).not.toBeNull()
+    })
+    it('no Apple voices row at all with no voices listed', async () => {
+      phone(ready)
+      mocks.voices = { voices: [], auto: null, ios: false }
+      await render(<VoiceList />)
+      expect(headers()).not.toContain('Apple voices')
+    })
+    it('picking a voice announces Playing in a polite live region', async () => {
+      phone(ready)
+      await render(<VoiceList />)
+      const live = host.querySelector('#vp-live')
+      expect(live.getAttribute('aria-live')).toBe('polite')
+      await tap(rowTitled('Heart'))
+      await act(async () => { await new Promise(r => setTimeout(r, 80)) })
+      expect(live.textContent).toBe('Playing')
+    })
     it('a stored Heart pick with no model reads as Automatic, checked, and keeps what is stored', async () => {
       phone({ state: 'none' })
       mocks.voices.auto = { id: 'anna', name: 'Anna', lang: 'en-GB', quality: 'enhanced' }

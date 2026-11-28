@@ -6075,6 +6075,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "Erişilebilirlik’ya, sonra Okuma ve Konuşma’ya dokun.",
   "Tap Voices, then {0}.": "Sesler’ya, sonra {0} diline dokun.",
   "Download a voice marked Premium or Enhanced.": "Premium veya Geliştirilmiş işaretli bir ses indir.",
+  "Playing": "Oynatılıyor",
   "Spoken cues are off": "Sesli uyarılar kapalı",
   "Switch them on to hear any of this.": "Bunlardan herhangi birini duymak için aç.",
   "Turn on": "Aç",

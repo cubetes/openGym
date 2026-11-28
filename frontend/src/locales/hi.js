@@ -6075,6 +6075,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "एक्सेसिबिलिटी पर टैप करें, फिर पढ़ें और बोलें पर।",
   "Tap Voices, then {0}.": "आवाज़ें। पर टैप करें, फिर {0} पर।",
   "Download a voice marked Premium or Enhanced.": "प्रीमियम या उन्नत चिह्नित आवाज़ डाउनलोड करें।",
+  "Playing": "चल रहा है",
   "Spoken cues are off": "बोले जाने वाले संकेत बंद हैं",
   "Switch them on to hear any of this.": "इनमें से कुछ सुनने के लिए इन्हें चालू करें।",
   "Turn on": "चालू करें",

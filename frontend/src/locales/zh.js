@@ -6075,6 +6075,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "点按“辅助功能”，再点按“朗读与讲述”。",
   "Tap Voices, then {0}.": "点按“声音”，再点按“{0}”。",
   "Download a voice marked Premium or Enhanced.": "下载标有“高级音质”或“增强音质”的语音。",
+  "Playing": "正在播放",
   "Spoken cues are off": "语音提示已关闭",
   "Switch them on to hear any of this.": "开启后才能听到这些。",
   "Turn on": "开启",

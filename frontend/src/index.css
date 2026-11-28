@@ -3112,6 +3112,9 @@ body.resting #totop{bottom:calc(172px + var(--sab))}
    out from under it rather than sitting beneath it. */
 body.totop-on #app{padding-bottom:calc(144px + var(--sab))}
 body.totop-on.resting #app{padding-bottom:calc(232px + var(--sab))}
+/* The voice pill's own padding has the same weight and comes earlier, so the larger of the two wins here. */
+body.vpill.totop-on #app{padding-bottom:max(calc(144px + var(--sab)),calc(var(--vp-b) + var(--vp-h,0px) + 10px))}
+body.vpill.totop-on.resting #app{padding-bottom:max(calc(232px + var(--sab)),calc(var(--vp-b) + var(--vp-h,0px) + 10px))}
 
 /* ---------------------------------------------------------------- misc --- */
 .empty{text-align:center;color:var(--label-2);padding:44px 20px;font-size:var(--fs-subhead);line-height:1.45}
@@ -3510,6 +3513,8 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
   #totop,body.resting #totop{inset-inline-end:max(16px,calc(50vw - 540px + var(--pad)));bottom:calc(20px + var(--sab))}
   body.totop-on #app{padding-bottom:calc(128px + var(--sab))}
   body.totop-on.resting #app{padding-bottom:calc(220px + var(--sab))}
+  body.vpill.totop-on #app{padding-bottom:max(calc(128px + var(--sab)),calc(var(--vp-b) + var(--vp-h,0px) + 10px))}
+  body.vpill.totop-on.resting #app{padding-bottom:max(calc(220px + var(--sab)),calc(var(--vp-b) + var(--vp-h,0px) + 10px))}
   body.no-tabbar #timer{left:50%;right:auto;bottom:16px;border-radius:var(--r-xl);padding-bottom:10px;box-shadow:0 12px 40px -10px rgba(0,0,0,.5)}
   .exmedia img,.exmedia video{height:380px}
   .hm-wrap{display:flex;flex-direction:column;align-items:center}

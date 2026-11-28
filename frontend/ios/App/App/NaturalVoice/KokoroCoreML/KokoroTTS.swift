@@ -1,3 +1,4 @@
+// Modified by openGym: an 80 ms gap and trimmed chunks via NaturalVoiceMath; iOS 16 availability; default model id is the INT8 repo; download code removed.
 import CoreML
 import Foundation
 

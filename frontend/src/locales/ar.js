@@ -6130,6 +6130,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "اضغط على تسهيلات الاستخدام ثم القراءة والتحدث.",
   "Tap Voices, then {0}.": "اضغط على الأصوات ثم {0}.",
   "Download a voice marked Premium or Enhanced.": "نزّل صوتًا مكتوبًا عليه مميز أو محسّن.",
+  "Playing": "جارٍ التشغيل",
   "Spoken cues are off": "التنبيهات المنطوقة متوقفة",
   "Switch them on to hear any of this.": "شغّلها لتسمع أيًّا من هذا.",
   "Turn on": "تشغيل",

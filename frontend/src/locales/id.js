@@ -6040,6 +6040,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "Ketuk Aksesibilitas, lalu Baca & Ucapkan.",
   "Tap Voices, then {0}.": "Ketuk Suara, lalu {0}.",
   "Download a voice marked Premium or Enhanced.": "Unduh suara yang bertanda Premium atau Ditingkatkan.",
+  "Playing": "Memutar",
   "Spoken cues are off": "Isyarat suara mati",
   "Switch them on to hear any of this.": "Nyalakan untuk mendengar semua ini.",
   "Turn on": "Nyalakan",

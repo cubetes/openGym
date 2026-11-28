@@ -1,3 +1,4 @@
+// Modified by openGym: iOS 16 availability (the app target is iOS 15.5).
 #if canImport(CoreML)
 import CoreML
 import Foundation

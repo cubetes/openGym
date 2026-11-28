@@ -6122,6 +6122,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "Tryck på Hjälpmedel och sedan Läs upp och tala.",
   "Tap Voices, then {0}.": "Tryck på Röster och sedan {0}.",
   "Download a voice marked Premium or Enhanced.": "Hämta en röst märkt Premium eller Förbättrad.",
+  "Playing": "Spelar",
   "Spoken cues are off": "Talade signaler är av",
   "Switch them on to hear any of this.": "Slå på dem för att höra något av detta.",
   "Turn on": "Slå på",

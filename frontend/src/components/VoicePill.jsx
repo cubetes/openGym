@@ -128,7 +128,7 @@ function Pill() {
   } else if (v.silent) {
     body = <div className="vcap-top" role="group" aria-label={age}>
       <span className="vcap-ic" aria-hidden="true">{muteIcon}</span>
-      <span className="vcap-tx"><span className="vcap-line" key={v.text}>{v.text}</span><span className="vcap-meta">{age}</span></span>
+      <span className="vcap-tx"><span className="vcap-line" key={v.text}>{v.text}</span><span className="vcap-meta" aria-hidden="true">{age}</span></span>
       {roundBtn(t('Open voice settings'), gear, settings)}
     </div>
   } else {

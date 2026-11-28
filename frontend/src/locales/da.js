@@ -6015,6 +6015,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "Tryk på Tilgængelighed og derefter Læs og tal.",
   "Tap Voices, then {0}.": "Tryk på Stemmer og derefter {0}.",
   "Download a voice marked Premium or Enhanced.": "Hent en stemme markeret Premium eller Forbedret.",
+  "Playing": "Afspiller",
   "Spoken cues are off": "Talte beskeder er slået fra",
   "Switch them on to hear any of this.": "Slå dem til for at høre noget af det her.",
   "Turn on": "Slå til",

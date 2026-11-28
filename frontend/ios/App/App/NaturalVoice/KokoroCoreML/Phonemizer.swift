@@ -1,3 +1,4 @@
+// Modified by openGym: iOS 16 availability (the app target is iOS 15.5).
 import CoreML
 import Foundation
 import NaturalLanguage

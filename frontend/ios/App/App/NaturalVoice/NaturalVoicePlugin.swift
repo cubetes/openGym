@@ -31,7 +31,7 @@ public class NaturalVoicePlugin: CAPPlugin, CAPBridgedPlugin {
     private static let required = [
         "kokoro_5s.mlmodelc", "G2PEncoder.mlmodelc", "G2PDecoder.mlmodelc",
         "us_gold.json", "us_silver.json", "gb_gold.json", "gb_silver.json",
-        "vocab_index.json", "g2p_vocab.json", "config.json",
+        "vocab_index.json", "g2p_vocab.json",
         "voices/af_heart.json", "voices/am_michael.json", "voices/bf_emma.json",
     ]
     private static let downloadShare = 0.95

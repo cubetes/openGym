@@ -6079,6 +6079,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "Нажмите «Универсальный доступ», затем «Чтение и озвучивание».",
   "Tap Voices, then {0}.": "Нажмите «Голоса», затем «{0}».",
   "Download a voice marked Premium or Enhanced.": "Загрузите голос с пометкой «Премиум» или «Улучшенный».",
+  "Playing": "Воспроизведение",
   "Spoken cues are off": "Голосовые подсказки выключены",
   "Switch them on to hear any of this.": "Включите их, чтобы услышать всё это.",
   "Turn on": "Включить",

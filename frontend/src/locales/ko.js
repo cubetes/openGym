@@ -6075,6 +6075,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "손쉬운 사용을(를) 탭한 다음 읽기 및 말하기을(를) 탭해요.",
   "Tap Voices, then {0}.": "음성을(를) 탭한 다음 {0}을(를) 탭해요.",
   "Download a voice marked Premium or Enhanced.": "프리미엄 또는 향상됨 표시가 있는 음성을 내려받아요.",
+  "Playing": "재생 중",
   "Spoken cues are off": "음성 알림이 꺼져 있어요",
   "Switch them on to hear any of this.": "켜면 이 설정을 들을 수 있어요.",
   "Turn on": "켜기",

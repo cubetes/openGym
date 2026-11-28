@@ -6072,6 +6072,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "Торкнися «Доступність», потім «Читання й озвучування».",
   "Tap Voices, then {0}.": "Торкнися «Голоси», потім «{0}».",
   "Download a voice marked Premium or Enhanced.": "Завантаж голос із позначкою «Преміум» або «Покращений».",
+  "Playing": "Відтворення",
   "Spoken cues are off": "Голосові підказки вимкнено",
   "Switch them on to hear any of this.": "Увімкни їх, щоб почути щось із цього.",
   "Turn on": "Увімкнути",

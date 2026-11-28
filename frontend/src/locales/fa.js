@@ -6041,6 +6041,7 @@ export default {
   "Tap Accessibility, then Read & Speak.": "روی دسترس‌پذیری و سپس خواندن و گفتن بزنید.",
   "Tap Voices, then {0}.": "روی صداها و سپس {0} بزنید.",
   "Download a voice marked Premium or Enhanced.": "صدایی با برچسب ممتاز یا بهبودیافته دانلود کنید.",
+  "Playing": "در حال پخش",
   "Spoken cues are off": "اعلان‌های گفتاری خاموش است",
   "Switch them on to hear any of this.": "برای شنیدن آن‌ها روشنشان کنید.",
   "Turn on": "روشن کن",
