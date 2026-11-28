@@ -84,6 +84,7 @@
 
   /* motion */
   --ease:cubic-bezier(.32,.72,0,1);
+  --ease-out:cubic-bezier(0.23, 1, 0.32, 1);
   --fast:140ms; --med:220ms;
   /* Pressed states (P13), one rule per tier, so a press feels the same wherever it lands:
      - rows (.item, .lrow.tap, .menu-item) fill with --press-fill and do not move: the iPhone's
