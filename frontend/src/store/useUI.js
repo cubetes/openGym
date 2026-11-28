@@ -14,7 +14,7 @@ import { accentValue } from '../lib/accent.js'
 import { COUNT_IN_SEC, chainCues, heldSec, phaseLeft, resumedEnd, shouldWait } from '../lib/auto-holds.js'
 import { cues, bindCueState } from '../lib/spoken-cues.js'
 import { refreshVoices } from '../lib/speech.js'
-import { refreshNatural, setNaturalAllowed } from '../lib/natural-voice.js'
+import { refreshNatural, setNaturalAllowed, onNatural, naturalState } from '../lib/natural-voice.js'
 import { useVoiceLevel } from '../lib/voice-level.js'
 import { useCaption } from '../lib/voice-caption.js'
 import { isOn } from '../lib/modules.js'
@@ -908,6 +908,13 @@ bindCueState(() => useStore.getState?.()?.S, (mut, push) => useStore.getState().
 // comes back (a voice may have been downloaded or deleted in iPhone Settings meanwhile).
 if (MOBILE) {
   refreshVoices().catch(() => {})
+  // The first Natural model load after a restart or an update is slow (iOS prepares it for the chip):
+  // start it at launch by making the fixed lines, so a workout's first line is not left to the Apple voice.
+  const offWarm = onNatural(() => {
+    if (naturalState().state !== 'ready') return
+    offWarm()
+    if (useStore.getState().S?.spokenCues) cues.prepareFixed()
+  })
   refreshNatural()
   // Better voices off: the Natural voice stays on the phone but does not speak (the build flag can arrive after the store).
   const allowNatural = () => setNaturalAllowed(isOn(useStore.getState().S, 'voices'))
