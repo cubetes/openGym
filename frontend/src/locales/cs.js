@@ -6046,4 +6046,6 @@ export default {
   "Turn on": "Zapnout",
   "Choose a voice": "Vyber hlas",
   "Settings > Accessibility > Read & Speak > Voices": "Nastavení > Zpřístupnění > Čtení a mluvení > Hlasy",
+  "Uses {0}, your phone’s standard voice.": "Používá {0}, standardní hlas tvého telefonu.",
+  "selected": "vybráno",
 }

@@ -6135,4 +6135,6 @@ export default {
   "Turn on": "تشغيل",
   "Choose a voice": "اختر صوتًا",
   "Settings > Accessibility > Read & Speak > Voices": "الإعدادات > تسهيلات الاستخدام > القراءة والتحدث > الأصوات",
+  "Uses {0}, your phone’s standard voice.": "يستخدم {0}، الصوت القياسي في هاتفك.",
+  "selected": "محدد",
 }

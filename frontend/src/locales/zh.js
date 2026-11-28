@@ -6080,4 +6080,6 @@ export default {
   "Turn on": "开启",
   "Choose a voice": "选择语音",
   "Settings > Accessibility > Read & Speak > Voices": "设置 > 辅助功能 > 朗读与讲述 > 声音",
+  "Uses {0}, your phone’s standard voice.": "使用 {0}，你手机的标准语音。",
+  "selected": "已选择",
 }

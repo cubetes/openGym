@@ -6159,4 +6159,6 @@ export default {
   "Turn on": "চালু করুন",
   "Choose a voice": "কণ্ঠ বেছে নিন",
   "Settings > Accessibility > Read & Speak > Voices": "সেটিংস > অ্যাক্সেসিবিলিটি > পড়া ও বলা > ভয়েস।",
+  "Uses {0}, your phone’s standard voice.": "{0} ব্যবহার করছে, আপনার ফোনের স্ট্যান্ডার্ড কণ্ঠ।",
+  "selected": "নির্বাচিত",
 }

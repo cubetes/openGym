@@ -401,7 +401,7 @@ export function Section({ title, footer, children, className = '', tour }) {
 /** How long a value may be and still sit beside a row's title and subtitle on a phone. */
 export const VALUE_BESIDE_MAX = 14
 
-export function Row({ icon, iconTint, title, subtitle, value, accessory = 'none', onClick, danger, children, className = '', tour }) {
+export function Row({ icon, iconTint, title, subtitle, value, accessory = 'none', onClick, danger, children, className = '', tour, ariaLabel }) {
   const Tag = onClick ? 'button' : 'div'
   // A worded value on a row that also has a subtitle ("Wie die Arbeitssätze" beside "Pause vor der
   // nächsten Übung") leaves the title a column a word wide on a phone: it goes under the text
@@ -409,8 +409,8 @@ export function Row({ icon, iconTint, title, subtitle, value, accessory = 'none'
   const vlong = icon && subtitle && !children && typeof value === 'string' && value.length > VALUE_BESIDE_MAX
   const id = useId()
   return (
-    <Tag className={'lrow' + (onClick ? ' tap' : '') + (danger ? ' danger' : '') + (vlong ? ' lrow-vlong' : '') + ' ' + className} onClick={onClick} data-tour={tour}>
-      {icon && <span className="lrow-i" style={iconTint ? { '--tint': iconTint } : null}><Icon name={icon} /></span>}
+    <Tag className={'lrow' + (onClick ? ' tap' : '') + (danger ? ' danger' : '') + (vlong ? ' lrow-vlong' : '') + ' ' + className} onClick={onClick} data-tour={tour} aria-label={ariaLabel}>
+      {icon && <span className="lrow-i" style={iconTint ? { '--tint': iconTint } : null} aria-hidden={ariaLabel ? 'true' : undefined}><Icon name={icon} /></span>}
       <span className="lrow-m">
         <span className="lrow-t" id={id}>{title}</span>
         {subtitle && <span className="lrow-s">{subtitle}</span>}

@@ -6073,4 +6073,6 @@ export default {
   "Turn on": "開啟",
   "Choose a voice": "選擇語音",
   "Settings > Accessibility > Read & Speak > Voices": "設定 > 輔助使用 > 朗讀與說話 > 聲音",
+  "Uses {0}, your phone’s standard voice.": "使用 {0}，你手機的標準語音。",
+  "selected": "已選取",
 }

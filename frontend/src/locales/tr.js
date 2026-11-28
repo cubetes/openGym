@@ -6080,4 +6080,6 @@ export default {
   "Turn on": "Aç",
   "Choose a voice": "Bir ses seç",
   "Settings > Accessibility > Read & Speak > Voices": "Ayarlar > Erişilebilirlik > Okuma ve Konuşma > Sesler",
+  "Uses {0}, your phone’s standard voice.": "{0} kullanılıyor, telefonunun standart sesi.",
+  "selected": "seçili",
 }

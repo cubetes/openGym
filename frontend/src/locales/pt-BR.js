@@ -4484,6 +4484,8 @@ export const PT_BR_OVERRIDES = {
   "Turn on": "Ativar",
   "Choose a voice": "Escolha uma voz",
   "Settings > Accessibility > Read & Speak > Voices": "Ajustes > Acessibilidade > Ler e Falar > Vozes",
+  "Uses {0}, your phone’s standard voice.": "Usa {0}, a voz padrão do seu celular.",
+  "selected": "selecionada",
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }

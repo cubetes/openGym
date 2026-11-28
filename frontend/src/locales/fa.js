@@ -6046,4 +6046,6 @@ export default {
   "Turn on": "روشن کن",
   "Choose a voice": "یک صدا انتخاب کنید",
   "Settings > Accessibility > Read & Speak > Voices": "تنظیمات > دسترس‌پذیری > خواندن و گفتن > صداها",
+  "Uses {0}, your phone’s standard voice.": "از {0} استفاده می‌کند، صدای استاندارد گوشی شما.",
+  "selected": "انتخاب‌شده",
 }

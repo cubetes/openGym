@@ -6091,4 +6091,6 @@ export default {
   "Turn on": "เปิด",
   "Choose a voice": "เลือกเสียง",
   "Settings > Accessibility > Read & Speak > Voices": "การตั้งค่า > การช่วยการเข้าถึง > อ่านและพูด > เสียง",
+  "Uses {0}, your phone’s standard voice.": "ใช้ {0} เสียงมาตรฐานของโทรศัพท์คุณ",
+  "selected": "เลือกอยู่",
 }

@@ -6080,4 +6080,6 @@ export default {
   "Turn on": "चालू करें",
   "Choose a voice": "आवाज़ चुनें",
   "Settings > Accessibility > Read & Speak > Voices": "सेटिंग्ज़ > एक्सेसिबिलिटी > पढ़ें और बोलें > आवाज़ें।",
+  "Uses {0}, your phone’s standard voice.": "{0} इस्तेमाल कर रहा है, आपके फ़ोन की स्टैंडर्ड आवाज़।",
+  "selected": "चुनी गई",
 }

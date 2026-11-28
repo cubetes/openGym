@@ -6045,4 +6045,6 @@ export default {
   "Turn on": "Nyalakan",
   "Choose a voice": "Pilih suara",
   "Settings > Accessibility > Read & Speak > Voices": "Pengaturan > Aksesibilitas > Baca & Ucapkan > Suara",
+  "Uses {0}, your phone’s standard voice.": "Memakai {0}, suara standar ponselmu.",
+  "selected": "dipilih",
 };

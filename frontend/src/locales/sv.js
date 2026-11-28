@@ -6127,4 +6127,6 @@ export default {
   "Turn on": "Slå på",
   "Choose a voice": "Välj en röst",
   "Settings > Accessibility > Read & Speak > Voices": "Inställningar > Hjälpmedel > Läs upp och tala > Röster",
+  "Uses {0}, your phone’s standard voice.": "Använder {0}, telefonens standardröst.",
+  "selected": "vald",
 }

@@ -6080,4 +6080,6 @@ export default {
   "Turn on": "Ligar",
   "Choose a voice": "Escolhe uma voz",
   "Settings > Accessibility > Read & Speak > Voices": "Definições > Acessibilidade > Ler e Falar > Vozes",
+  "Uses {0}, your phone’s standard voice.": "Usa {0}, a voz padrão do telemóvel.",
+  "selected": "selecionada",
 }

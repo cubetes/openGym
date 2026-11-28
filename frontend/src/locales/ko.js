@@ -6080,4 +6080,6 @@ export default {
   "Turn on": "켜기",
   "Choose a voice": "음성 선택",
   "Settings > Accessibility > Read & Speak > Voices": "설정 > 손쉬운 사용 > 읽기 및 말하기 > 음성",
+  "Uses {0}, your phone’s standard voice.": "{0} 음성을 사용해요. 휴대폰의 표준 음성이에요.",
+  "selected": "선택됨",
 }

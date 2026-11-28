@@ -6084,4 +6084,6 @@ export default {
   "Turn on": "Включить",
   "Choose a voice": "Выберите голос",
   "Settings > Accessibility > Read & Speak > Voices": "Настройки > Универсальный доступ > Чтение и озвучивание > Голоса",
+  "Uses {0}, your phone’s standard voice.": "Используется {0}, стандартный голос вашего телефона.",
+  "selected": "выбрано",
 }

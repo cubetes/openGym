@@ -105,7 +105,7 @@ describe('Settings → Timer alerts → Voice', () => {
   it('the picker groups voices by language', async () => {
     mocks.voices = { voices: [{ id: 'anna', name: 'Anna', lang: 'en-GB' }, { id: 'tom', name: 'Tom', lang: 'en-US' }, { id: 'bob', name: 'Bob', lang: 'en-GB' }], auto: null, ios: false }
     await render(<VoiceList />)
-    expect([...host.querySelectorAll('.sect-t')].map(e => e.textContent)).toEqual(['British English', 'American English'])
+    expect([...host.querySelectorAll('.sect-t')].map(e => e.textContent)).toEqual(['English (UK)', 'English (US)'])
   })
   it('cues off: a notice with Turn on, which switches them on', async () => {
     mocks.S.spokenCues = false
@@ -138,7 +138,7 @@ describe('Settings → Timer alerts → Voice', () => {
       expect(host.textContent).toContain(hint)
       expect(host.textContent).toContain('Settings > Accessibility > Read & Speak > Voices')
       expect(host.textContent).not.toContain('Nothing to add')
-      expect(rowTitled('Automatic').querySelector('.lrow-s').textContent).toBe('Uses your phone’s standard voice.')
+      expect(rowTitled('Automatic').querySelector('.lrow-s').textContent).toBe('Uses Anna, your phone’s standard voice.')
       expect(rowTitled('Anna').querySelector('.lrow-v').textContent).toBe('Standard')
     })
     it('Show me how opens the steps and Done closes them', async () => {
@@ -152,6 +152,18 @@ describe('Settings → Timer alerts → Voice', () => {
       expect(host.querySelectorAll('li')).toHaveLength(4)
       await act(async () => { button('Done').click() })
       expect(close).toHaveBeenCalledTimes(1)
+    })
+    it('Automatic names the standard voice; a row reads as one labelled element', async () => {
+      phone([{ ...anna, lang: 'en-US' }], null)
+      await render(<VoiceList />)
+      expect(rowTitled('Automatic').querySelector('.lrow-s').textContent).toBe('Uses Anna, your phone’s standard voice.')
+      expect(rowTitled('Anna').getAttribute('aria-label')).toBe('Anna, Standard')
+      expect(rowTitled('Anna').querySelector('.lrow-i').getAttribute('aria-hidden')).toBe('true')
+      expect(rowTitled('Automatic').getAttribute('aria-label')).toBe('Automatic, selected')
+      expect([...host.querySelectorAll('.sect-t')].map(e => e.textContent)).toEqual(['English (US)'])
+      localStorage.setItem('og_speech_voice', 'anna')
+      await render(<VoiceList key="again" />)
+      expect(rowTitled('Anna').getAttribute('aria-label')).toBe('Anna, Standard, selected')
     })
     it('an Enhanced voice still gets the hint, and Automatic names it', async () => {
       phone([nicky, anna], nicky)

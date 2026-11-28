@@ -6020,4 +6020,6 @@ export default {
   "Turn on": "Slå til",
   "Choose a voice": "Vælg en stemme",
   "Settings > Accessibility > Read & Speak > Voices": "Indstillinger > Tilgængelighed > Læs og tal > Stemmer",
+  "Uses {0}, your phone’s standard voice.": "Bruger {0}, din telefons standardstemme.",
+  "selected": "valgt",
 }

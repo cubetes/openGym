@@ -6083,4 +6083,6 @@ export default {
   "Turn on": "Bekapcsolás",
   "Choose a voice": "Válassz hangot",
   "Settings > Accessibility > Read & Speak > Voices": "Beállítások > Kisegítő lehetőségek > Olvasás és beszéd > Hangok",
+  "Uses {0}, your phone’s standard voice.": "Ezt használja: {0}, a telefonod alapértelmezett hangja.",
+  "selected": "kiválasztva",
 }

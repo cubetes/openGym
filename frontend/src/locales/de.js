@@ -6100,4 +6100,6 @@ export default {
   "Turn on": "Einschalten",
   "Choose a voice": "Stimme wählen",
   "Settings > Accessibility > Read & Speak > Voices": "Einstellungen > Bedienungshilfen > Gesprochene Inhalte > Stimmen",
+  "Uses {0}, your phone’s standard voice.": "Nutzt {0}, die Standardstimme deines Telefons.",
+  "selected": "ausgewählt",
 }

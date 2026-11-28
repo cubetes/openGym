@@ -6012,4 +6012,6 @@ export default {
   "Turn on": "オンにする",
   "Choose a voice": "音声を選ぶ",
   "Settings > Accessibility > Read & Speak > Voices": "設定 > アクセシビリティ > 読み上げコンテンツ > 声",
+  "Uses {0}, your phone’s standard voice.": "{0}を使います。お使いの電話の標準音声です。",
+  "selected": "選択中",
 }

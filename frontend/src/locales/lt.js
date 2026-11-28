@@ -6076,4 +6076,6 @@ export default {
   "Turn on": "Įjungti",
   "Choose a voice": "Pasirinkite balsą",
   "Settings > Accessibility > Read & Speak > Voices": "Nustatymai > Prieinamumas > Skaitymas ir kalbėjimas > Balsai",
+  "Uses {0}, your phone’s standard voice.": "Naudoja {0}, standartinį jūsų telefono balsą.",
+  "selected": "pasirinkta",
 }

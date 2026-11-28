@@ -6046,4 +6046,6 @@ export default {
   "Turn on": "Bật",
   "Choose a voice": "Chọn giọng",
   "Settings > Accessibility > Read & Speak > Voices": "Cài đặt > Trợ năng > Đọc & Nói > Giọng nói",
+  "Uses {0}, your phone’s standard voice.": "Dùng {0}, giọng tiêu chuẩn của điện thoại bạn.",
+  "selected": "đã chọn",
 };

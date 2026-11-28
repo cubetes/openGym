@@ -6077,4 +6077,6 @@ export default {
   "Turn on": "Увімкнути",
   "Choose a voice": "Обери голос",
   "Settings > Accessibility > Read & Speak > Voices": "Параметри > Доступність > Читання й озвучування > Голоси",
+  "Uses {0}, your phone’s standard voice.": "Використовується {0}, стандартний голос твого телефону.",
+  "selected": "вибрано",
 }

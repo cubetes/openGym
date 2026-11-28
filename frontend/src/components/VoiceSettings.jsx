@@ -77,6 +77,16 @@ function StepsSheet({ close, lang }) {
     <Button variant="primary" onClick={close}>{t('Done')}</Button>
   </>
 }
+/** "English (US)", "English (UK)", "German (Germany)": the language, then its region, in the app's language. */
+function groupName(tag) {
+  const [lang, region] = String(tag).split(/[-_]/)
+  const name = langName(lang) || tag
+  if (!/^[a-z]{2}$/i.test(region || '')) return name
+  const R = region.toUpperCase()
+  let r = R === 'US' ? 'US' : R === 'GB' ? 'UK' : ''
+  try { r = r || new Intl.DisplayNames([speechLang()], { type: 'region' }).of(R) || R } catch { r = R }
+  return `${name} (${r})`
+}
 const isEnglish = () => speechLang().split('-')[0] === 'en'
 
 /** Settings > Timer alerts > Voice > Choose a voice: Automatic, then this language's voices, by tier. */
@@ -92,9 +102,11 @@ export function VoiceList() {
   }
   const lang = langName(speechLang().split('-')[0])
   const premium = voices.some(v => v.quality === 'premium')
+  // With no Premium or Enhanced voice, voiceOpts passes '' and the phone speaks its default for the language, which is the top of this ranked list in practice; the name is that list's first voice.
   const autoNote = !ios ? null : auto
     ? t('Uses {0} ({1}), the best voice for your accent.', voiceLabel(auto), auto.quality === 'premium' ? t('Premium') : t('Enhanced'))
-    : t('Uses your phone’s standard voice.')
+    : voices[0] ? t('Uses {0}, your phone’s standard voice.', voiceLabel(voices[0])) : t('Uses your phone’s standard voice.')
+  const sel = on => (on ? ', ' + t('selected') : '')
   const groups = []
   for (const v of voices) {
     const g = groups.find(x => x.lang === v.lang)
@@ -102,10 +114,10 @@ export function VoiceList() {
   }
   return <>
     <Section footer={voices.length ? null : t('No other voices for this language here. Your device’s settings can add more.')}>
-      <Row icon={cur ? 'play' : 'speaker'} iconTint="var(--teal)" title={t('Automatic')} subtitle={autoNote} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', auto?.id || '')} />
+      <Row icon={cur ? 'play' : 'speaker'} iconTint="var(--teal)" title={t('Automatic')} subtitle={autoNote} ariaLabel={t('Automatic') + sel(!cur)} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', auto?.id || '')} />
     </Section>
-    {groups.map(g => <Section key={g.lang} title={langName(g.lang) || g.lang}>
-      {g.voices.map(v => <Row key={v.id} icon={cur === v.id ? 'speaker' : 'play'} iconTint="var(--teal)" title={voiceLabel(v)}
+    {groups.map(g => <Section key={g.lang} title={groupName(g.lang)}>
+      {g.voices.map(v => <Row key={v.id} icon={cur === v.id ? 'speaker' : 'play'} iconTint="var(--teal)" title={voiceLabel(v)} ariaLabel={[voiceLabel(v), tierOf(v, ios)].filter(Boolean).join(', ') + sel(cur === v.id)}
         subtitle={v.online ? t('Needs internet') : null} value={tierOf(v, ios)} className="vp-voice"
         accessory={cur === v.id ? 'check' : 'none'} onClick={() => pick(v.id)} />)}
     </Section>)}

@@ -6090,4 +6090,6 @@ export default {
   "Turn on": "Attiva",
   "Choose a voice": "Scegli una voce",
   "Settings > Accessibility > Read & Speak > Voices": "Impostazioni > Accessibilità > Lettura e pronuncia > Voci",
+  "Uses {0}, your phone’s standard voice.": "Usa {0}, la voce standard del tuo telefono.",
+  "selected": "selezionata",
 }
