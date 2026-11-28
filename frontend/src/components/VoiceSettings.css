@@ -77,12 +77,17 @@
 .vp-legend span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap }
 
 @media (prefers-reduced-motion: reduce) {
-  .vp-in { animation-name: vs-fade; animation-duration: 140ms; animation-delay: 0s }
-  .vp-voice.vp-pick .lrow-k { animation-name: vs-fade; animation-duration: 140ms; animation-delay: 0s }
+  /* index.css turns every animation and transition off with !important. These fades are the Voice pages' own
+     reduced-motion design (flow-studio.md, picker-badges.md), so they carry !important too and win by specificity. */
+  .vp-in { animation: vs-fade 140ms linear both !important }
+  .vp-voice.vp-pick .lrow-k { animation: vs-fade 140ms linear both !important }
   .vhero-wave i, .vhero:is(.play, .end) .vhero-wave i { animation: none }
+  .vhero-wave i { transition: opacity 120ms linear !important }
   .vhero.play .vhero-wave i { transform: scaleY(.5) }
+  .vhero.end .vhero-wave i { transform: scaleY(.5) }
   .btn.vhero-try, .vs-tile, .vs-bub, .vhero-main { transition: none }
-  .btn.vhero-try:active, .vs-tile:active, .vs-bub:active, .vhero-main:active { transform: none }
-  .vs-ok.pop { animation: vs-fade 160ms linear both }
+  /* No press scale: an instant dim says the press landed. */
+  .btn.vhero-try:active, .vs-tile:active, .vs-bub:active, .vhero-main:active { transform: none; opacity: .6 }
+  .vs-ok.pop { animation: vs-fade 160ms linear both !important }
   @keyframes vs-fade { from { opacity: 0 } to { opacity: 1 } }
 }

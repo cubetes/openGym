@@ -40,5 +40,7 @@ button.at-op:active { background: var(--press-fill, rgba(128,128,128,.2)); backg
 .text-big .at-op { min-height: 56px }
 @media (prefers-reduced-motion: reduce) {
   .at, .at .mini::after { transition: none }
+  /* No press scale: an instant dim says the press landed. */
   .at:has(.at-sw:active) { transform: none }
+  .at-sw:active { opacity: .6 }
 }

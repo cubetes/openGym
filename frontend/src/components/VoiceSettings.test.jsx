@@ -565,6 +565,8 @@ describe('Settings → Timer alerts → Voice', () => {
     expect(block).toMatch(/\.vs-tile:active[^}]*transform: none/)
     expect(block).toMatch(/\.vhero\.play \.vhero-wave i \{ transform: scaleY\(\.5\)/)
     expect(block).toMatch(/\.vs-ok\.pop \{ animation: vs-fade/)
+    for (const m of block.matchAll(/(transition|animation):([^;}]+)/g)) if (m[2].trim() !== 'none') expect(m[2].trim()).toMatch(/!important$/)
+    expect(block).toMatch(/:active \{ transform: none; opacity: \.6 \}/)
     expect(css).toMatch(/\.vhero-main:active \{ transform: scale\(var\(--press-scale-card\)\) \}/)
   })
   describe('the picker: tier tiles, and the plain list with Better voices off', () => {
@@ -686,8 +688,8 @@ describe('Settings → Timer alerts → Voice', () => {
     it('reduced motion: the check and the new rows fade, the bar does not slide', async () => {
       const css = (await import('node:fs')).readFileSync('src/components/VoiceSettings.css', 'utf8')
       const block = css.slice(css.lastIndexOf('@media (prefers-reduced-motion: reduce)'))
-      expect(block).toMatch(/\.vp-in \{[^}]*animation-name: vs-fade/)
-      expect(block).toMatch(/\.vp-voice\.vp-pick \.lrow-k \{[^}]*animation-name: vs-fade/)
+      expect(block).toMatch(/\.vp-in \{ animation: vs-fade 140ms linear both !important/)
+      expect(block).toMatch(/\.vp-voice\.vp-pick \.lrow-k \{ animation: vs-fade 140ms linear both !important/)
       const idx = (await import('node:fs')).readFileSync('src/index.css', 'utf8')
       expect(idx).toMatch(/prefers-reduced-motion:reduce\)\{[^@]*\.vp-bar i\{transition:none/)
     })

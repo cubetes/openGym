@@ -38,4 +38,6 @@
 @media (prefers-reduced-motion: reduce) {
   .tier-bars i { animation: none; transform: scaleY(.65) }
   .tier-ring { display: none }
+  /* index.css turns transitions off with !important; the still bars and the glyph still crossfade, gently. */
+  .tier-play, .tier-tile .tier-glyph { transition: opacity 120ms linear !important }
 }
