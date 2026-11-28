@@ -85,6 +85,7 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
     private var naturalQueue: [NaturalLine] = []
     /// The beat between two Natural lines: nothing starts during it (a flush clears it).
     private var pausing = false
+    private var pauseId = 0  // a stale timer from an earlier pause never ends a newer one
     /// Apple-voice utterances that cover a Natural line, to that line (it ends when they do).
     private var covers: [ObjectIdentifier: NaturalLine] = [:]
     /// Whether a spoken cue is talking, without making the synthesizer just to ask.
@@ -396,8 +397,10 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
         // A line said right after another waits a beat, so the two do not run together.
         if naturalQueue.isEmpty { return }
         pausing = true
+        pauseId += 1
+        let id = pauseId
         DispatchQueue.main.asyncAfter(deadline: .now() + Double(NaturalVoiceMath.sentencePauseMs) / 1000) {
-            guard self.pausing else { return }  // a flush ended the pause and started its own line
+            guard self.pausing, id == self.pauseId else { return }  // a flush ended this pause, or a newer one runs
             self.pausing = false
             self.playNext()
         }
