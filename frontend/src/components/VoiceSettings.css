@@ -69,8 +69,8 @@
 .vp-voice .lrow-k { animation: vs-pop 160ms var(--ease-out) both }
 .vp-in { animation: vp-in 240ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms) }
 @keyframes vp-in { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
-.vp-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0 16px 14px; font-size: var(--fs-footnote); color: var(--label-2) }
-.vp-legend span { display: inline-flex; align-items: center; gap: 6px }
+.vp-legend { display: flex; flex-wrap: wrap; gap: 6px 11px; margin: 0 16px 14px; font-size: var(--fs-caption, 12px); color: var(--label-2) }
+.vp-legend span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap }
 
 @media (prefers-reduced-motion: reduce) {
   .vp-in { animation-name: vs-fade; animation-duration: 140ms; animation-delay: 0s }
