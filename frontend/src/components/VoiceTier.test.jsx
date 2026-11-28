@@ -94,4 +94,11 @@ describe('each Natural voice has its own shade', () => {
     }
     for (const c of ['#0d9488', '#8b5cf6', '#7c3aed']) expect(onWhite(c)).toBeGreaterThanOrEqual(3)
   })
+
+  // `.vp-legend span` also matched the tile (a span), turning its grid into inline-flex and pinning the glyph to the left.
+  it('the legend styles its own entries only, never the tile inside', () => {
+    const css = readFileSync('src/components/VoiceSettings.css', 'utf8')
+    expect(css).toMatch(/\.vp-legend > span \{/)
+    expect(css).not.toMatch(/\.vp-legend span/)
+  })
 })
