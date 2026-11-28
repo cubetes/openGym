@@ -3054,6 +3054,8 @@ export default {
   'Also during workouts': 'ওয়ার্কআউটের সময়ও',
   'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'হেডারে মাকড়সার জাল, বিশ্রামের টাইমারের পেছনে বাদুড়, শেষে কুমড়ো। আপনার সেটের উপর কখনো নয়।',
   'Seasonal themes': 'মৌসুমি থিম',
+  'Better voices': 'আরও ভালো কণ্ঠ',
+  'The Natural voice to download, and how to get Apple’s best voices for free.': 'ডাউনলোড করার Natural কণ্ঠ, আর Apple-এর সেরা কণ্ঠ বিনামূল্যে পাওয়ার উপায়।',
   'Little extras for the time of year.': 'বছরের এই সময়ের জন্য ছোট্ট কিছু বাড়তি সাজ।',
   'Halloween': 'হ্যালোইন',
   'Auto': 'অটো',

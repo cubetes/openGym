@@ -2986,6 +2986,8 @@ export default {
   'Also during workouts': 'ระหว่างออกกำลังกายด้วย',
   'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'ใยแมงมุมที่ส่วนหัว ค้างคาวหลังตัวจับเวลาพัก ฟักทองตอนจบ ไม่บังเซ็ตของคุณเด็ดขาด',
   'Seasonal themes': 'ธีมตามฤดูกาล',
+  "Better voices": "เสียงที่ดีขึ้น",
+  "The Natural voice to download, and how to get Apple’s best voices for free.": "เสียง Natural ที่ดาวน์โหลดได้ และวิธีรับเสียงที่ดีที่สุดของ Apple ฟรี",
   'Little extras for the time of year.': 'ของตกแต่งเล็กๆ ตามช่วงเวลาของปี',
   'Halloween': 'ฮาโลวีน',
   'Auto': 'อัตโนมัติ',

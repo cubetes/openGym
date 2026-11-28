@@ -2975,6 +2975,8 @@ export default {
   'Also during workouts': '운동 중에도',
   'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': '헤더에 거미줄, 휴식 타이머 뒤에 박쥐, 마무리 화면에 호박. 세트 위에는 절대 안 나와요.',
   'Seasonal themes': '시즌 테마',
+  "Better voices": "더 나은 음성",
+  "The Natural voice to download, and how to get Apple’s best voices for free.": "내려받을 수 있는 Natural 음성과 Apple의 최고 음성을 무료로 받는 방법.",
   'Little extras for the time of year.': '계절에 맞춘 작은 장식이에요.',
   'Halloween': '핼러윈',
   'Auto': '자동',

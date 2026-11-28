@@ -2963,6 +2963,8 @@ export default {
   'Also during workouts': 'I během tréninku',
   'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'Pavučina v záhlaví, netopýři za časovačem pauzy, dýně na závěrečné obrazovce. Nikdy na tvých sériích.',
   'Seasonal themes': 'Sezónní motivy',
+  'Better voices': 'Lepší hlasy',
+  'The Natural voice to download, and how to get Apple’s best voices for free.': 'Hlas Natural ke stažení a jak získat nejlepší hlasy Applu zdarma.',
   'Little extras for the time of year.': "Drobnosti podle ročního období.",
   'Halloween': 'Halloween',
   'Auto': "Auto",

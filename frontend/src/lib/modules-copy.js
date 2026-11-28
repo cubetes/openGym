@@ -15,6 +15,7 @@ export const moduleCopy = () => ({
   health: [t('Health'), t('Apple Health or Health Connect, heart rate and recovery tips.')],
   motivation: [t('Motivation'), t('Streaks, challenges, badges, recaps and your year in openGym.')],
   coach: [t('AI Coach'), t('Reviews your training and suggests changes. You still say yes or no.')],
+  voices: [t('Better voices'), t('The Natural voice to download, and how to get Apple’s best voices for free.')],
   integrations: [t('Integrations'), t('Webhooks for Home Assistant and friends, and the MCP server.')],
   community: [t('Community'), t('Exercises, plans and sounds people on your server shared, and a way to share yours.')],
   seasonal: [t('Seasonal themes'), t('Halloween and friends, little extras for the time of year. All optional.')],

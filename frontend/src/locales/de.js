@@ -2995,6 +2995,8 @@ export default {
   'Also during workouts': 'Auch im Training',
   'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'Ein Spinnennetz im Kopfbereich, Fledermäuse hinter dem Pausentimer, Kürbisse beim Abschluss. Nie auf deinen Sätzen.',
   'Seasonal themes': 'Saison-Themen',
+  "Better voices": "Bessere Stimmen",
+  "The Natural voice to download, and how to get Apple’s best voices for free.": "Die Natural-Stimme zum Herunterladen und wie du Apples beste Stimmen gratis bekommst.",
   'Little extras for the time of year.': 'Kleine Extras passend zur Jahreszeit.',
   'Halloween': 'Halloween',
   'Auto': 'Auto',

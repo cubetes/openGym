@@ -1,14 +1,14 @@
 // openGym Offline (lib/build-caps.js): the build without the INTERNET permission hides everything
 // that needs a network, and the modules that are nothing but network are off whatever S says.
 import { afterEach, describe, expect, it } from 'vitest'
-import { setOfflineBuild, offlineBuild, networkBuilt, subscribeBuildCaps, OFFLINE_OFF_CARDS } from './build-caps.js'
+import { setIphoneBuild, setOfflineBuild, offlineBuild, networkBuilt, subscribeBuildCaps, OFFLINE_OFF_CARDS } from './build-caps.js'
 import { isOn, moduleBuilt, presetOf, applyPreset } from './modules.js'
 import { youtubeId, youtubeSearchUrl, youtubeLinks } from './youtube.js'
 import { directory } from './integrations.js'
 import { coachAvailable } from './coach.js'
 import { findPlaces, addressAt } from './gym-places.js'
 
-afterEach(() => setOfflineBuild(false))
+afterEach(() => { setOfflineBuild(false); setIphoneBuild(true) })
 
 describe('openGym Offline', () => {
   it('is off by default and says so to listeners once', () => {
@@ -56,5 +56,19 @@ describe('openGym Offline', () => {
     expect(ids).toEqual(expect.arrayContaining(['files', 'csv']))
     const normal = directory({ ...ctx, offline: false }).flatMap(c => c.cards.map(x => x.id))
     expect(normal.length).toBeGreaterThan(ids.length)
+  })
+})
+
+describe('Better voices is an iPhone module', () => {
+  it('is unavailable off the iPhone app, and the two lists combine', () => {
+    expect(isOn({}, 'voices')).toBe(true) // neither setter called: nothing unavailable
+    setIphoneBuild(false)
+    expect(isOn({}, 'voices')).toBe(false)
+    expect(moduleBuilt('voices')).toBe(false)
+    setIphoneBuild(true)
+    expect(isOn({}, 'voices')).toBe(true)
+    setOfflineBuild(true)
+    expect(isOn({ modules: { coach: true } }, 'coach')).toBe(false)
+    expect(isOn({}, 'voices')).toBe(true)
   })
 })

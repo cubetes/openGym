@@ -14,7 +14,9 @@ import { accentValue } from '../lib/accent.js'
 import { COUNT_IN_SEC, chainCues, heldSec, phaseLeft, resumedEnd, shouldWait } from '../lib/auto-holds.js'
 import { cues, bindCueState } from '../lib/spoken-cues.js'
 import { refreshVoices } from '../lib/speech.js'
-import { refreshNatural } from '../lib/natural-voice.js'
+import { refreshNatural, setNaturalAllowed } from '../lib/natural-voice.js'
+import { isOn } from '../lib/modules.js'
+import { subscribeBuildCaps } from '../lib/build-caps.js'
 import { restNextLine, restOverTitle } from '../lib/rest-next.js'
 
 // Timed holds that run themselves (lib/auto-holds.js): the workout screen hands in what comes
@@ -905,6 +907,11 @@ bindCueState(() => useStore.getState?.()?.S, (mut, push) => useStore.getState().
 if (MOBILE) {
   refreshVoices().catch(() => {})
   refreshNatural()
+  // Better voices off: the Natural voice stays on the phone but does not speak (the build flag can arrive after the store).
+  const allowNatural = () => setNaturalAllowed(isOn(useStore.getState().S, 'voices'))
+  allowNatural()
+  useStore.subscribe(allowNatural)
+  subscribeBuildCaps(allowNatural)
   onAppActive(() => { refreshVoices().catch(() => {}); refreshNatural() })
 }
 

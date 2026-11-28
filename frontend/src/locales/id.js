@@ -2950,6 +2950,8 @@ export default {
   "Also during workouts": "Juga saat latihan",
   "A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.": "Jaring laba-laba di header, kelelawar di belakang timer istirahat, labu di layar akhir. Tidak pernah di set-mu.",
   "Seasonal themes": "Tema musiman",
+  "Better voices": "Suara lebih baik",
+  "The Natural voice to download, and how to get Apple’s best voices for free.": "Suara Natural untuk diunduh, dan cara mendapatkan suara terbaik Apple secara gratis.",
   "Little extras for the time of year.": "Sedikit tambahan untuk sepanjang tahun.",
   "Halloween": "Halloween",
   "Auto": "Auto",

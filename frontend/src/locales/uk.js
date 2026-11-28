@@ -2972,6 +2972,8 @@ export default {
   'Also during workouts': 'І під час тренування',
   'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'Павутина в шапці, кажани за таймером відпочинку, гарбузи на підсумках. Ніколи поверх твоїх підходів.',
   'Seasonal themes': 'Сезонні теми',
+  "Better voices": "Кращі голоси",
+  "The Natural voice to download, and how to get Apple’s best voices for free.": "Голос Natural для завантаження і як безкоштовно отримати найкращі голоси Apple.",
   'Little extras for the time of year.': 'Маленькі сюрпризи до пори року.',
   'Halloween': 'Гелловін',
   'Auto': 'Авто',

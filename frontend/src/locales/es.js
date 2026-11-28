@@ -2975,6 +2975,8 @@ export default {
   'Also during workouts': 'También al entrenar',
   'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'Una telaraña en la cabecera, murciélagos detrás del temporizador de descanso, calabazas al terminar. Nunca encima de tus series.',
   'Seasonal themes': 'Temas de temporada',
+  "Better voices": "Mejores voces",
+  "The Natural voice to download, and how to get Apple’s best voices for free.": "La voz Natural para descargar y cómo conseguir gratis las mejores voces de Apple.",
   'Little extras for the time of year.': 'Pequeños extras según la época del año.',
   'Halloween': 'Halloween',
   'Auto': 'Auto',

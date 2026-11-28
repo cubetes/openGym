@@ -40,7 +40,7 @@ const render = () => createRoot(document.getElementById('root')).render(
 // a sync button, not even for a frame. The answer is a few milliseconds; a shell that never
 // answers still gets its app after a moment.
 if (MOBILE) Promise.race([initBuildCaps().catch(() => {}), new Promise(r => setTimeout(r, 700))]).then(render)
-else render()
+else { initBuildCaps(); render() }
 
 // The photos and videos of custom exercises, in every build (the phone and the demo included):
 // uploads of what the server lacks, the local clean-up, and the plan's files kept offline.

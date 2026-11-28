@@ -2963,6 +2963,8 @@ export default {
   'Also during workouts': 'Cả trong lúc tập',
   'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'Mạng nhện trên thanh tiêu đề, dơi sau bộ đếm giờ nghỉ, bí ngô trên màn hình kết thúc. Không bao giờ trên các hiệp của bạn.',
   'Seasonal themes': 'Giao diện theo mùa',
+  "Better voices": "Giọng nói tốt hơn",
+  "The Natural voice to download, and how to get Apple’s best voices for free.": "Giọng Natural để tải về, và cách có giọng nói tốt nhất của Apple miễn phí.",
   'Little extras for the time of year.': 'Chút điểm xuyết theo thời điểm trong năm.',
   'Halloween': 'Halloween',
   'Auto': 'Tự động',

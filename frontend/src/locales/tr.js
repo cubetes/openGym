@@ -2975,6 +2975,8 @@ export default {
   'Also during workouts': 'Antrenman sırasında da',
   'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'Başlıkta bir örümcek ağı, dinlenme sayacının arkasında yarasalar, bitişte balkabakları. Setlerinin üstünde asla.',
   'Seasonal themes': 'Sezon temaları',
+  "Better voices": "Daha iyi sesler",
+  "The Natural voice to download, and how to get Apple’s best voices for free.": "İndirilebilen Natural ses ve Apple’ın en iyi seslerini ücretsiz alma yolu.",
   'Little extras for the time of year.': 'Mevsime göre küçük sürprizler.',
   'Halloween': 'Cadılar Bayramı',
   'Auto': 'Otomatik',

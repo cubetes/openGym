@@ -2975,6 +2975,8 @@ export default {
   'Also during workouts': '训练时也显示',
   'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': '页眉里一张蛛网，休息计时器后面几只蝙蝠，完成页上几个南瓜。绝不挡住你的组。',
   'Seasonal themes': '季节主题',
+  "Better voices": "更好的语音",
+  "The Natural voice to download, and how to get Apple’s best voices for free.": "可下载的 Natural 语音，以及如何免费获取 Apple 最好的语音。",
   'Little extras for the time of year.': '应季的小彩蛋。',
   'Halloween': '万圣节',
   'Auto': '自动',

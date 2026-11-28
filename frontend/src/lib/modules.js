@@ -42,6 +42,8 @@ export const MODULES = [
     desc: 'Streaks, challenges, badges, recaps and your year in openGym.' },
   { id: 'coach', group: 'extras', icon: 'sparkles', tint: 'var(--green)', title: 'AI Coach',
     desc: 'Reviews your training and suggests changes. You still say yes or no.' },
+  { id: 'voices', group: 'extras', icon: 'speaker', tint: 'var(--teal)', title: 'Better voices',
+    desc: 'The Natural voice to download, and how to get Apple’s best voices for free.' },
   { id: 'integrations', group: 'extras', icon: 'webhook', tint: 'var(--indigo)', title: 'Integrations',
     desc: 'Webhooks for Home Assistant and friends, and the MCP server.' },
   { id: 'community', group: 'extras', icon: 'globe', tint: 'var(--blue)', title: 'Community',

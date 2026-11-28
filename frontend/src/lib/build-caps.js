@@ -19,7 +19,12 @@ export const OFFLINE_OFF_MODULES = ['coach', 'integrations', 'community']
 // opennutrition: the sister-app link (lib/sister-nutrition.js, gm-hooks) talks to another server.
 export const OFFLINE_OFF_CARDS = ['hevy', 'strava', 'webdav', 'calendar', 'webhook', 'coach', 'mcp', 'opennutrition']
 
+// The modules only the iPhone app has so far (the Natural voice is iPhone only, until Android has it).
+export const IPHONE_ONLY_MODULES = ['voices']
+
 let offline = false
+// True until told otherwise, so unit tests (and any code that never asks) see nothing unavailable.
+let iphone = true
 const subs = new Set()
 
 /** Whether this is openGym Offline, the build without the INTERNET permission. */
@@ -28,12 +33,23 @@ export const offlineBuild = () => offline
 /** Whether something that needs the network may be offered in this build. */
 export const networkBuilt = () => !offline
 
+function apply() {
+  setUnavailableModules([...(offline ? OFFLINE_OFF_MODULES : []), ...(iphone ? [] : IPHONE_ONLY_MODULES)])
+  subs.forEach(fn => { try { fn() } catch { /* a listener's own trouble */ } })
+}
+
 export function setOfflineBuild(v) {
   v = !!v
   if (v === offline) return
   offline = v
-  setUnavailableModules(v ? OFFLINE_OFF_MODULES : [])
-  subs.forEach(fn => { try { fn() } catch { /* a listener's own trouble */ } })
+  apply()
+}
+
+export function setIphoneBuild(v) {
+  v = !!v
+  if (v === iphone) return
+  iphone = v
+  apply()
 }
 
 export function subscribeBuildCaps(fn) {

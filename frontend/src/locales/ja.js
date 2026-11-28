@@ -2614,6 +2614,8 @@ export default {
   "Also during workouts": "トレーニング中も表示",
   "A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.": "ヘッダーにクモの巣、休憩タイマーの背景にコウモリ、終了画面にカボチャ。セットの表示には重なりません。",
   "Seasonal themes": "季節のテーマ",
+  "Better voices": "より良い音声",
+  "The Natural voice to download, and how to get Apple’s best voices for free.": "ダウンロードできるNatural音声と、Appleの高品質な音声を無料で入手する方法。",
   "Little extras for the time of year.": "季節に合わせた、ちょっとしたお楽しみ。",
   "Halloween": "ハロウィーン",
   "Auto": "自動",

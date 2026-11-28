@@ -139,6 +139,7 @@ const MODULE_KW = {
   health: 'health apple health healthkit health connect heart rate recovery sync',
   motivation: 'motivation streak challenges badges trophies recap wrapped year share gamification',
   coach: 'ai coach llm assistant review suggestions',
+  voices: 'better voices natural voice download premium enhanced kokoro speech spoken cues',
   integrations: 'integrations webhook webhooks home assistant n8n mcp automation',
   seasonal: 'seasonal season halloween theme decoration',
 }

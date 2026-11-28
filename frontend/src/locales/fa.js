@@ -2898,6 +2898,8 @@ export default {
   "Also during workouts": "همچنین در طول تمرین",
   "A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.": "یک تار عنکبوت در هدر، خفاش‌ها پشت تایمر استراحت، کدو تنبل روی صفحه پایان. هرگز در ست‌های خود.",
   "Seasonal themes": "تم‌های فصلی",
+  "Better voices": "صداهای بهتر",
+  "The Natural voice to download, and how to get Apple’s best voices for free.": "صدای Natural برای دانلود، و راه گرفتن بهترین صداهای اپل به‌صورت رایگان.",
   "Little extras for the time of year.": "جزئیات کوچک متناسب با فصل.",
   "Halloween": "هالووین",
   "Auto": "خودکار",

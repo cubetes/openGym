@@ -27,6 +27,7 @@ cannot be switched off.
 | **Health** | The Apple Health and Health Connect pages and cards, the Works with list, live heart rate during a workout, recovery tips on Home. Syncing with the health app pauses (see below). |
 | **Motivation** | The streak card on Home and in Stats, monthly challenges and the trophy shelf, the week and month recap, Your year (its Home card, its Stats rows and its December notification), Share as image, the streak on the watch. With it off, Weekly sets on Home gets a small card of its own. |
 | **AI Coach** | The Coach button on Plan, Ask the Coach in a workout, the Coach screens, its Settings row and Integrations card, scheduled reviews. |
+| **Better voices** | The Natural voice (offer, download, its voices, Remove) and the help for Apple's Premium and Enhanced voices (tier icons, the free-voices hint and its steps). Off, spoken cues use the phone's own voices as before; the Natural model stays on the phone and a Natural pick waits until it is back on. iPhone only for now. |
 | **Integrations** | The Webhooks and MCP server cards and search hits. Webhooks pause (see below). Imports and the CSV export are core and stay. |
 | **Seasonal themes** | Halloween, Christmas and the advent calendar, their colours and decorations, the Seasonal themes page. |
 

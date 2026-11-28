@@ -3029,6 +3029,8 @@ export default {
   'Also during workouts': 'أثناء التمرين أيضًا',
   'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'شبكة عنكبوت في الترويسة، وخفافيش خلف مؤقت الراحة، ويقطين في شاشة الإنهاء. أبدًا فوق مجموعاتك.',
   'Seasonal themes': 'سمات المواسم',
+  'Better voices': 'أصوات أفضل',
+  'The Natural voice to download, and how to get Apple’s best voices for free.': 'صوت Natural للتنزيل، وطريقة الحصول على أفضل أصوات Apple مجانًا.',
   'Little extras for the time of year.': 'لمسات صغيرة تناسب الوقت من السنة.',
   'Halloween': 'الهالوين',
   'Auto': 'تلقائي',

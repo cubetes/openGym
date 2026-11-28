@@ -29,4 +29,15 @@ describe('the Natural voice after a launch', () => {
     mocks.active()
     await vi.waitFor(() => expect(pickedVoice()).toBe('natural:af_heart'))
   })
+
+  it('Better voices off in the store: the Natural voice is not allowed', async () => {
+    await import('./useUI.js')
+    const nv = await import('../lib/natural-voice.js')
+    const { useStore } = await import('./useStore.js')
+    expect(nv.naturalAllowed()).toBe(true)
+    useStore.getState().update(S => { S.modules = { voices: false } }, false)
+    expect(nv.naturalAllowed()).toBe(false)
+    useStore.getState().update(S => { S.modules = { voices: true } }, false)
+    expect(nv.naturalAllowed()).toBe(true)
+  })
 })

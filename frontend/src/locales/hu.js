@@ -2978,6 +2978,8 @@ export default {
   'Also during workouts': 'Edzés közben is',
   'A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.': 'Pókháló a fejlécben, denevérek a pihenőidőzítő mögött, tökök a végén. Soha nem a sorozataidon.',
   'Seasonal themes': 'Szezonális témák',
+  "Better voices": "Jobb hangok",
+  "The Natural voice to download, and how to get Apple’s best voices for free.": "A letölthető Natural hang, és hogyan szerezheted meg ingyen az Apple legjobb hangjait.",
   'Little extras for the time of year.': 'Apró extrák az évszakhoz.',
   'Halloween': 'Halloween',
   'Auto': 'Auto',

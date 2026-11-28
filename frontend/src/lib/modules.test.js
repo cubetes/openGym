@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { MODULES, MODULE_IDS, GROUPS, PRESETS, isOn, moduleStates, presetModules, presetOf, applyPreset, setModule, turnedOff, onCount } from './modules.js'
+import { MODULE, MODULES, MODULE_IDS, GROUPS, PRESETS, isOn, moduleStates, presetModules, presetOf, applyPreset, setModule, turnedOff, onCount } from './modules.js'
 
 describe('modules', () => {
   it('every module belongs to a group, with an icon and copy', () => {
@@ -67,7 +67,15 @@ describe('modules', () => {
   })
 
   it('names what a change switches off', () => {
-    expect(turnedOff({}, presetModules('training')).sort()).toEqual(['body', 'checkin', 'coach', 'community', 'health', 'integrations', 'motivation', 'seasonal', 'strength', 'videos'])
+    expect(turnedOff({}, presetModules('training')).sort()).toEqual(['body', 'checkin', 'coach', 'community', 'health', 'integrations', 'motivation', 'seasonal', 'strength', 'videos', 'voices'])
     expect(turnedOff({ modules: { body: false } }, { body: false, coach: false })).toEqual(['coach'])
+  })
+
+  it('Better voices: an Extras module, on by default, in Everything only', () => {
+    expect(MODULE.voices.group).toBe('extras')
+    expect(isOn({}, 'voices')).toBe(true)
+    expect(presetModules('all').voices).toBe(true)
+    expect(presetModules('training').voices).toBe(false)
+    expect(presetModules('body').voices).toBe(false)
   })
 })

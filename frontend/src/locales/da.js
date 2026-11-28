@@ -2957,6 +2957,8 @@ export default {
   "Also during workouts": "Også under træninger",
   "A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.": "Et spindelvæv i toppen, flagermus bag pausetimeren, græskar på afslutningsskærmen. Aldrig på dine sæt.",
   "Seasonal themes": "Sæsontemaer",
+  "Better voices": "Bedre stemmer",
+  "The Natural voice to download, and how to get Apple’s best voices for free.": "Natural-stemmen til download, og hvordan du får Apples bedste stemmer gratis.",
   "Little extras for the time of year.": "Små ekstra ting efter årstiden.",
   "Halloween": "Halloween",
   "Auto": "Auto",

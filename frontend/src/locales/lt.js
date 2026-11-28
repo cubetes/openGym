@@ -2935,6 +2935,8 @@ export default {
   "Also during workouts": "Taip pat treniruočių metu",
   "A cobweb in the header, bats behind the rest timer, pumpkins on the finish screen. Never on your sets.": "Voros tinklas antraštėje, šikšnosparniai už poilsio laikmačio, moliūgai užbaigimo ekrane. Niekada jūsų serijose.",
   "Seasonal themes": "Sezoninės temos",
+  "Better voices": "Geresni balsai",
+  "The Natural voice to download, and how to get Apple’s best voices for free.": "Natural balsas atsisiuntimui ir kaip nemokamai gauti geriausius „Apple“ balsus.",
   "Little extras for the time of year.": "Maži papildomi elementai tam tikram metų laikotarpiui.",
   "Halloween": "Helovinas",
   "Auto": "Automatiškai",

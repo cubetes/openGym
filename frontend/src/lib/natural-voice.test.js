@@ -95,3 +95,24 @@ describe('the native side', () => {
     expect(nv.naturalState().state).toBe('none')
   })
 })
+
+describe('Better voices off', () => {
+  it('a Natural pick falls back to Automatic and comes back, nothing cleared', async () => {
+    mocks.ready = true
+    await nv.refreshNatural()
+    const { pickedVoice, storedVoice, setPickedVoice } = await import('./speech.js')
+    setPickedVoice('natural:af_heart')
+    vi.stubGlobal('navigator', { language: 'en-US' })
+    expect(pickedVoice()).toBe('natural:af_heart')
+    let n = 0
+    const off = nv.onNatural(() => n++)
+    nv.setNaturalAllowed(false)
+    expect(nv.naturalAllowed()).toBe(false)
+    expect(pickedVoice()).toBe('')
+    expect(storedVoice()).toBe('natural:af_heart')
+    expect(n).toBe(1)
+    nv.setNaturalAllowed(true)
+    expect(pickedVoice()).toBe('natural:af_heart')
+    off(); vi.unstubAllGlobals()
+  })
+})

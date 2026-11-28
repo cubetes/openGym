@@ -22,7 +22,16 @@ export const NATURAL_VOICES = [
 
 export const isNatural = id => typeof id === 'string' && id.startsWith('natural:')
 /** A natural pick only speaks in English with the model on the phone; otherwise Automatic does. */
-export const naturalUsable = (id, lang, s = state) => isNatural(id) && /^en/i.test(lang || '') && s.state === 'ready'
+let allowed = true
+export const naturalAllowed = () => allowed
+/** The Better voices module (lib/modules.js) switches the Natural voice off without deleting anything: the stored pick waits. */
+export function setNaturalAllowed(on) {
+  on = !!on
+  if (on === allowed) return
+  allowed = on
+  emit()
+}
+export const naturalUsable = (id, lang, s = state) => allowed && isNatural(id) && /^en/i.test(lang || '') && s.state === 'ready'
 
 /* ---------------------------------------------------------------- the choice, per device */
 export function readPrefs(storage = globalThis.localStorage) {

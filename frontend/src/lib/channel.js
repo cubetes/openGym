@@ -11,7 +11,7 @@
 // Android says which build it is (ChannelPlugin.java, the build flavour). An APK from before the
 // plugin existed is a sideloaded one: the Play build never shipped without it.
 import { MOBILE } from './mobile.js'
-import { setOfflineBuild } from './build-caps.js'
+import { setIphoneBuild, setOfflineBuild } from './build-caps.js'
 
 const NATIVE = new Set(['play', 'fdroid', 'offline'])
 
@@ -62,8 +62,10 @@ export async function nativeScanner() {
 /** Asks the shell once which build this is and sets lib/build-caps.js from it. main.jsx waits
  *  for it (briefly) before the first render, so no screen ever shows a sync button first. */
 export async function initBuildCaps() {
-  if (!MOBILE) return false
-  const offline = (await getChannel()) === 'offline'
+  if (!MOBILE) { setIphoneBuild(false); return false }
+  const channel = await getChannel()
+  setIphoneBuild(channel === 'appstore') // the iPhone app is the only 'appstore' build
+  const offline = channel === 'offline'
   setOfflineBuild(offline)
   return offline
 }
