@@ -11,7 +11,7 @@ import './VoicePill.css'
 
 const FADE_OUT_MS = 140
 
-const Wave = () => <span className="vp-wave" aria-hidden="true"><b /><b /><b /><b /></span>
+const Wave = () => <span className="vcap-wave" aria-hidden="true"><b /><b /><b /><b /></span>
 
 // The caption for every spoken cue line (lib/voice-caption.js). Shown only while a workout runs.
 export default function VoicePill() {
@@ -22,6 +22,8 @@ export default function VoicePill() {
 function Pill() {
   const c = useCaption()
   const rest = useUI(s => !!(s.timer || s.work || s.countIn))
+  // Which bar it is: the element changes between a rest, a hold and a count-in, and gains a row for auto holds.
+  const barKey = useUI(s => [!!s.countIn, !!s.work, !!s.timer, s.timer?.ready, s.timer?.kind].join())
   const [acts, setActs] = useState(false) // the actions are open (the store's `expanded` also holds the pill while focused)
   const [, tick] = useState(0)
   const [leaving, setLeaving] = useState(false)
@@ -53,7 +55,20 @@ function Pill() {
     wasRest.current = rest
   }, [rest])
 
-  useEffect(() => () => useCaption.getState().close(), [])
+  // Gone with the workout: a muted line or a card must not show in the next one.
+  useEffect(() => () => { useCaption.getState().close(); caption.hide() }, [])
+
+  // The rest bar's height, so the pill sits 12 px above it whatever rows it has (index.css --vp-b).
+  useEffect(() => {
+    const el = rest && document.getElementById('timer')
+    if (!el) return undefined
+    const b = document.body
+    const size = () => b.style.setProperty('--vp-rb', el.offsetHeight + 'px')
+    size()
+    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(size) : null
+    ro?.observe(el)
+    return () => { ro?.disconnect(); b.style.removeProperty('--vp-rb') }
+  }, [rest, barKey])
 
   const v = c.text ? c : leaving ? lastShown.current : null
 
@@ -82,50 +97,50 @@ function Pill() {
   const gear = <Icon name="gear" />
   const stopIcon = <Icon name="stop" />
   const muteIcon = <Icon name="speakerSlash" />
-  const roundBtn = (label, icon, onClick) => <button type="button" className="vp-round" aria-label={label} onClick={onClick}>{icon}</button>
+  const roundBtn = (label, icon, onClick) => <button type="button" className="vcap-round" aria-label={label} onClick={onClick}>{icon}</button>
 
   let body
   if (v.muted) {
     body = <>
-      <div className="vp-top" style={{ paddingBottom: 4 }}>
-        <span className="vp-ic" aria-hidden="true">{muteIcon}</span>
-        <span className="vp-tx"><span className="vp-line full">{v.text}</span><span className="vp-meta">{t('Voice is muted for this workout')}</span></span>
+      <div className="vcap-top" style={{ paddingBottom: 4 }}>
+        <span className="vcap-ic" aria-hidden="true">{muteIcon}</span>
+        <span className="vcap-tx"><span className="vcap-line full">{v.text}</span><span className="vcap-meta">{t('Voice is muted for this workout')}</span></span>
       </div>
-      <div className="vp-acts two">
+      <div className="vcap-acts two">
         <button type="button" aria-label={t('Unmute spoken cues')} onClick={unmute}><i><Icon name="speaker" /></i>{t('Unmute')}</button>
         <button type="button" aria-label={t('Open voice settings')} onClick={settings}><i>{gear}</i>{t('Settings')}</button>
       </div>
     </>
   } else if (v.kind === 'card') {
-    body = <div className="vp-card" role={v.source ? 'group' : undefined} aria-label={v.source || undefined}>
-      {(v.speaking || v.source || v.silent) && <div className="vp-hdr">
+    body = <div className="vcap-card" role={v.source ? 'group' : undefined} aria-label={v.source || undefined}>
+      {(v.speaking || v.source || v.silent) && <div className="vcap-hdr">
         {v.speaking && <Wave />}
-        <div className="vp-src">{v.source}{v.silent && <span>{v.source ? ' · ' : ''}{age}</span>}</div>
+        <div className="vcap-src">{v.source}{v.silent && <span>{v.source ? ' · ' : ''}{age}</span>}</div>
         {v.speaking && roundBtn(t('Stop speaking'), stopIcon, stop)}
       </div>}
-      <div className="vp-line full" aria-hidden={v.speaking || undefined} key={v.text}>{v.text}</div>
-      <div className="vp-row">
-        <button type="button" className="vp-dis" onClick={dismiss}>{t('Dismiss')}</button>
+      <div className="vcap-line full" aria-hidden={v.speaking || undefined} key={v.text}>{v.text}</div>
+      <div className="vcap-row">
+        <button type="button" className="vcap-dis" onClick={dismiss}>{t('Dismiss')}</button>
         {!v.silent && roundBtn(t('Mute spoken cues'), muteIcon, mute)}
         {roundBtn(t('Open voice settings'), gear, settings)}
       </div>
     </div>
   } else if (v.silent) {
-    body = <div className="vp-top" role="group" aria-label={age}>
-      <span className="vp-ic" aria-hidden="true">{muteIcon}</span>
-      <span className="vp-tx"><span className="vp-line" key={v.text}>{v.text}</span><span className="vp-meta">{age}</span></span>
+    body = <div className="vcap-top" role="group" aria-label={age}>
+      <span className="vcap-ic" aria-hidden="true">{muteIcon}</span>
+      <span className="vcap-tx"><span className="vcap-line" key={v.text}>{v.text}</span><span className="vcap-meta">{age}</span></span>
       {roundBtn(t('Open voice settings'), gear, settings)}
     </div>
   } else {
     body = <>
-      <button type="button" className="vp-top" aria-expanded={acts}
+      <button type="button" className="vcap-top" aria-expanded={acts}
         aria-label={acts ? t('Voice actions') : v.speaking ? t('Voice, speaking. Open voice actions.') : undefined}
         onClick={() => { if (acts) shut(); else { setActs(true); useCaption.getState().open() } }}>
         {v.speaking && <Wave />}
-        <span className="vp-tx"><span className={'vp-line' + (acts ? ' full' : '')} aria-hidden={(v.speaking && !acts) || undefined} key={v.text}>{v.text}</span></span>
-        {acts && <span className="vp-chev" aria-hidden="true"><Icon name="chevronDown" /></span>}
+        <span className="vcap-tx"><span className={'vcap-line' + (acts ? ' full' : '')} aria-hidden={(v.speaking && !acts) || undefined} key={v.text}>{v.text}</span></span>
+        {acts && <span className="vcap-chev" aria-hidden="true"><Icon name="chevronDown" /></span>}
       </button>
-      {acts && <div className="vp-acts hair">
+      {acts && <div className="vcap-acts hair">
         <button type="button" aria-label={v.speaking ? t('Stop speaking') : t('Replay the last line')} onClick={v.speaking ? stop : () => cues.replay()}>
           <i><Icon name={v.speaking ? 'stop' : 'reset'} /></i>{v.speaking ? t('Stop') : t('Replay')}
         </button>
@@ -137,7 +152,7 @@ function Pill() {
 
   // Focus inside holds the pill (the store defers hide while `expanded`), so it never goes from under a finger or a screen reader.
   return (
-    <div ref={root} className={'vp' + (v.speaking ? ' sp' : '') + (c.text ? '' : ' out')}
+    <div ref={root} className={'vcap' + (v.speaking ? ' sp' : '') + (c.text ? '' : ' out')}
       onFocus={() => useCaption.getState().open()}
       onBlur={e => { if (!acts && !e.currentTarget.contains(e.relatedTarget)) useCaption.getState().close() }}>
       {body}

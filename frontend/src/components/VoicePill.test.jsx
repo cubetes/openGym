@@ -1,4 +1,5 @@
 // @vitest-environment happy-dom
+import { readFileSync } from 'node:fs'
 import { act } from 'react'
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -62,7 +63,7 @@ describe('the voice pill', () => {
     await show(SHORT)
     expect(host.textContent).toContain(SHORT)
     expect(byLabel('Voice, speaking. Open voice actions.')).toBeTruthy()
-    expect(q('.vp-line').getAttribute('aria-hidden')).toBe('true')
+    expect(q('.vcap-line').getAttribute('aria-hidden')).toBe('true')
     await run(3900 + 1100) // speech estimate, then 1.1 s of the 1.2 s hold
     expect(host.textContent).toContain(SHORT)
     await run(100) // hold over
@@ -150,7 +151,7 @@ describe('the voice pill', () => {
     await mount()
     await show(LONG)
     expect(q('[role="group"]')).toBeNull() // no source given: no group name
-    expect(q('.vp-card')).toBeTruthy()
+    expect(q('.vcap-card')).toBeTruthy()
     for (const l of ['Stop speaking', 'Mute spoken cues', 'Open voice settings']) expect(byLabel(l)).toBeTruthy()
     await run(60000)
     expect(host.textContent).toContain(LONG)
@@ -186,5 +187,33 @@ describe('the voice pill', () => {
     await run(6000)
     await run(300)
     expect(document.body.classList.contains('vpill')).toBe(false)
+  })
+
+  it('is gone with the workout, even a muted line', async () => {
+    await mount()
+    await show(SHORT, { muted: true })
+    expect(host.textContent).toContain('Voice is muted for this workout')
+    await act(async () => { root.unmount() })
+    expect(useCaption.getState().text).toBe('')
+    root = createRoot(host)
+  })
+
+  it('sits on the rest bar as measured', async () => {
+    const bar = document.createElement('div'); bar.id = 'timer'
+    Object.defineProperty(bar, 'offsetHeight', { value: 140 })
+    document.body.append(bar)
+    h.ui = { timer: { left: 30 }, work: null, countIn: null }
+    await mount()
+    expect(document.body.style.getPropertyValue('--vp-rb')).toBe('140px')
+    h.ui = { timer: null, work: null, countIn: null }
+    await mount()
+    expect(document.body.style.getPropertyValue('--vp-rb')).toBe('')
+    bar.remove()
+  })
+
+  it('allows four lines and drops the bars at large text', () => {
+    const css = readFileSync('src/components/VoicePill.css', 'utf8')
+    expect(css).toMatch(/\.text-big \.vcap-line\{-webkit-line-clamp:4\}/)
+    expect(css).toMatch(/\.text-big \.vcap-wave\{display:none\}/)
   })
 })
