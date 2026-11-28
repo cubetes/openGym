@@ -539,6 +539,16 @@ describe('the place', () => {
     expect(animate).toHaveBeenCalledWith([{ transform: 'translateY(60px)' }, { transform: 'none' }], expect.objectContaining({ duration: 300 }))
     delete Element.prototype.animate
   })
+
+  it('a body change that cannot move the orb reads no layout', async () => {
+    await mount()
+    let reads = 0
+    Object.defineProperty(q('.vo'), 'offsetTop', { get: () => { reads++; return 0 }, configurable: true })
+    await act(async () => { document.body.classList.add('totop-on') })
+    await act(async () => { await Promise.resolve() })
+    document.body.classList.remove('totop-on')
+    expect(reads).toBe(0)
+  })
 })
 
 describe('the motion', () => {

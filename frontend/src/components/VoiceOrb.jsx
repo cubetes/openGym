@@ -116,17 +116,17 @@ function Orb() {
     const was = l.s
     const s = l.s = smooth(was, live ? v.now() : 0)
     if (!live && s < 0.01) { endLoop(); return }
-    const calm = reduced()
+    const calm = l.calm
     if (!calm && was < 0.7 && s >= 0.7 && at - l.ripple > 300) { l.ripple = at; ripple() }
     l.hist.push(s)
     if (l.hist.length > 6) l.hist.shift()
-    const light = document.documentElement.dataset.theme === 'light'
+    const light = l.light
     const set = (el, tf, op) => { if (!el) return; if (tf) el.style.transform = tf; el.style.opacity = op }
     if (!calm) orbBody.current.style.transform = `scale(${1 + 0.13 * s})`
     set(halo.current, calm ? null : `scale(${0.62 + 0.42 * s})`, calm ? 0.2 + 0.4 * s : 0.14 + (light ? 0.41 : 0.86) * s)
     set(core.current, null, 0.12 + 0.38 * s)
     const hs = lineLevels(l.hist)
-    ;[...lines.current.children].forEach((b, i) => {
+    l.bars.forEach((b, i) => {
       b.style.transform = `scaleY(${calm ? 0.6 : hs[i]})`
       b.style.opacity = calm ? 0.55 + 0.45 * s : ''
     })
@@ -140,7 +140,12 @@ function Orb() {
     fx.current.append(el)
     el.animate([{ transform: 'scale(1)', opacity: 0.5 }, { transform: 'scale(1.9)', opacity: 0 }], { duration: 650, easing: RIPPLE_EASE }).onfinish = () => el.remove()
   }
-  useEffect(() => { if (speaking && !loop.current.raf) loop.current.raf = requestAnimationFrame(frame) }, [speaking])
+  useEffect(() => {
+    if (!speaking || loop.current.raf) return
+    // Read once per line, not per frame: the motion setting, the theme and the three lines.
+    Object.assign(loop.current, { calm: reduced(), light: document.documentElement.dataset.theme === 'light', bars: [...lines.current.children] })
+    loop.current.raf = requestAnimationFrame(frame)
+  }, [speaking])
   useEffect(() => { if (settled || silent) endLoop() }, [settled, silent])
   useEffect(() => () => { cancelAnimationFrame(loop.current.raf); fx.current?.querySelectorAll('.vo-rp').forEach(r => r.remove()) }, [])
 
@@ -241,9 +246,15 @@ function Orb() {
 
   // When the rest bar comes or goes the orb's place changes: slide it from the old place (FLIP), never animate `bottom`.
   useEffect(() => {
-    let last = root.current.offsetTop
+    const b = document.body
+    // What --vp-b depends on (index.css): only a change here can move the orb, so only then read layout.
+    const where = () => [b.classList.contains('resting'), b.classList.contains('no-tabbar'), b.style.getPropertyValue('--vp-rb')].join()
+    let last = root.current.offsetTop, key = where()
     const sync = () => { last = root.current.offsetTop }
     const move = () => {
+      const k = where()
+      if (k === key) return
+      key = k
       const now = root.current.offsetTop, d = last - now
       last = now
       if (!d || reduced()) return

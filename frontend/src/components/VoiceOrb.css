@@ -43,7 +43,7 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 :where(.vo-stack) button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .vo-bar,.vo-panel,.vo-hint{
   background:var(--surface-raised);background:color-mix(in srgb,var(--surface-raised) 90%,transparent);
-  -webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);
   border:.5px solid var(--raised-line);box-shadow:0 8px 24px rgba(0,0,0,.3);transform-origin:100% 100%}
 [dir="rtl"] :is(.vo-bar,.vo-panel,.vo-hint){transform-origin:0 100%}
 /* Closed it is the orb's own 56 x 56 shape (scaleX 56 / width, scaleY stays 1); open it grows to the left. */
@@ -105,9 +105,10 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 .vo-wash.go{animation:vo-wash 240ms var(--ease-out)}
 @keyframes vo-wash{0%{opacity:0}40%{opacity:.8}100%{opacity:0}}
 .vo-lines{position:absolute;inset:16px 18px;display:flex;gap:4px;align-items:center;justify-content:center}
-.vo-lines b{width:4px;height:24px;border-radius:2px;background:currentColor;transform:scaleY(.36)}
+.vo-lines b{width:4px;height:24px;border-radius:2px;background:currentColor;transform:scaleY(.36);will-change:transform}
 .vo-lines b:nth-child(2){transform:scaleY(.5)}
-.vo-orb:not(.muted):not(.sil) .vo-lines{filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.3))}
+/* The shadow sits on each line's own layer, so a frame only moves layers (a filter on the parent repainted every frame). */
+.vo-orb:not(.muted):not(.sil) .vo-lines b{box-shadow:0 1px 1.5px rgba(0,0,0,.3)}
 /* White lines hold 3:1 on every tier but gold and the plain teal, which take a dark ink. */
 .tier-premium .vo-lines{color:var(--tier-ink)}
 .tier-plain .vo-lines{color:#052a31}
