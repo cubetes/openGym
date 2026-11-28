@@ -49,6 +49,19 @@ describe('naturalUsable', () => {
   })
 })
 
+describe('autoNatural', () => {
+  const ready = { state: 'ready' }
+  it('is Emma for UK-like English, Heart for other English, nothing otherwise', () => {
+    for (const l of ['en-GB', 'en-IE', 'en-AU', 'en-NZ']) expect(nv.autoNatural(l, ready)).toBe('natural:bf_emma')
+    for (const l of ['en-US', 'en-CA', 'en']) expect(nv.autoNatural(l, ready)).toBe('natural:af_heart')
+    expect(nv.autoNatural('de-DE', ready)).toBe('')
+    expect(nv.autoNatural('en-GB', { state: 'none' })).toBe('')
+    nv.setNaturalAllowed(false)
+    expect(nv.autoNatural('en-GB', ready)).toBe('')
+    nv.setNaturalAllowed(true)
+  })
+})
+
 describe('the native side', () => {
   it('reads the model state and Apple\'s size', async () => {
     mocks.ready = true; mocks.info = { downloadSize: 123 }

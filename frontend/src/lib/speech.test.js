@@ -236,7 +236,7 @@ describe('the Natural voice (iPhone)', () => {
     native = vi.fn(async () => true)
     vi.doMock('./mobile.js', async orig => ({ ...(await orig()), MOBILE: true, nativePlatform: async () => 'ios' }))
     vi.doMock('./rest-alert.js', () => ({ speakNative: native, hushNative: () => {}, voicesNative: async () => [{ id: 'ava', name: 'Ava', lang: locale, online: false, quality: 'premium' }] }))
-    vi.doMock('./natural-voice.js', () => ({ isNatural: id => String(id).startsWith('natural:'), naturalUsable: (id, lang) => usable && /^en/i.test(lang), naturalState: () => ({}) }))
+    vi.doMock('./natural-voice.js', () => ({ isNatural: id => String(id).startsWith('natural:'), naturalUsable: (id, lang) => usable && /^en/i.test(lang), autoNatural: lang => (usable && /^en/i.test(lang) ? (/^en-gb/i.test(lang) ? 'natural:bf_emma' : 'natural:af_heart') : ''), naturalState: () => ({}) }))
     vi.doMock('./i18n-core.js', async orig => ({ ...(await orig()), dateLocale: () => locale }))
     vi.stubGlobal('navigator', { language: locale })
     localStorage.clear()
@@ -261,6 +261,16 @@ describe('the Natural voice (iPhone)', () => {
     usable = false
     expect(mod.pickedVoice()).toBe('')
     expect(mod.voiceOpts({}).voice).toBe('ava')
+  })
+  test('Automatic is the Natural voice when it can speak, by accent; a pick still wins', async () => {
+    await setup('en-GB')
+    mod.setPickedVoice('')
+    expect(mod.voiceOpts({})).toEqual({ rate: 1, pitch: 1, voice: 'natural:bf_emma', fallback: 'ava' })
+    mod.setPickedVoice('ava')
+    expect(mod.voiceOpts({})).toEqual({ rate: 1, pitch: 1, voice: 'ava' })
+    mod.setPickedVoice('')
+    usable = false
+    expect(mod.voiceOpts({})).toEqual({ rate: 1, pitch: 1, voice: 'ava' })
   })
   test('speak() passes a muted phone through', async () => {
     await setup('en-GB')

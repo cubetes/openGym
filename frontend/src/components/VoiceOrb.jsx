@@ -4,8 +4,8 @@ import { useUI } from '../store/useUI.js'
 import { useCaption, caption, ageText, agoText, speakMs } from '../lib/voice-caption.js'
 import { useVoiceLevel, smooth, lineLevels, curveMs } from '../lib/voice-level.js'
 import { cues } from '../lib/spoken-cues.js'
-import { hush, onVoices, pickedVoice, speechSupported, voiceLabel, voiceState } from '../lib/speech.js'
-import { NATURAL_VOICES } from '../lib/natural-voice.js'
+import { hush, onVoices, pickedVoice, speechLang, speechSupported, voiceLabel, voiceState } from '../lib/speech.js'
+import { NATURAL_VOICES, autoNatural, naturalState } from '../lib/natural-voice.js'
 import { onVoiceLoading, tickNative } from '../lib/rest-alert.js'
 import { isOn } from '../lib/modules.js'
 import { nav } from '../lib/nav.js'
@@ -29,7 +29,7 @@ function useVoiceInfo(on) {
   useEffect(() => onVoices(() => bump(n => n + 1)), [])
   const { voices, auto } = voiceState()
   const id = pickedVoice()
-  const nat = NATURAL_VOICES.find(v => v.id === id)
+  const nat = NATURAL_VOICES.find(v => v.id === (id || autoNatural(speechLang(), naturalState())))
   const v = nat ? null : voices?.find(x => x.id === id) || auto
   const key = !on ? 'plain' : nat ? 'natural' : v ? tierKey(v) : 'plain'
   const name = nat ? nat.name : v ? voiceLabel(v) : t('Automatic')

@@ -32,6 +32,11 @@ export function setNaturalAllowed(on) {
   emit()
 }
 export const naturalUsable = (id, lang, s = state) => allowed && isNatural(id) && /^en/i.test(lang || '') && s.state === 'ready'
+/** What Automatic speaks with when the Natural voice can: Emma for a British, Irish, Australian or New Zealand accent, Heart for other English; '' otherwise. */
+export const autoNatural = (lang, s = state) => {
+  const id = /^en-(gb|ie|au|nz)\b/i.test(lang || '') ? 'natural:bf_emma' : 'natural:af_heart'
+  return naturalUsable(id, lang, s) ? id : ''
+}
 
 /* ---------------------------------------------------------------- the choice, per device */
 export function readPrefs(storage = globalThis.localStorage) {

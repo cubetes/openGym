@@ -16,7 +16,7 @@ import { savePrefs } from '../lib/device-prefs-sync.js'
 import { useUI } from '../store/useUI.js'
 import { t } from '../lib/i18n.js'
 import { speak, hush, voiceState, onVoices, refreshVoices, langName, speechLang, voiceLabel, voiceOpts, pickedVoice, setPickedVoice, speechRateNum, speechPitchNum, setSpeechRate, setSpeechPitch, speechSupported, SPEECH_MIN, SPEECH_MAX } from '../lib/speech.js'
-import { isNatural, NATURAL_VOICES, NATURAL_MB, naturalState, onNatural, refreshNatural, downloadNatural, cancelNatural, removeNatural, readPrefs, writePrefs } from '../lib/natural-voice.js'
+import { isNatural, autoNatural, NATURAL_VOICES, NATURAL_MB, naturalState, onNatural, refreshNatural, downloadNatural, cancelNatural, removeNatural, readPrefs, writePrefs } from '../lib/natural-voice.js'
 import { sampleCue, cues } from '../lib/spoken-cues.js'
 import { confirmSheet } from '../sheets.jsx'
 import { MOMENTS, MOMENT_COPY, STYLE_COPY, cueStyleOf, linesFor, ownLines, setOwnLines, startOwnFrom, hasOwnLines, sampleLine, LINES_MAX, LINE_MAX } from '../lib/voice-styles.js'
@@ -126,10 +126,15 @@ function useNatural() {
 }
 const mbOf = bytes => Math.round(bytes / 1e6)
 
+/** The Natural voice Automatic speaks with now ('' pick, model ready, English), or undefined. */
+const autoNat = cur => (cur ? undefined : NATURAL_VOICES.find(v => v.id === autoNatural(speechLang(), naturalState())))
+
 /** What the Voice row says. `cur` is the usable pick, so an unusable Natural pick reads as Automatic (Ruling 7). */
 export function voiceRowValue({ voices, auto, stuck }, cur) {
   const nat = NATURAL_VOICES.find(v => v.id === cur)
   if (nat) return t('Natural voice · {0}', nat.name)
+  const an = autoNat(cur)
+  if (an) return t('Automatic · {0}', an.name)
   if (voices === null) return null
   const picked = voices.find(v => v.id === cur)
   if (picked) return voiceLabel(picked)
@@ -174,24 +179,27 @@ export function VoiceList() {
   // read each render: it turns '' when the model goes away. With Better voices off a Natural pick reads as Automatic; the pick itself stays stored.
   const stored = pickedVoice()
   const cur = !on && isNatural(stored) ? '' : stored
+  const autoN = on ? autoNat(cur) : undefined // what Automatic speaks with when that is a Natural voice
   const pick = (id, say = id) => {
     setPickedVoice(id)
     savePrefs(useStore.getState().update)
     redraw(n => n + 1)
     const text = sampleLine(S_()) || sampleCue(S_().unit)
-    sayIt(text, { voice: say, ...(isNatural(id) ? { fallback: auto?.id || '' } : {}) })
+    sayIt(text, { voice: say, ...(isNatural(say) ? { fallback: auto?.id || '' } : {}) })
     setPlayKey(id || 'auto')
     endAfter(timer, text, text, speechRateNum(S_()), () => setPlayKey(null), isNatural(say))
   }
-  const tile = (key, id, glyph) => on ? <TierTile tier={key} glyph={glyph} accent={accentClass(id)} playing={playKey === (id || 'auto') && !w} /> : null
+  const tile = (key, id, glyph, accent = id) => on ? <TierTile tier={key} glyph={glyph} accent={accentClass(accent)} playing={playKey === (id || 'auto') && !w} /> : null
   const rowCls = id => 'vp-voice' + (playKey === (id || 'auto') ? ' vp-pick' : '') // the check pops on a pick, not on a visit
-  // Opening the page with a Natural pick, or picking one, has the model make the fixed lines ahead.
-  useEffect(() => { if (isNatural(cur)) cues.prepareFixed() }, [cur])
+  // Opening the page with a Natural pick (or Automatic speaking Natural), or picking one, has the model make the fixed lines ahead; prepareFixed does nothing for an Apple voice.
+  useEffect(() => { cues.prepareFixed() }, [cur, autoN?.id])
   const [showApple, setShowApple] = useState(false)
   const lang = langName(speechLang().split('-')[0])
   const premium = voices.some(v => v.quality === 'premium')
   // With no Premium or Enhanced voice, voiceOpts passes '' and the phone speaks its default for the language, which is the top of this ranked list in practice; the name is that list's first voice.
-  const autoNote = !ios ? null : auto
+  const autoNote = !ios ? null : autoN
+    ? t('Uses {0} ({1}), the best voice for your accent.', autoN.name, tierName('natural'))
+    : auto
     ? (on ? t('Uses {0} ({1}), the best voice for your accent.', voiceLabel(auto), tierName(tierKey(auto))) : t('Uses {0}, the best voice for your accent.', voiceLabel(auto)))
     : voices[0] ? t('Uses {0}, your phone’s standard voice.', voiceLabel(voices[0])) : t('Uses your phone’s standard voice.')
   const sel = on => (on ? ', ' + t('selected') : '')
@@ -227,7 +235,7 @@ export function VoiceList() {
       <span className="vh">{t('Voice types: {0}', kinds.map(legendName).join(', '))}</span>
     </>}
     <Section footer={voices.length ? null : t('No other voices for this language here. Your device’s settings can add more.')}>
-      <Row icon={tile('plain', '', 'bolt')} className={rowCls('')} title={t('Automatic')} subtitle={autoNote} ariaLabel={t('Automatic') + sel(!cur)} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', auto?.id || '')} />
+      <Row icon={tile(autoN ? 'natural' : 'plain', '', 'bolt', autoN?.id)} className={rowCls('')} title={t('Automatic')} subtitle={autoNote} ariaLabel={t('Automatic') + sel(!cur)} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', autoN?.id || auto?.id || '')} />
     </Section>
     {natural && nat.state === 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} tile={tile} rowCls={rowCls} fresh={fresh} wait={id => (w === 2 && playKey === id ? t('Loading, please wait…') : null)} />}
     {folded
@@ -475,11 +483,13 @@ function VoiceHero({ vs, cur, openList }) {
   }, [])
   const nat = NATURAL_VOICES.find(v => v.id === cur)
   const apple = nat ? null : vs.voices?.find(v => v.id === cur)
-  const used = nat || apple ? null : vs.auto // what Automatic speaks with
-  const key = !on ? 'plain' : nat ? 'natural' : apple ? tierKey(apple) : used ? tierKey(used) : 'plain'
+  const autoN = on ? autoNat(cur) : undefined
+  const used = nat || apple ? null : autoN || vs.auto // what Automatic speaks with
+  const accent = nat ? cur : autoN?.id
+  const key = !on ? 'plain' : nat || autoN ? 'natural' : apple ? tierKey(apple) : used ? tierKey(used) : 'plain'
   const name = nat ? nat.name : apple ? voiceLabel(apple) : t('Automatic')
   const tier = !on ? null : nat ? `${tierName('natural')} · ${nat.region}` : apple ? tierName(key) : used ? tierName(key) : vs.ios && vs.voices ? t('Standard voice') : null
-  const sub = used ? [voiceLabel(used), on && tierName(key)].filter(Boolean).join(' · ') : tier
+  const sub = used ? [autoN ? autoN.name : voiceLabel(used), on && tierName(key)].filter(Boolean).join(' · ') : tier
   const tryIt = () => {
     const cue = sampleCue(S.unit), line = sampleLine(S)
     sayIt(cue)
@@ -488,9 +498,9 @@ function VoiceHero({ vs, cur, openList }) {
     endAfter(timer, `${cue}. ${line}`, line, speechRateNum(S), () => setPlaying(false), isNatural(voiceOpts(S).voice))
   }
   const ending = useEnding(lit)
-  return <div className={`vhero tier-${key}${nat ? accentClass(cur) : ''}${lit ? ' play' : ''}${ending ? ' end' : ''}`}>
+  return <div className={`vhero tier-${key}${accentClass(accent)}${lit ? ' play' : ''}${ending ? ' end' : ''}`}>
     <button type="button" className="vhero-main" aria-label={`${t('Using now')}, ${[name, sub].filter(Boolean).join(', ')}. ${t('Change voice')}`} onClick={openList}>
-      <TierTile tier={key} size="xl" accent={accentClass(cur)} playing={lit} />
+      <TierTile tier={key} size="xl" accent={accentClass(accent)} playing={lit} />
       <span className="vhero-tx">
         <span className="vhero-k">{t('Using now')}</span>
         <span className="vhero-n">{name}</span>
@@ -582,7 +592,7 @@ export default function VoiceSettings({ openList }) {
       <Section title={t('Fine tune')}>
         <SliderRow icon="gauge" title={t('Speed')} value={speechRateNum(S)} set={setSpeechRate} low={t('Slower')} high={t('Faster')} />
         {/* Kokoro has no pitch, and shifting it afterwards spoils the sound (Ruling 2). */}
-        {isNatural(cur)
+        {isNatural(cur) || autoNat(cur)
           ? <div className="lrow vp-nopitch" data-find={t('Pitch')}><span className="lrow-i" style={{ '--tint': 'var(--teal)' }}><Icon name="speaker" /></span><span className="lrow-m"><span className="lrow-s">{t('No pitch for Natural voices.')}</span></span></div>
           : <SliderRow icon="speaker" title={t('Pitch')} value={speechPitchNum(S)} set={setSpeechPitch} low={t('Lower')} high={t('Higher')} />}
       </Section>

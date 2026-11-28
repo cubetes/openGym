@@ -18,7 +18,7 @@ import { MOBILE, nativePlatform } from './mobile.js'
 import { offlineBuild } from './build-caps.js'
 import { speakNative, hushNative, voicesNative } from './rest-alert.js'
 import { dateLocale } from './i18n-core.js'
-import { isNatural, naturalUsable, naturalState } from './natural-voice.js'
+import { isNatural, naturalUsable, naturalState, autoNatural } from './natural-voice.js'
 
 export const SPEECH_RATES = { slow: 0.8, normal: 1, fast: 1.25 }
 export const speechRateOf = S => (S?.speechRate in SPEECH_RATES ? S.speechRate : 'normal')
@@ -65,7 +65,8 @@ export const voiceOpts = S => {
   const auto = (fresh ? voiceCache.auto?.id : '') || ''
   const picked = pickedVoice()
   // A Natural voice that fails or is too slow on a line is said by Apple's automatic voice instead.
-  return { rate: speechRateNum(S), pitch: speechPitchNum(S), voice: picked || auto, ...(isNatural(picked) ? { fallback: auto } : {}) }
+  const voice = picked || autoNatural(speechLang(), naturalState()) || auto // Automatic is the Natural voice when it can speak here
+  return { rate: speechRateNum(S), pitch: speechPitchNum(S), voice, ...(isNatural(voice) ? { fallback: auto } : {}) }
 }
 
 /** The app's language as a voice language: 'de-DE', 'pt-BR', 'ar' (no Unicode extensions). */

@@ -437,10 +437,10 @@ describe('Settings → Timer alerts → Voice', () => {
       phone(ready)
       const prepare = vi.spyOn(cues, 'prepareFixed').mockImplementation(() => {})
       await render(<VoiceList />)
-      expect(prepare).not.toHaveBeenCalled()
+      expect(prepare).toHaveBeenCalledTimes(1) // Automatic is Natural here: the lines are made ahead
       await tap(rowTitled('Heart'))
       expect(localStorage.getItem('og_speech_voice')).toBe('natural:af_heart')
-      expect(prepare).toHaveBeenCalledTimes(1)
+      expect(prepare).toHaveBeenCalledTimes(2)
       expect(mocks.opts.at(-1).voice).toBe('natural:af_heart')
       expect(rowTitled('Heart').querySelector('.lrow-k')).not.toBeNull()
       prepare.mockRestore()
@@ -503,7 +503,7 @@ describe('Settings → Timer alerts → Voice', () => {
       expect(headers()).not.toContain('Apple voices')
     })
     it('picking a voice announces Playing in a polite live region', async () => {
-      phone(ready)
+      phone({ state: 'none' }) // no model: Automatic is an Apple voice and plays at once
       await render(<VoiceList />)
       const live = host.querySelector('#vp-live')
       expect(live.getAttribute('aria-live')).toBe('polite')
@@ -617,6 +617,26 @@ describe('Settings → Timer alerts → Voice', () => {
       expect(host.querySelectorAll('[role="slider"]')).toHaveLength(2)
       expect(localStorage.getItem('og_speech_voice')).toBe('natural:af_heart')
     })
+    it('Automatic with the model ready is Heart in en-US and Emma in en-GB: row, note, hero, no Pitch; not ready, the Apple voice', async () => {
+      const apple = { id: 'anna', name: 'Anna', lang: 'en-GB', quality: 'enhanced' }
+      for (const [loc, name, region] of [['en-US', 'Heart', 'US'], ['en-GB', 'Emma', 'UK']]) {
+        mocks.loc = loc
+        phone(ready); mocks.voices.auto = apple
+        await render(<VoiceList />)
+        expect(rowTitled('Automatic').textContent).toContain(`Uses ${name} (Natural voice), the best voice for your accent.`)
+        await render(<VoiceSettings />)
+        expect(heroName()).toBe('Automatic')
+        expect(heroSub()).toBe(`${name} · Natural voice`)
+        expect(host.querySelector('.vhero').className).toContain('tier-natural')
+        expect(host.querySelectorAll('[role="slider"]')).toHaveLength(1)
+        expect(region).toBeTruthy()
+      }
+      mocks.loc = 'en-GB'
+      phone({ state: 'none' }); mocks.voices.auto = apple
+      await render(<VoiceSettings />)
+      expect(heroSub()).toBe('Anna · Enhanced')
+      expect(host.querySelectorAll('[role="slider"]')).toHaveLength(2)
+    })
     it('the hero reads Heart with the model ready, and Pitch is gone', async () => {
       phone(ready)
       localStorage.setItem('og_speech_voice', 'natural:af_heart')
@@ -654,6 +674,11 @@ describe('Settings → Timer alerts → Voice', () => {
   it('the Timer alerts row names the voice the same way the Voice page does', () => {
     mocks.nat = { ...idleNat, available: true, state: 'ready' }
     expect(voiceRowValue({ voices: [], auto: null, stuck: false }, 'natural:af_heart')).toBe('Natural voice · Heart')
+    expect(voiceRowValue({ voices: [], auto: null, stuck: true }, '')).toBe('Automatic · Emma') // Automatic is Natural once the model is ready (en-GB)
+    mocks.loc = 'en-US'
+    expect(voiceRowValue({ voices: [], auto: null, stuck: false }, '')).toBe('Automatic · Heart')
+    mocks.loc = 'en-GB'
+    mocks.nat = idleNat
     expect(voiceRowValue({ voices: [], auto: null, stuck: true }, '')).toBe('Standard voice')
     expect(voiceRowValue({ voices: [], auto: { id: 'a', name: 'Ava', lang: 'en-US' }, stuck: false }, '')).toBe('Automatic · Ava')
   })

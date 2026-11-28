@@ -17,7 +17,7 @@ vi.mock('../store/useStore.js', async () => {
 })
 vi.mock('../store/useUI.js', () => ({ useUI: sel => sel(h.ui) }))
 vi.mock('../lib/speech.js', () => ({
-  hush: vi.fn(), speechSupported: () => h.speech, onVoices: () => () => {}, pickedVoice: () => h.picked,
+  hush: vi.fn(), speechLang: () => 'en-GB', speechSupported: () => h.speech, onVoices: () => () => {}, pickedVoice: () => h.picked,
   voiceLabel: v => v.name, voiceState: () => ({ voices: [], auto: null }),
 }))
 vi.mock('../lib/rest-alert.js', () => ({ tickNative: vi.fn(), onVoiceLoading: cb => { h.loading = cb; return () => { h.loading = null } } }))
