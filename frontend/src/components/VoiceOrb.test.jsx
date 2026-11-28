@@ -781,4 +781,11 @@ describe('the style', () => {
     expect(block).toMatch(/\.vo-wash\.go\{animation:vo-wash 150ms/)
     expect(block).toMatch(/:active\{transform:none;opacity:\.6\}/)
   })
+
+  it('lifts the toast above the orb and its bar, in every place they sit', () => {
+    const idx = readFileSync('src/index.css', 'utf8')
+    const lift = idx.match(/(body\.vpill #toast,body\.vpill\.no-tabbar #toast,body\.vpill\.no-tabbar\.resting #toast)\{bottom:calc\(var\(--vp-b\) \+ var\(--vp-h,0px\) \+ 10px\)\}/)
+    expect(lift).not.toBeNull()
+    expect(idx.indexOf(lift[0])).toBeGreaterThan(idx.indexOf('body.no-tabbar.resting #toast{'))
+  })
 })
