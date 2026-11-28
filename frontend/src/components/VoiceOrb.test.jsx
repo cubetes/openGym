@@ -87,17 +87,13 @@ describe('the voice orb', () => {
     expect(orb().getAttribute('aria-expanded')).toBe('false')
   })
 
-  it('takes the tier colour of the voice, and the plain one with Better voices off', async () => {
-    await mount()
-    expect(q('.vo').className).toContain('tier-natural')
-    await setS({ ...S0, modules: { voices: false } })
-    expect(q('.vo').className).toContain('tier-plain')
-  })
-
-  it('a Natural voice gives the orb and its glow its own shade', async () => {
+  it('the orb and its glow take the app theme colour, never the voice tier colour', async () => {
     h.picked = 'natural:am_michael'
     await mount()
-    for (const sel of ['.vo', '.vo-glow', '.vo-fx']) expect(q(sel).className).toContain('tier-natural nv-michael')
+    for (const sel of ['.vo', '.vo-glow', '.vo-fx']) expect(q(sel).className).not.toMatch(/\b(tier-|nv-)/)
+    const css = readFileSync('src/components/VoiceOrb.css', 'utf8')
+    expect(css).not.toContain('--tier-')
+    expect(css).toMatch(/linear-gradient\(135deg,var\(--acc\),var\(--acc-2\)\)/)
   })
 
   it('a tap toggles the bar and saves S.voiceBar', async () => {
@@ -703,7 +699,6 @@ describe('the motion', () => {
     await click(orb())
     const g = q('.vo-glow')
     expect(g.getAttribute('aria-hidden')).toBe('true')
-    expect(g.className).toContain('tier-natural')
     expect(g.className).toContain('sp')
     expect(g.className).not.toContain('rest')
     h.ui = { timer: { kind: 'rest' }, work: null, countIn: null }

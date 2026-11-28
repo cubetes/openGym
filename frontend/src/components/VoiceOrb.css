@@ -1,19 +1,18 @@
 /* The voice orb (VoiceOrb.jsx). Its place comes from --vp-b in index.css; the loop in the component writes the lines, body, halo and core per frame. */
-/* The tier classes (VoiceTier.css) also paint a tile: this is no tile, only the colours --tier-a and --tier-b. */
-div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-radius:0}
+/* The orb, halo, ripples and edge glow take the app theme colour (--acc, --acc-2, ink --on-acc), not the voice tier. */
 .vo,.vo-fx{position:fixed;inset-inline:16px;bottom:var(--vp-b);height:56px;max-width:528px;margin-inline:auto;pointer-events:none}
 .vo{z-index:65;color:var(--label);--vo-tint:color-mix(in srgb,var(--label) 11%,transparent)}
 /* The halo and the ripples sit at z 2: over the page (#app is lifted to 1 while the orb shows, index.css), under the orb (65), the status-bar strip (30), the tab bar, the rest bar and the sheets. They never take a tap. The bar-mode edge glow below stays at z 0, behind the page controls. */
 .vo-fx{z-index:2;transition:opacity 200ms var(--ease-out)}
 .vo-halo{position:absolute;inset-inline-end:-50px;bottom:-50px;width:156px;height:156px;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,var(--tier-a) 0,var(--tier-b) 34%,transparent 68%);transform:scale(.62);opacity:.14;
+  background:radial-gradient(circle,var(--acc) 0,var(--acc-2) 34%,transparent 68%);transform:scale(.62);opacity:.14;
   will-change:transform,opacity}
 /* Muted, silent or bar mode: no halo. The whole layer fades both ways; the loop's inline values on the halo stay untouched. */
 .vo-fx.off{opacity:0}
 /* One ring per word peak, spawned and removed by the component (WAAPI). */
-.vo-rp{position:absolute;inset-inline-end:0;bottom:0;width:56px;height:56px;border-radius:50%;border:1.5px solid var(--tier-a);opacity:0;pointer-events:none}
+.vo-rp{position:absolute;inset-inline-end:0;bottom:0;width:56px;height:56px;border-radius:50%;border:1.5px solid var(--acc);opacity:0;pointer-events:none}
 
-/* Bar mode: the edge glow, 230 px of tier light along the screen's bottom edge, behind the page controls. */
+/* Bar mode: the edge glow, 230 px of theme light along the screen's bottom edge, behind the page controls. */
 .vo-glow{position:fixed;inset-inline:-30px;bottom:0;height:230px;z-index:0;pointer-events:none;opacity:0;
   transition:opacity 280ms var(--ease-out),transform 300ms var(--ease)}
 .vo-glow.on{opacity:.7}
@@ -21,17 +20,17 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 @starting-style{.vo-glow.on{opacity:0}}
 .vo-glow.rest{transform:translateY(-72px)}
 .vo-glow i{position:absolute;inset:0;transform-origin:50% 100%;
-  background:radial-gradient(60% 100% at 50% 100%,var(--tier-a),transparent 70%),radial-gradient(45% 80% at 12% 100%,var(--tier-b),transparent 70%),radial-gradient(40% 70% at 92% 100%,var(--tier-a),transparent 70%);
+  background:radial-gradient(60% 100% at 50% 100%,var(--acc),transparent 70%),radial-gradient(45% 80% at 12% 100%,var(--acc-2),transparent 70%),radial-gradient(40% 70% at 92% 100%,var(--acc),transparent 70%);
   animation:vo-breathe 2.6s var(--ease-in-out) infinite paused}
 /* Paused, not removed, when the voice stops: the glow fades out from the frame it was on. */
 .vo-glow.sp i{animation-play-state:running}
 @keyframes vo-breathe{0%,100%{opacity:.62;transform:scaleY(.86)}50%{opacity:1;transform:scaleY(1.08)}}
 .vo-gh{position:absolute;bottom:0;left:0;width:200px;height:150px;mix-blend-mode:screen;transform:translateX(-200px);
-  background:radial-gradient(50% 100% at 50% 100%,var(--tier-b),transparent 72%);animation:vo-sweep 4s var(--ease-in-out) 1 both paused}
+  background:radial-gradient(50% 100% at 50% 100%,var(--acc-2),transparent 72%);animation:vo-sweep 4s var(--ease-in-out) 1 both paused}
 :root[data-theme="light"] .vo-gh{mix-blend-mode:normal}
 .vo-glow.sp .vo-gh{animation-play-state:running}
 @keyframes vo-sweep{to{transform:translateX(420px)}}
-.vo-ge{display:none;position:absolute;left:30px;right:30px;bottom:0;height:2px;opacity:.9;background:linear-gradient(90deg,transparent,var(--tier-a) 30%,var(--tier-a) 70%,transparent)}
+.vo-ge{display:none;position:absolute;left:30px;right:30px;bottom:0;height:2px;opacity:.9;background:linear-gradient(90deg,transparent,var(--acc) 30%,var(--acc) 70%,transparent)}
 :root[data-theme="light"] .vo-ge{display:block}
 .vo-glow.mut .vo-ge{background:linear-gradient(90deg,transparent,rgba(150,150,160,.7) 30%,rgba(150,150,160,.7) 70%,transparent)}
 .vo-glow.mut i{animation:none;background:radial-gradient(70% 100% at 50% 100%,rgba(150,150,160,.5),transparent 72%)}
@@ -83,9 +82,9 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 .vo-acts button:active,.vo-btn:active,.vo-round:active{transform:scale(var(--press-scale))}
 .vo-stack button:focus-visible,.vo-orb:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 
-/* The orb: 56 px round, the tier's gradient, three rounded lines (scaleY only). */
+/* The orb: 56 px round, the theme colour's gradient, three rounded lines (scaleY only). */
 .vo-orb{position:absolute;inset-inline-end:0;bottom:0;width:56px;height:56px;padding:0;border:0;background:none;border-radius:50%;
-  pointer-events:auto;color:#fff;touch-action:manipulation;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;
+  pointer-events:auto;color:var(--on-acc);touch-action:manipulation;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;
   transform:scale(var(--s,1));transition:transform 200ms var(--ease-out),opacity 200ms var(--ease-out)}
 .vo-orb *{pointer-events:none}
 .vo-orb.held{--s:var(--press-scale-sm);transition-duration:160ms}
@@ -93,7 +92,7 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 .vo-orb.muted.held{--s:.79}
 /* The orb's entrance: from .95 and clear, on its own transition. */
 @starting-style{.vo-orb{opacity:0;--s:.95}}
-.vo-body{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,var(--tier-a),var(--tier-b));
+.vo-body{position:absolute;inset:0;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,var(--acc),var(--acc-2));
   box-shadow:inset 0 1.5px 0 rgba(255,255,255,.45),inset 0 -7px 12px rgba(0,0,0,.18),0 2px 8px rgba(0,0,0,.28)}
 .vo-body i{position:absolute;inset:0;border-radius:50%}
 .vo-b1{background:radial-gradient(circle at 24% 28%,rgba(255,255,255,.4) 0,transparent 55%);animation:vo-spin 9s linear infinite paused}
@@ -109,9 +108,6 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 .vo-lines b:nth-child(2){transform:scaleY(.5)}
 /* The shadow sits on each line's own layer, so a frame only moves layers (a filter on the parent repainted every frame). */
 .vo-orb:not(.muted):not(.sil) .vo-lines b{box-shadow:0 1px 1.5px rgba(0,0,0,.3)}
-/* White lines hold 3:1 on every tier but gold and the plain teal, which take a dark ink. */
-.tier-premium .vo-lines{color:var(--tier-ink)}
-.tier-plain .vo-lines{color:#052a31}
 .vo-orb.muted .vo-body{background:var(--surface-3);box-shadow:inset 0 0 0 1px var(--raised-line)}
 .vo-orb.sil .vo-body{background:var(--surface-raised);box-shadow:inset 0 0 0 2px var(--label-2)}
 /* Muted or silent the loop has stopped: the swollen body eases back instead of snapping. */

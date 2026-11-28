@@ -11,7 +11,7 @@ import { isOn } from '../lib/modules.js'
 import { nav } from '../lib/nav.js'
 import { t } from '../lib/i18n.js'
 import Icon from './Icon.jsx'
-import { tierKey, tierName, accentClass } from './VoiceTier.jsx'
+import { tierKey, tierName } from './VoiceTier.jsx'
 import './VoiceOrb.css'
 
 const HOLD_MS = 500
@@ -23,7 +23,7 @@ const curves = {}
 const ease = name => (curves[name] ??= getComputedStyle(document.documentElement).getPropertyValue(name).trim() || 'ease-out')
 const reduced = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
-// The voice in use: its tier (the orb colour) and its name. Automatic reads as what it speaks with.
+// The voice in use: its tier and its name (the orb takes the app theme colour, VoiceOrb.css). Automatic reads as what it speaks with.
 function useVoiceInfo(on) {
   const [, bump] = useState(0)
   useEffect(() => onVoices(() => bump(n => n + 1)), [])
@@ -33,7 +33,7 @@ function useVoiceInfo(on) {
   const v = nat ? null : voices?.find(x => x.id === id) || auto
   const key = !on ? 'plain' : nat ? 'natural' : v ? tierKey(v) : 'plain'
   const name = nat ? nat.name : v ? voiceLabel(v) : t('Automatic')
-  return { key, name, tier: key === 'plain' ? '' : tierName(key), look: 'tier-' + key + (key === 'natural' ? accentClass(id) : '') }
+  return { key, name, tier: key === 'plain' ? '' : tierName(key) }
 }
 
 // A line that changes: the old one fades up and out, the new one in, by CSS transitions (no keyframe restart on a countdown).
@@ -345,16 +345,16 @@ function Orb() {
   const cls = ['vo-orb', settled && 'muted', silent && 'sil', speaking && 'sp', held && 'held', dot && 'dot'].filter(Boolean).join(' ')
   // Focus inside the bar holds the line (the store defers hide while `expanded`), so it never goes from under a finger or a screen reader.
   return <>
-    <div ref={fx} className={'vo-fx ' + voice.look + (muted || silent || bar ? ' off' : '')} aria-hidden="true">
+    <div ref={fx} className={'vo-fx' + (muted || silent || bar ? ' off' : '')} aria-hidden="true">
       <i ref={halo} className="vo-halo" />
     </div>
     {/* In bar mode the halo gives way to the light along the screen's bottom edge (one glow at a time). It stays mounted, so closing the bar fades it out. */}
-    <div className={'vo-glow ' + voice.look + (!bar ? '' : speaking ? ' on sp' : muted ? ' on mut' : '') + (rest ? ' rest' : '')} aria-hidden="true"><i />
+    <div className={'vo-glow' + (!bar ? '' : speaking ? ' on sp' : muted ? ' on mut' : '') + (rest ? ' rest' : '')} aria-hidden="true"><i />
       {/* The bright patch crosses once over the estimated length of the line (not for 1 or 2 words); it pauses when the voice stops, so it fades with the glow. The hairline is the light-mode edge. */}
       {!muted && !silent && c.text && c.text.trim().split(/\s+/).length > 2 && <b key={c.shownAt} className="vo-gh" style={{ animationDuration: speakMs(c.text) + 'ms' }} />}
       <b className="vo-ge" />
     </div>
-    <div ref={root} className={'vo ' + voice.look}>
+    <div ref={root} className="vo">
       <div className="vo-stack"
         onFocus={() => useCaption.getState().open()}
         onBlur={e => { if (!acts && !e.currentTarget.contains(e.relatedTarget)) useCaption.getState().close() }}>
