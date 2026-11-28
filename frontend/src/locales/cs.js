@@ -6074,4 +6074,7 @@ export default {
   "Your Apple voice keeps speaking.": "Tvůj hlas Apple dál mluví.",
   "{0} of {1} MB": "{0} z {1} MB",
   "{0} of {1} MB · Wi-Fi only": "{0} z {1} MB · Jen přes Wi-Fi",
+  "Not spoken, {0} seconds ago": "Nevysloveno, před {0} sekundami",
+  "Not spoken, {0} minute ago": "Nevysloveno, před {0} minutou",
+  "Not spoken, {0} minutes ago": {one: "Nevysloveno, před {0} minutou",few: "Nevysloveno, před {0} minutami",many: "Nevysloveno, před {0} minutami",other: "Nevysloveno, před {0} minutami"},
 }

@@ -6074,4 +6074,7 @@ export default {
   "Your Apple voice keeps speaking.": "صدای Apple شما به صحبت ادامه می‌دهد.",
   "{0} of {1} MB": "{0} از {1} مگابایت",
   "{0} of {1} MB · Wi-Fi only": "{0} از {1} مگابایت · فقط Wi-Fi",
+  "Not spoken, {0} seconds ago": "بیان نشد، {0} ثانیه پیش",
+  "Not spoken, {0} minute ago": "بیان نشد، {0} دقیقه پیش",
+  "Not spoken, {0} minutes ago": "بیان نشد، {0} دقیقه پیش",
 }

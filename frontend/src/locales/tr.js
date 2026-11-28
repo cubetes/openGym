@@ -6108,4 +6108,7 @@ export default {
   "Your Apple voice keeps speaking.": "Apple sesin konuşmaya devam ediyor.",
   "{0} of {1} MB": "{0} / {1} MB",
   "{0} of {1} MB · Wi-Fi only": "{0} / {1} MB · Yalnızca Wi-Fi",
+  "Not spoken, {0} seconds ago": "Okunmadı, {0} saniye önce",
+  "Not spoken, {0} minute ago": "Okunmadı, {0} dakika önce",
+  "Not spoken, {0} minutes ago": "Okunmadı, {0} dakika önce",
 }

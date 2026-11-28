@@ -6111,4 +6111,7 @@ export default {
   "Your Apple voice keeps speaking.": "Az Apple-hangod tovább beszél.",
   "{0} of {1} MB": "{0} / {1} MB",
   "{0} of {1} MB · Wi-Fi only": "{0} / {1} MB · Csak Wi-Fi",
+  "Not spoken, {0} seconds ago": "Nem hangzott el, {0} másodperce",
+  "Not spoken, {0} minute ago": "Nem hangzott el, {0} perce",
+  "Not spoken, {0} minutes ago": "Nem hangzott el, {0} perce",
 }

@@ -6040,4 +6040,7 @@ export default {
   "Your Apple voice keeps speaking.": "Appleの音声が引き続き話します。",
   "{0} of {1} MB": "{0} / {1} MB",
   "{0} of {1} MB · Wi-Fi only": "{0} / {1} MB · Wi-Fiのみ",
+  "Not spoken, {0} seconds ago": "読み上げなし、{0}秒前",
+  "Not spoken, {0} minute ago": "読み上げなし、{0}分前",
+  "Not spoken, {0} minutes ago": "読み上げなし、{0}分前",
 }

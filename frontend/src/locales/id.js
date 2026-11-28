@@ -6073,4 +6073,7 @@ export default {
   "Your Apple voice keeps speaking.": "Suara Apple-mu tetap berbicara.",
   "{0} of {1} MB": "{0} dari {1} MB",
   "{0} of {1} MB · Wi-Fi only": "{0} dari {1} MB · Hanya Wi-Fi",
+  "Not spoken, {0} seconds ago": "Tidak diucapkan, {0} detik lalu",
+  "Not spoken, {0} minute ago": "Tidak diucapkan, {0} menit lalu",
+  "Not spoken, {0} minutes ago": "Tidak diucapkan, {0} menit lalu",
 };

@@ -6104,4 +6104,7 @@ export default {
   "Your Apple voice keeps speaking.": "Tavo „Apple“ balsas toliau kalba.",
   "{0} of {1} MB": "{0} iš {1} MB",
   "{0} of {1} MB · Wi-Fi only": "{0} iš {1} MB · Tik per Wi-Fi",
+  "Not spoken, {0} seconds ago": "Neištarta, prieš {0} sekundžių",
+  "Not spoken, {0} minute ago": "Neištarta, prieš {0} minutę",
+  "Not spoken, {0} minutes ago": {one: "Neištarta, prieš {0} minutę",few: "Neištarta, prieš {0} minutes",many: "Neištarta, prieš {0} minutės",other: "Neištarta, prieš {0} minučių"},
 }

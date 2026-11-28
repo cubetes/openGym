@@ -6187,4 +6187,7 @@ export default {
   "Your Apple voice keeps speaking.": "আপনার Apple কণ্ঠ বলতে থাকবে।",
   "{0} of {1} MB": "{1} MB-এর মধ্যে {0}",
   "{0} of {1} MB · Wi-Fi only": "{1} MB-এর মধ্যে {0} · শুধু Wi-Fi",
+  "Not spoken, {0} seconds ago": "বলা হয়নি, {0} সেকেন্ড আগে",
+  "Not spoken, {0} minute ago": "বলা হয়নি, {0} মিনিট আগে",
+  "Not spoken, {0} minutes ago": "বলা হয়নি, {0} মিনিট আগে",
 }

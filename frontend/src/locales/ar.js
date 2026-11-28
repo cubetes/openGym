@@ -6163,4 +6163,7 @@ export default {
   "Your Apple voice keeps speaking.": "صوت Apple لديك يواصل الكلام.",
   "{0} of {1} MB": "{0} من {1} ميغابايت",
   "{0} of {1} MB · Wi-Fi only": "{0} من {1} ميغابايت · Wi-Fi فقط",
+  "Not spoken, {0} seconds ago": "لم يُنطق، قبل {0} ثانية",
+  "Not spoken, {0} minute ago": "لم يُنطق، قبل {0} دقيقة",
+  "Not spoken, {0} minutes ago": {one: "لم يُنطق، قبل {0} دقيقة",two: "لم يُنطق، قبل {0} دقيقة",few: "لم يُنطق، قبل {0} دقائق",many: "لم يُنطق، قبل {0} دقيقة",other: "لم يُنطق، قبل {0} دقيقة"},
 }

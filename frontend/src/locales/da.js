@@ -6048,4 +6048,7 @@ export default {
   "Your Apple voice keeps speaking.": "Din Apple-stemme bliver ved med at tale.",
   "{0} of {1} MB": "{0} af {1} MB",
   "{0} of {1} MB · Wi-Fi only": "{0} af {1} MB · Kun Wi-Fi",
+  "Not spoken, {0} seconds ago": "Ikke talt, for {0} sekunder siden",
+  "Not spoken, {0} minute ago": "Ikke talt, for {0} minut siden",
+  "Not spoken, {0} minutes ago": "Ikke talt, for {0} minutter siden",
 }

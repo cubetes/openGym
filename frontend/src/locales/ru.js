@@ -6112,4 +6112,7 @@ export default {
   "Your Apple voice keeps speaking.": "Твой голос Apple продолжает говорить.",
   "{0} of {1} MB": "{0} из {1} МБ",
   "{0} of {1} MB · Wi-Fi only": "{0} из {1} МБ · Только Wi-Fi",
+  "Not spoken, {0} seconds ago": "Не озвучено, {0} секунд назад",
+  "Not spoken, {0} minute ago": "Не озвучено, {0} минуту назад",
+  "Not spoken, {0} minutes ago": {one: "Не озвучено, {0} минуту назад",few: "Не озвучено, {0} минуты назад",many: "Не озвучено, {0} минут назад",other: "Не озвучено, {0} минуты назад"},
 }

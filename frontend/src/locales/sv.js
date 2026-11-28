@@ -6155,4 +6155,7 @@ export default {
   "Your Apple voice keeps speaking.": "Din Apple-röst fortsätter att tala.",
   "{0} of {1} MB": "{0} av {1} MB",
   "{0} of {1} MB · Wi-Fi only": "{0} av {1} MB · Bara Wi-Fi",
+  "Not spoken, {0} seconds ago": "Inte uttalat, för {0} sekunder sedan",
+  "Not spoken, {0} minute ago": "Inte uttalat, för {0} minut sedan",
+  "Not spoken, {0} minutes ago": "Inte uttalat, för {0} minuter sedan",
 }

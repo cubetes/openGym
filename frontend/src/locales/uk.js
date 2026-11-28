@@ -6105,4 +6105,7 @@ export default {
   "Your Apple voice keeps speaking.": "Твій голос Apple й далі говорить.",
   "{0} of {1} MB": "{0} із {1} МБ",
   "{0} of {1} MB · Wi-Fi only": "{0} із {1} МБ · Лише Wi-Fi",
+  "Not spoken, {0} seconds ago": "Не озвучено, {0} секунд тому",
+  "Not spoken, {0} minute ago": "Не озвучено, {0} хвилину тому",
+  "Not spoken, {0} minutes ago": {one: "Не озвучено, {0} хвилину тому",few: "Не озвучено, {0} хвилини тому",many: "Не озвучено, {0} хвилин тому",other: "Не озвучено, {0} хвилини тому"},
 }

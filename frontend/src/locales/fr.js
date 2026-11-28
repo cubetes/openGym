@@ -6108,4 +6108,7 @@ export default {
   "Your Apple voice keeps speaking.": "Votre voix Apple continue de parler.",
   "{0} of {1} MB": "{0} sur {1} Mo",
   "{0} of {1} MB · Wi-Fi only": "{0} sur {1} Mo · Wi-Fi uniquement",
+  "Not spoken, {0} seconds ago": "Non prononcé, il y a {0} secondes",
+  "Not spoken, {0} minute ago": "Non prononcé, il y a {0} minute",
+  "Not spoken, {0} minutes ago": "Non prononcé, il y a {0} minutes",
 }
