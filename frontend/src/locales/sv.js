@@ -6196,6 +6196,7 @@ export default {
   "Fine tune": "Finjustera",
   "No pitch for Natural voices.": "Naturliga röster har ingen tonhöjd.",
   "Loading, please wait…": "Laddar, vänta lite…",
+  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "Den naturliga rösten förbereds. Första gången efter en uppdatering eller en omstart tar det lite längre tid.",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "Talade tillrop är av. Slå på dem för att höra ditt nästa set och nedräkningen.",
   "One rest, in order": "En vila, i ordning",
   "Starts": "Start",

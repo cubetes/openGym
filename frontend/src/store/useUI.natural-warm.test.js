@@ -4,7 +4,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest'
 
 const mocks = vi.hoisted(() => ({ natural: null, state: 'none' }))
 vi.mock('../lib/mobile.js', async importOriginal => ({ ...(await importOriginal()), MOBILE: true }))
-vi.mock('../lib/rest-alert.js', () => ({ armRestAlert: vi.fn(), holdRestAlert: vi.fn(), disarmRestAlert: vi.fn(), bindNativeRest: vi.fn(), onVoiceLine: () => () => {} }))
+vi.mock('../lib/rest-alert.js', () => ({ armRestAlert: vi.fn(), holdRestAlert: vi.fn(), disarmRestAlert: vi.fn(), bindNativeRest: vi.fn(), onVoiceLine: () => () => {}, onVoiceLoading: () => () => {} }))
 vi.mock('../lib/natural-voice.js', async importOriginal => ({
   ...(await importOriginal()),
   refreshNatural: vi.fn(),

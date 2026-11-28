@@ -6145,6 +6145,7 @@ export default {
   "Fine tune": "Tikslus derinimas",
   "No pitch for Natural voices.": "Natūralūs balsai neturi tono aukščio.",
   "Loading, please wait…": "Kraunama, palaukite…",
+  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "Ruošiamas natūralus balsas. Pirmą kartą po atnaujinimo ar paleidimo iš naujo užtrunka kiek ilgiau.",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "Balso signalai išjungti. Įjunkite, kad išgirstumėte kitą seriją ir atgalinį skaičiavimą.",
   "One rest, in order": "Viena pertrauka eilės tvarka",
   "Starts": "Pradžia",

@@ -6153,6 +6153,7 @@ export default {
   "Fine tune": "Точная настройка",
   "No pitch for Natural voices.": "У естественных голосов нет высоты тона.",
   "Loading, please wait…": "Загрузка, подождите…",
+  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "Готовим естественный голос. В первый раз после обновления или перезапуска это занимает чуть больше времени.",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "Голосовые подсказки выключены. Включите их, чтобы слышать следующий подход и обратный отсчёт.",
   "One rest, in order": "Один отдых по порядку",
   "Starts": "Старт",

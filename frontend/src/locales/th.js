@@ -6160,6 +6160,7 @@ export default {
   "Fine tune": "ปรับละเอียด",
   "No pitch for Natural voices.": "เสียงธรรมชาติไม่มีระดับเสียงสูงต่ำ",
   "Loading, please wait…": "กำลังโหลด โปรดรอสักครู่…",
+  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "กำลังเตรียมเสียงธรรมชาติ ครั้งแรกหลังอัปเดตหรือรีสตาร์ตจะใช้เวลานานขึ้นเล็กน้อย",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "เสียงแจ้งเตือนปิดอยู่ เปิดเพื่อฟังเซ็ตถัดไปและการนับถอยหลัง",
   "One rest, in order": "พักหนึ่งครั้ง ตามลำดับ",
   "Starts": "เริ่ม",

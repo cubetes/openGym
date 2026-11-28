@@ -6149,6 +6149,7 @@ export default {
   "Fine tune": "微调",
   "No pitch for Natural voices.": "自然语音没有音高。",
   "Loading, please wait…": "正在加载，请稍候…",
+  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "正在准备自然语音。更新或重启后的第一次会稍慢一些。",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "语音提示已关闭。打开后可听到下一组和倒计时。",
   "One rest, in order": "一次休息，按顺序",
   "Starts": "开始",

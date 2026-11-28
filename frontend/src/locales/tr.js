@@ -6149,6 +6149,7 @@ export default {
   "Fine tune": "İnce ayar",
   "No pitch for Natural voices.": "Doğal seslerde perde ayarı yok.",
   "Loading, please wait…": "Yükleniyor, lütfen bekleyin…",
+  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "Doğal ses hazırlanıyor. Bir güncellemeden veya yeniden başlatmadan sonraki ilk seferde biraz daha uzun sürer.",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "Sesli uyarılar kapalı. Sonraki setini ve geri sayımı duymak için aç.",
   "One rest, in order": "Tek bir dinlenme, sırayla",
   "Starts": "Başlar",

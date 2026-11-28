@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 const mocks = vi.hoisted(() => ({ active: null }))
 vi.mock('../lib/mobile.js', async importOriginal => ({ ...(await importOriginal()), MOBILE: true, onAppActive: cb => { mocks.active = cb } }))
-vi.mock('../lib/rest-alert.js', () => ({ armRestAlert: vi.fn(), holdRestAlert: vi.fn(), disarmRestAlert: vi.fn(), bindNativeRest: vi.fn(), onVoiceLine: () => () => {} }))
+vi.mock('../lib/rest-alert.js', () => ({ armRestAlert: vi.fn(), holdRestAlert: vi.fn(), disarmRestAlert: vi.fn(), bindNativeRest: vi.fn(), onVoiceLine: () => () => {}, onVoiceLoading: () => () => {} }))
 vi.mock('../lib/sound.js', () => ({ prepareAudio: vi.fn(), beep: vi.fn(), chime: vi.fn(), vibrate: vi.fn(), alertBuzz: vi.fn() }))
 vi.mock('../lib/api.js', () => ({ api: vi.fn(() => Promise.resolve({ ok: true })) }))
 // A stand-in for the NaturalVoice plugin with the model on the phone; natural-voice.js itself is real.

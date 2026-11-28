@@ -56,7 +56,7 @@ const startWait = text => {
   offWait = onVoiceLine(ev => { if (ev?.text === text) { stopWait(); announcePlaying() } })
   waitT = setTimeout(() => {
     setWait(2); announce(t('Loading, please wait…'))
-    waitT = setTimeout(stopWait, 15000) // the phone waits no longer than this for the model
+    waitT = setTimeout(stopWait, 90000) // safety net: the phone waits no longer than 90 s for the model (the first load after an update is slow)
   }, 300)
 }
 const useWait = () => useSyncExternalStore(f => { waitSubs.add(f); return () => waitSubs.delete(f) }, () => wait)
@@ -75,7 +75,7 @@ const endAfter = (timer, all, last, speed, done, natural = false) => {
   clearTimeout(timer.current)
   offLine()
   const end = () => { stopWait(); done() }
-  timer.current = setTimeout(end, speakMs(all, speed) + (natural ? 15000 : 0))
+  timer.current = setTimeout(end, speakMs(all, speed) + (natural ? 90000 : 0))
   offLine = onVoiceLine(ev => {
     if (ev?.text !== last || !(ev.ms > 0 || ev.cover)) return
     clearTimeout(timer.current)

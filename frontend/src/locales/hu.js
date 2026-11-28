@@ -6152,6 +6152,7 @@ export default {
   "Fine tune": "Finomhangolás",
   "No pitch for Natural voices.": "A természetes hangoknak nincs hangmagasságuk.",
   "Loading, please wait…": "Betöltés, kérjük, várjon…",
+  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "A természetes hang előkészítése folyamatban. Frissítés vagy újraindítás után először kicsit tovább tart.",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "A hangos jelzések ki vannak kapcsolva. Kapcsold be, hogy halld a következő sorozatot és a visszaszámlálást.",
   "One rest, in order": "Egy pihenő, sorrendben",
   "Starts": "Kezdés",

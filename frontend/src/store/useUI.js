@@ -7,7 +7,7 @@ import { api } from '../lib/api.js'
 import { t } from '../lib/i18n.js'
 import { deviceId } from '../lib/push.js'
 import { MOBILE, onAppActive } from '../lib/mobile.js'
-import { onVoiceLine, armRestAlert, bindNativeRest, disarmRestAlert, holdRestAlert, toneNative } from '../lib/rest-alert.js'
+import { onVoiceLine, onVoiceLoading, armRestAlert, bindNativeRest, disarmRestAlert, holdRestAlert, toneNative } from '../lib/rest-alert.js'
 import { useStore } from './useStore.js'
 import { REST_MAX } from '../lib/duration.js'
 import { accentValue } from '../lib/accent.js'
@@ -924,6 +924,12 @@ if (MOBILE) {
   // The Natural voice says how loud and how long the line really is; the orb and the caption follow it.
   // A cover (the Apple voice speaks a Natural line) carries no levels or length: the orb keeps its own look.
   onVoiceLine(ev => { if (ev.cover) return; useVoiceLevel.getState().fromNative(ev); useCaption.getState().heard(ev.text, ev.ms) })
+  // A load that runs past 1.5 s is the slow first one: say so once, so a late voice is not read as broken.
+  let loadingTm = null
+  onVoiceLoading(ev => {
+    clearTimeout(loadingTm)
+    loadingTm = ev?.on ? setTimeout(() => useUI.getState().toast(t('Getting the Natural voice ready. The first time after an update or a restart takes a little longer.')), 1500) : null
+  })
   onAppActive(() => { refreshVoices().catch(() => {}); refreshNatural() })
 }
 

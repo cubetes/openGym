@@ -6204,6 +6204,7 @@ export default {
   "Fine tune": "ضبط دقيق",
   "No pitch for Natural voices.": "لا نبرة للأصوات الطبيعية.",
   "Loading, please wait…": "جارٍ التحميل، يُرجى الانتظار…",
+  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "جارٍ تجهيز الصوت الطبيعي. أول مرة بعد تحديث أو إعادة تشغيل تستغرق وقتًا أطول قليلًا.",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "التنبيهات الصوتية متوقفة. شغّلها لتسمع مجموعتك التالية والعدّ التنازلي.",
   "One rest, in order": "راحة واحدة بالترتيب",
   "Starts": "تبدأ",

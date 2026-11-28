@@ -6081,6 +6081,7 @@ export default {
   "Fine tune": "細かく調整",
   "No pitch for Natural voices.": "ナチュラルボイスにはピッチがありません。",
   "Loading, please wait…": "読み込み中です。しばらくお待ちください…",
+  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "ナチュラルボイスを準備しています。アップデートや再起動のあとの初回は、少し時間がかかります。",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "音声ガイドがオフです。次のセットとカウントダウンを聞くにはオンにしてください。",
   "One rest, in order": "1回の休憩を順に",
   "Starts": "開始",

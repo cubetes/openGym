@@ -67,6 +67,9 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
     /// Which of our sounds play now, and whether the session is held for them.
     private var ledger = CueAudioLedger()
     /// A line in the Natural voice, from the moment it is asked for until its sound ended.
+    /// The Natural model is loading now / when the last load ended (main queue only): a line waits for a load instead of being covered.
+    private var modelLoading = false
+    private var loadEndedAt: Date?
     private final class NaturalLine {
         let text: String, voice: String, speed: Double, id: Int
         let apple: (lang: String, rate: Float, pitch: Float, fallback: String, onSilent: Bool)
@@ -121,7 +124,11 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
         RestAlertPlugin.mixWithMusic()
         if #available(iOS 16.0, *) {
             Task { await NaturalVoiceEngine.shared.setOnLoading { [weak self] on in
-                DispatchQueue.main.async { self?.notifyListeners("voiceLoading", data: ["on": on]) }
+                DispatchQueue.main.async {
+                    self?.modelLoading = on
+                    if !on { self?.loadEndedAt = Date() }
+                    self?.notifyListeners("voiceLoading", data: ["on": on])
+                }
             } }
         }
     }
@@ -347,10 +354,18 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
                 }
             }
         }
-        let wait = patient ? NaturalVoiceMath.patientFallBackSec : NaturalVoiceMath.fallBackSec
-        DispatchQueue.main.asyncAfter(deadline: .now() + wait) {
-            if !line.done, NaturalVoiceMath.shouldFallBack(waited: wait, hasAudio: line.wav != nil, failed: false) {
-                self.fallBack(line)
+        checkCover(line, asked: Date(), patient: patient, after: patient ? NaturalVoiceMath.patientFallBackSec : NaturalVoiceMath.fallBackSec)
+    }
+
+    /// Covers a line with the Apple voice only when no model load is running; a load holds it (up to the cap), then its window starts fresh.
+    private func checkCover(_ line: NaturalLine, asked: Date, patient: Bool, after: Double) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + after) {
+            guard !line.done, !line.fallBack else { return }
+            let ended = self.loadEndedAt.flatMap { $0 > asked ? Date().timeIntervalSince($0) : nil }
+            switch NaturalVoiceMath.coverStep(loading: self.modelLoading, sinceAsked: Date().timeIntervalSince(asked), sinceLoadEnded: ended, hasAudio: line.wav != nil, patient: patient) {
+            case .none: break
+            case .cover: self.fallBack(line)
+            case .wait(let s): self.checkCover(line, asked: asked, patient: patient, after: s)
             }
         }
     }

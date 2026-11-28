@@ -6115,6 +6115,7 @@ export default {
   "Fine tune": "تنظیم دقیق",
   "No pitch for Natural voices.": "صداهای طبیعی زیر و بمی ندارند.",
   "Loading, please wait…": "در حال بارگذاری، لطفاً صبر کنید…",
+  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "صدای طبیعی در حال آماده شدن است. بار اول پس از به‌روزرسانی یا راه‌اندازی دوباره کمی بیشتر طول می‌کشد.",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "اعلان‌های صوتی خاموش است. روشنشان کن تا ست بعدی و شمارش معکوس را بشنوی.",
   "One rest, in order": "یک استراحت، به ترتیب",
   "Starts": "شروع",

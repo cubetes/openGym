@@ -6115,6 +6115,7 @@ export default {
   "Fine tune": "Tinh chỉnh",
   "No pitch for Natural voices.": "Giọng tự nhiên không có cao độ.",
   "Loading, please wait…": "Đang tải, vui lòng đợi…",
+  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "Đang chuẩn bị giọng tự nhiên. Lần đầu sau khi cập nhật hoặc khởi động lại sẽ mất lâu hơn một chút.",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "Lời nhắc bằng giọng nói đang tắt. Hãy bật để nghe hiệp tiếp theo và đếm ngược.",
   "One rest, in order": "Một lần nghỉ, theo thứ tự",
   "Starts": "Bắt đầu",

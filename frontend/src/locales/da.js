@@ -6089,6 +6089,7 @@ export default {
   "Fine tune": "Finjustering",
   "No pitch for Natural voices.": "Naturlige stemmer har ingen tonehøjde.",
   "Loading, please wait…": "Indlæser, vent venligst…",
+  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "Den naturlige stemme gøres klar. Første gang efter en opdatering eller en genstart tager det lidt længere.",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "Talte beskeder er slået fra. Slå dem til for at høre dit næste sæt og nedtællingen.",
   "One rest, in order": "Én pause, i rækkefølge",
   "Starts": "Starter",

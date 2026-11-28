@@ -6149,6 +6149,7 @@ export default {
   "Fine tune": "Ajuste fino",
   "No pitch for Natural voices.": "As vozes naturais não têm tom.",
   "Loading, please wait…": "A carregar, aguarde…",
+  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "A preparar a voz natural. A primeira vez após uma atualização ou um reinício demora um pouco mais.",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "Os avisos por voz estão desligados. Liga-os para ouvir a tua próxima série e a contagem decrescente.",
   "One rest, in order": "Um descanso, por ordem",
   "Starts": "Começa",

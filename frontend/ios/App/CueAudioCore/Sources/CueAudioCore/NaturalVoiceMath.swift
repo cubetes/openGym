@@ -58,6 +58,17 @@ public enum NaturalVoiceMath {
         !hasAudio && (failed || waited >= fallBackSec)
     }
 
+    /// While the model loads (the first time after an update or a restart is slow) a line never gets the Apple voice on time; this is the longest it waits.
+    public static let firstLoadCapSec = 90.0
+    public enum CoverStep: Equatable { case none, cover, wait(Double) }
+    /// What to do about a line with no sound yet. The normal window restarts when a load ends (`sinceLoadEnded`, nil if none ended since the line was asked).
+    public static func coverStep(loading: Bool, sinceAsked: Double, sinceLoadEnded: Double?, hasAudio: Bool, patient: Bool) -> CoverStep {
+        if hasAudio { return .none }
+        if loading { return sinceAsked >= firstLoadCapSec ? .cover : .wait(1) }
+        let left = (patient ? patientFallBackSec : fallBackSec) - (sinceLoadEnded ?? sinceAsked)
+        return left <= 0 ? .cover : .wait(left)
+    }
+
     /// A copied folder is usable only when every expected file is there at its full size.
     public static func isCompleteCopy(expected: [String: Int], found: [String: Int]) -> Bool {
         expected.allSatisfy { found[$0.key] == $0.value }

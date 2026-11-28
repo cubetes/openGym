@@ -49,6 +49,22 @@ final class NaturalVoiceMathTests: XCTestCase {
         XCTAssertFalse(NaturalVoiceMath.shouldFallBack(waited: 3.0, hasAudio: true, failed: false))
     }
 
+    func testCoverStepWaitsForTheLoad() {
+        func step(_ loading: Bool, _ asked: Double, _ ended: Double? = nil, audio: Bool = false, patient: Bool = false) -> NaturalVoiceMath.CoverStep {
+            NaturalVoiceMath.coverStep(loading: loading, sinceAsked: asked, sinceLoadEnded: ended, hasAudio: audio, patient: patient)
+        }
+        XCTAssertEqual(step(false, 1), .wait(1))                 // no load: the normal 2 s window
+        XCTAssertEqual(step(false, 2), .cover)
+        XCTAssertEqual(step(true, 2), .wait(1))                  // loading at 2 s: keep waiting
+        XCTAssertEqual(step(true, 89), .wait(1))
+        XCTAssertEqual(step(true, 90), .cover)                   // the cap
+        XCTAssertEqual(step(false, 21, 1), .wait(1))             // load ended at 20 s: a fresh 2 s window
+        XCTAssertEqual(step(false, 22, 2), .cover)
+        XCTAssertEqual(step(false, 30, 5, patient: true), .wait(10)) // a Settings sample: 15 s after the load
+        XCTAssertEqual(step(false, 40, 15, patient: true), .cover)
+        XCTAssertEqual(step(true, 100, audio: true), .none)      // sound there: nothing to cover
+    }
+
     func testIsCompleteCopy() {
         XCTAssertTrue(NaturalVoiceMath.isCompleteCopy(expected: ["a": 10, "b": 20], found: ["a": 10, "b": 20, "c": 1]))
         XCTAssertFalse(NaturalVoiceMath.isCompleteCopy(expected: ["a": 10, "b": 20], found: ["a": 10, "b": 19]))

@@ -6149,6 +6149,7 @@ export default {
   "Fine tune": "बारीक सेटिंग",
   "No pitch for Natural voices.": "प्राकृतिक आवाज़ों में पिच नहीं होती।",
   "Loading, please wait…": "लोड हो रहा है, कृपया प्रतीक्षा करें…",
+  "Getting the Natural voice ready. The first time after an update or a restart takes a little longer.": "प्राकृतिक आवाज़ तैयार हो रही है। अपडेट या रीस्टार्ट के बाद पहली बार थोड़ा ज़्यादा समय लगता है।",
   "Spoken cues are off. Switch them on to hear your next set and the countdown.": "बोलकर सूचनाएँ बंद हैं। अगला सेट और उलटी गिनती सुनने के लिए इन्हें चालू करें।",
   "One rest, in order": "एक विश्राम, क्रम से",
   "Starts": "शुरू",
