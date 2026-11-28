@@ -336,6 +336,8 @@ body.resting{--vp-b:calc(100px + var(--sab) + var(--vp-rb,80px))}  /* the floati
 body.no-tabbar{--vp-b:max(34px,var(--sab))}
 body.no-tabbar.resting{--vp-b:calc(var(--vp-rb,80px) + 12px)}  /* --vp-rb: the rest bar's measured height (VoiceOrb.jsx) */
 body.vpill #app,body.vpill.resting #app,body.vpill.no-tabbar #app,body.vpill.no-tabbar.resting #app{padding-bottom:calc(var(--vp-b) + var(--vp-h,0px) + 10px)}
+/* The page sits over the orb's halo and edge glow (VoiceOrb.css, z 40): they light only the empty page. Sheets and the rest bar are outside #app. */
+body.vpill #app{position:relative;z-index:41}
 .workout-end-spacer{height:0}
 /* The end of a workout (Workout.jsx, P3): Add exercise and the session note as one inset list. */
 .wk-end{margin-top:2px}

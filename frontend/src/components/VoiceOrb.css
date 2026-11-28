@@ -3,7 +3,7 @@
 div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-radius:0}
 .vo,.vo-fx{position:fixed;inset-inline:16px;bottom:var(--vp-b);height:56px;max-width:528px;margin-inline:auto;pointer-events:none}
 .vo{z-index:65;color:var(--label);--vo-tint:color-mix(in srgb,var(--label) 11%,transparent)}
-/* The halo and the ripples sit behind the page controls (the Complete bar, the rest bar), so they only ever light the empty page. */
+/* The halo, the ripples and the edge glow sit at z 40, under the page (#app is lifted to 41 while the orb shows, index.css) and the rest bar, so they only ever light the empty page. */
 .vo-fx{z-index:40}
 .vo-halo{position:absolute;inset-inline-end:-50px;bottom:-50px;width:156px;height:156px;border-radius:50%;pointer-events:none;
   background:radial-gradient(circle,var(--tier-a) 0,var(--tier-b) 34%,transparent 68%);mix-blend-mode:screen;transform:scale(.62);opacity:.14;
@@ -26,6 +26,14 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 :root[data-theme="light"] .vo-glow i{mix-blend-mode:normal}
 .vo-glow.sp i{animation:vo-breathe 2.6s cubic-bezier(.77,0,.175,1) infinite}
 @keyframes vo-breathe{0%,100%{opacity:.62;transform:scaleY(.86)}50%{opacity:1;transform:scaleY(1.08)}}
+.vo-gh{display:none;position:absolute;bottom:0;left:0;width:200px;height:150px;mix-blend-mode:screen;transform:translateX(-200px);
+  background:radial-gradient(50% 100% at 50% 100%,var(--tier-b),transparent 72%)}
+:root[data-theme="light"] .vo-gh{mix-blend-mode:normal}
+.vo-glow.sp .vo-gh{display:block;animation:vo-sweep 4s cubic-bezier(.77,0,.175,1) 1 both}
+@keyframes vo-sweep{to{transform:translateX(420px)}}
+.vo-ge{display:none;position:absolute;left:30px;right:30px;bottom:0;height:2px;opacity:.9;background:linear-gradient(90deg,transparent,var(--tier-a) 30%,var(--tier-a) 70%,transparent)}
+:root[data-theme="light"] .vo-ge{display:block}
+.vo-glow.mut .vo-ge{background:linear-gradient(90deg,transparent,rgba(150,150,160,.7) 30%,rgba(150,150,160,.7) 70%,transparent)}
 .vo-glow.mut i{mix-blend-mode:normal;background:radial-gradient(70% 100% at 50% 100%,rgba(150,150,160,.5),transparent 72%)}
 
 /* The bar and its panel: glass, grown out of the orb. */
@@ -123,6 +131,7 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
   .vo-b1,.vo-b2{animation:none}
   .vo-glow{transition:opacity 150ms linear}
   .vo-glow.sp i{animation:none}
+  .vo-glow.sp .vo-gh{display:none}
   .vo-bar,.vo-bar.on,.vo-panel,.vo-panel.on,.vo-hint{transform:none;transition:opacity 150ms linear}
   .vo-words,.vo-bar.on .vo-words{transition:opacity 150ms linear}
   .vo-ln>span{transition:opacity 150ms linear}

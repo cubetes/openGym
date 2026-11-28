@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useStore } from '../store/useStore.js'
 import { useUI } from '../store/useUI.js'
-import { useCaption, caption, ageText, agoText } from '../lib/voice-caption.js'
+import { useCaption, caption, ageText, agoText, speakMs } from '../lib/voice-caption.js'
 import { useVoiceLevel, smooth, lineLevels, curveMs } from '../lib/voice-level.js'
 import { cues } from '../lib/spoken-cues.js'
 import { hush, onVoices, pickedVoice, voiceLabel, voiceState } from '../lib/speech.js'
@@ -81,6 +81,7 @@ function Orb() {
   const loop = useRef({ raf: 0, s: 0, hist: [], ripple: -1e3 })
   const hold = useRef(false)
   const panel = useRef(null)
+  const barEl = useRef(null)
   const press = useRef({ timer: 0, long: false })
   const hintTimers = useRef([])
 
@@ -221,17 +222,21 @@ function Orb() {
     return () => { ro?.disconnect(); b.style.removeProperty('--vp-rb') }
   }, [rest, barKey])
 
-  // The page keeps room for the orb, or the bar and its open panel, the way it does for the rest bar (index.css body.vpill).
+  // The page keeps room for the orb, or the bar (up to 4 lines at large text) and its open panel, the way it does for the rest bar (index.css body.vpill).
   const panelOpen = bar && acts
   useLayoutEffect(() => {
     const b = document.body
-    const size = () => b.style.setProperty('--vp-h', (56 + (panelOpen ? 8 + (panel.current?.offsetHeight || 0) : 0)) + 'px')
+    const size = () => {
+      const bh = bar ? Math.max(56, barEl.current?.offsetHeight || 0) : 56
+      b.style.setProperty('--vp-h', (bh + (panelOpen ? 8 + (panel.current?.offsetHeight || 0) : 0)) + 'px')
+    }
     size()
     b.classList.add('vpill')
-    const ro = panelOpen && typeof ResizeObserver === 'function' ? new ResizeObserver(size) : null
-    if (panel.current) ro?.observe(panel.current)
+    const ro = bar && typeof ResizeObserver === 'function' ? new ResizeObserver(size) : null
+    if (barEl.current) ro?.observe(barEl.current)
+    if (panelOpen && panel.current) ro?.observe(panel.current)
     return () => { ro?.disconnect(); b.classList.remove('vpill'); b.style.removeProperty('--vp-h') }
-  }, [panelOpen])
+  }, [bar, panelOpen])
 
   // When the rest bar comes or goes the orb's place changes: slide it from the old place (FLIP), never animate `bottom`.
   useEffect(() => {
@@ -323,12 +328,16 @@ function Orb() {
       <i ref={halo} className="vo-halo" />
     </div>
     {/* In bar mode the halo gives way to the light along the screen's bottom edge (one glow at a time). */}
-    {bar && <div className={'vo-glow tier-' + voice.key + (speaking ? ' on sp' : muted ? ' on mut' : '') + (rest ? ' rest' : '')} aria-hidden="true"><i /></div>}
+    {bar && <div className={'vo-glow tier-' + voice.key + (speaking ? ' on sp' : muted ? ' on mut' : '') + (rest ? ' rest' : '')} aria-hidden="true"><i />
+      {/* The bright patch crosses once over the estimated length of the line (not for 1 or 2 words); the hairline is the light-mode edge. */}
+      {speaking && c.text.trim().split(/\s+/).length > 2 && <b key={c.shownAt} className="vo-gh" style={{ animationDuration: speakMs(c.text) + 'ms' }} />}
+      <b className="vo-ge" />
+    </div>}
     <div ref={root} className={'vo tier-' + voice.key}>
       <div className="vo-stack"
         onFocus={() => useCaption.getState().open()}
         onBlur={e => { if (!acts && !e.currentTarget.contains(e.relatedTarget)) useCaption.getState().close() }}>
-        <div className={'vo-bar' + (bar ? ' on' : '')} inert={!bar}>
+        <div ref={barEl} className={'vo-bar' + (bar ? ' on' : '')} inert={!bar}>
           <button type="button" className="vo-cap" aria-expanded={acts}
             aria-label={speaking ? t('Voice actions') : spoken + '. ' + t('Voice actions')}
             onClick={() => { if (acts) shut(); else { setActs(true); useCaption.getState().open() } }}>

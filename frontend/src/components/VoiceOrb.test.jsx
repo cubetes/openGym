@@ -472,6 +472,19 @@ describe('the place', () => {
     root = createRoot(host)
   })
 
+  it('measures a bar taller than the orb (large text), and its open panel', async () => {
+    const heights = { 'vo-bar': 120, 'vo-panel': 60 }
+    Object.defineProperty(HTMLElement.prototype, 'offsetHeight', { configurable: true, get() { return heights[[...this.classList].find(c => heights[c])] || 0 } })
+    try {
+      await mount()
+      expect(document.body.style.getPropertyValue('--vp-h')).toBe('56px')
+      await click(orb())
+      expect(document.body.style.getPropertyValue('--vp-h')).toBe('120px')
+      await click(q('.vo-cap'))
+      expect(document.body.style.getPropertyValue('--vp-h')).toBe('188px') // 120 + 8 + 60
+    } finally { delete HTMLElement.prototype.offsetHeight }
+  })
+
   it('sits on the rest bar as measured', async () => {
     const el = document.createElement('div'); el.id = 'timer'
     Object.defineProperty(el, 'offsetHeight', { value: 140 })
@@ -622,6 +635,16 @@ describe('the motion', () => {
     expect(q('.vo-fx').className).toContain('off') // the halo gives way
   })
 
+  it('the bright patch runs once over the estimated length, but not for a 1 or 2 word line', async () => {
+    await setS({ active: { cur: 0, entries: [] }, voiceBar: true })
+    await mount()
+    await show('Rest is over')
+    expect(q('.vo-gh').style.animationDuration).toBe('1500ms') // 3 words x 400 ms + 300
+    await show('Go now')
+    expect(q('.vo-gh')).toBeNull()
+    expect(q('.vo-ge')).not.toBeNull()
+  })
+
   it('the glow is grey when muted and absent when the phone is silent', async () => {
     await setS({ active: { cur: 0, entries: [], voiceMuted: true }, voiceBar: true })
     await mount()
@@ -660,10 +683,16 @@ describe('the style', () => {
     expect(css).toMatch(/\.vo-b2\{[^}]*13s linear infinite reverse paused/)
     expect(css).toMatch(/\.vo-orb\.sp \.vo-b1,\.vo-orb\.sp \.vo-b2\{animation-play-state:running\}/)
     expect(css).toMatch(/\.vo-glow\{[^}]*height:230px/)
+    const idx = readFileSync('src/index.css', 'utf8')
+    expect(idx).toMatch(/body\.vpill #app\{position:relative;z-index:41\}/) // the page paints over the glow (z 40)
+    expect(css).toMatch(/\.vo-fx\{z-index:40\}/)
+    expect(css).toMatch(/\.vo-glow\{[^}]*z-index:40/)
+    expect(css).toMatch(/:root\[data-theme="light"\] \.vo-ge\{display:block\}/)
     expect(css).toMatch(/cubic-bezier\(\.77,0,\.175,1\) infinite/)
     const rm = css.slice(css.indexOf('@media (prefers-reduced-motion:reduce)'))
     expect(rm).toMatch(/\.vo-b1,\.vo-b2\{animation:none\}/)
     expect(rm).toMatch(/\.vo-glow\.sp i\{animation:none\}/)
+    expect(rm).toMatch(/\.vo-glow\.sp \.vo-gh\{display:none\}/)
     expect(rm).toMatch(/\.vo-glow\{transition:opacity 150ms linear\}/)
   })
 })
