@@ -4511,6 +4511,13 @@ export const PT_BR_OVERRIDES = {
   "{0} of {1} MB · Wi-Fi only": "{0} de {1} MB · Só com Wi-Fi",
   "Voice, speaking. Open voice actions.": "Voz, falando. Abrir ações de voz.",
   "Open voice settings": "Abrir as configurações de voz",
+  "Using now": "Em uso agora",
+  "Change voice": "Trocar a voz",
+  "Spoken cues are off. Switch them on to hear your next set and the countdown.": "Os avisos falados estão desativados. Ative para ouvir sua próxima série e a contagem regressiva.",
+  "One rest, in order": "Um descanso, em ordem",
+  "Screen blinks": "A tela pisca",
+  "Wakes the screen": "Acende a tela",
+  "Screen stays dark": "A tela fica apagada",
 }
 
 export default { ...pt, ...PT_BR_OVERRIDES }
