@@ -25,12 +25,12 @@ export function tierName(key) {
 const GLYPH = { natural: 'sparkles', premium: 'crown', enhanced: 'starFill', standard: 'speaker', online: 'cloud' }
 const SIZE = { xs: 'xs', md: 'md', xl: 'xl' }
 
-// One tile per tier. `tier` is a TIER_KEYS value, or anything else (plain) for Automatic.
-export default function TierTile({ tier, size = 'md', playing = false }) {
+// One tile per tier. `tier` is a TIER_KEYS value, or anything else (plain) for Automatic; `glyph` swaps the icon (Automatic wears bolt).
+export default function TierTile({ tier, size = 'md', playing = false, glyph }) {
   const key = GLYPH[tier] ? tier : 'plain'
   return (
     <span className={`tier-tile tier-${key} tier-${SIZE[size] || 'md'}${playing ? ' playing' : ''}`} aria-hidden="true">
-      <Icon name={GLYPH[key] || 'speaker'} className="tier-glyph" />
+      <Icon name={glyph || GLYPH[key] || 'speaker'} className="tier-glyph" />
       {playing && <><span className="tier-bars"><i /><i /><i /><i /></span><span className="tier-ring" /></>}
     </span>
   )

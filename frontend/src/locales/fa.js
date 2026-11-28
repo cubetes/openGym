@@ -6031,6 +6031,8 @@ export default {
   "Automatic · {0}": "خودکار · {0}",
   "Standard": "استاندارد",
   "Uses {0} ({1}), the best voice for your accent.": "از {0} ({1}) استفاده می‌کند، بهترین صدا برای لهجه شما.",
+  "Uses {0}, the best voice for your accent.": "از {0} استفاده می‌کند، بهترین صدا برای لهجه شما.",
+  "Voice types: {0}": "انواع صدا: {0}",
   "Better voices are free": "صداهای بهتر رایگان هستند",
   "Better {0} voices are free": "صداهای بهتر برای {0} رایگان هستند",
   "Show me how": "نشانم بده چطور",

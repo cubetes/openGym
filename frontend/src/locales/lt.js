@@ -6061,6 +6061,8 @@ export default {
   "Automatic · {0}": "Automatiškai · {0}",
   "Standard": "Standartinis",
   "Uses {0} ({1}), the best voice for your accent.": "Naudoja {0} ({1}), geriausią balsą jūsų akcentui.",
+  "Uses {0}, the best voice for your accent.": "Naudoja {0}, geriausią balsą jūsų akcentui.",
+  "Voice types: {0}": "Balsų tipai: {0}",
   "Better voices are free": "Geresni balsai nemokami",
   "Better {0} voices are free": "Geresni {0} balsai nemokami",
   "Show me how": "Parodykite, kaip",

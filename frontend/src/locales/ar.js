@@ -6120,6 +6120,8 @@ export default {
   "Automatic · {0}": "تلقائي · {0}",
   "Standard": "قياسي",
   "Uses {0} ({1}), the best voice for your accent.": "يستخدم {0} ({1})، أفضل صوت للهجتك.",
+  "Uses {0}, the best voice for your accent.": "يستخدم {0}، أفضل صوت للهجتك.",
+  "Voice types: {0}": "أنواع الأصوات: {0}",
   "Better voices are free": "الأصوات الأفضل مجانية",
   "Better {0} voices are free": "الأصوات الأفضل للغة {0} مجانية",
   "Show me how": "أرني كيف",

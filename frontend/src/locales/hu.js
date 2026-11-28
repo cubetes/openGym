@@ -6068,6 +6068,8 @@ export default {
   "Automatic · {0}": "Automatikus · {0}",
   "Standard": "Alapértelmezett",
   "Uses {0} ({1}), the best voice for your accent.": "Ezt használja: {0} ({1}), a legjobb hang az akcentusodhoz.",
+  "Uses {0}, the best voice for your accent.": "Ezt használja: {0}, a legjobb hang az akcentusodhoz.",
+  "Voice types: {0}": "Hangtípusok: {0}",
   "Better voices are free": "A jobb hangok ingyenesek",
   "Better {0} voices are free": "A jobb {0} hangok ingyenesek",
   "Show me how": "Mutasd meg, hogyan",

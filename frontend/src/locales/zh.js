@@ -6065,6 +6065,8 @@ export default {
   "Automatic · {0}": "自动 · {0}",
   "Standard": "标准",
   "Uses {0} ({1}), the best voice for your accent.": "使用 {0}（{1}），最适合你口音的语音。",
+  "Uses {0}, the best voice for your accent.": "使用 {0}，最适合你口音的语音。",
+  "Voice types: {0}": "语音类型：{0}",
   "Better voices are free": "更好的语音是免费的",
   "Better {0} voices are free": "更好的{0}语音是免费的",
   "Show me how": "教我怎么做",

@@ -554,6 +554,114 @@ describe('Settings → Timer alerts → Voice', () => {
     expect(block).toMatch(/\.vs-tile:active[^}]*transform: none/)
     expect(block).toMatch(/\.vs-ok \{ animation: vs-fade/)
   })
+  describe('the picker: tier tiles, and the plain list with Better voices off', () => {
+    const ava = { id: 'ava', name: 'Ava', lang: 'en-US', online: false, quality: 'premium' }
+    const anna = { id: 'anna', name: 'Anna', lang: 'en-US', online: false }
+    const net = { id: 'net', name: 'Nora', lang: 'en-US', online: true }
+    const phone = (nat, voices = [ava, anna], auto = ava) => { mocks.mobile = true; mocks.voices = { voices, auto, ios: true }; mocks.nat = { ...idleNat, available: true, ...nat } }
+    const tiles = row => [...row.querySelectorAll('.tier-tile')]
+    it('on: a legend in ladder order, a note for a screen reader, and a tile on every row', async () => {
+      phone({ state: 'ready', bytes: 88e6 })
+      localStorage.setItem('og_speech_voice', 'ava') // a pick among the Apple voices keeps them unfolded
+      await render(<VoiceList />)
+      const legend = host.querySelector('.vp-legend')
+      expect(legend.getAttribute('aria-hidden')).toBe('true')
+      expect([...legend.querySelectorAll('.tier-tile')].map(e => e.className.match(/tier-(natural|premium|enhanced|standard|online)\b/)[1])).toEqual(['natural', 'premium', 'enhanced', 'standard'])
+      expect(host.querySelector('.vp-legend + .vh').textContent).toBe('Voice types: Natural voice, Premium, Enhanced, Standard')
+      expect(tiles(rowTitled('Ava'))[0].classList.contains('tier-premium')).toBe(true)
+      expect(tiles(rowTitled('Anna'))[0].classList.contains('tier-standard')).toBe(true)
+      expect(tiles(rowTitled('Heart'))[0].classList.contains('tier-natural')).toBe(true)
+      expect(tiles(rowTitled('Automatic'))[0].classList.contains('tier-plain')).toBe(true)
+      expect(rowTitled('Ava').querySelector('.lrow-v').textContent).toBe('Premium')
+      expect(rowTitled('Ava').querySelector('.tier-tile').getAttribute('aria-hidden')).toBe('true')
+    })
+    it('on: Needs internet joins the legend, last, only when a voice is online; no Natural without the downloader', async () => {
+      phone({ available: false }, [ava, net])
+      await render(<VoiceList />)
+      expect([...host.querySelectorAll('.vp-legend .tier-tile')].pop().classList.contains('tier-online')).toBe(true)
+      expect(host.querySelector('.vp-legend + .vh').textContent).toBe('Voice types: Premium, Enhanced, Standard, Needs internet')
+      expect(tiles(rowTitled('Nora'))[0].classList.contains('tier-online')).toBe(true)
+    })
+    it('on: the row that was picked shows its sample playing in the tile until the sample ends', async () => {
+      phone({})
+      await render(<VoiceList />)
+      vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+      try {
+        await act(async () => { rowTitled('Ava').click() })
+        expect(tiles(rowTitled('Ava'))[0].classList.contains('playing')).toBe(true)
+        await act(async () => { vi.advanceTimersByTime(speakMs(sampleLine(mocks.S) || sampleCue('kg'), 1) + 50) })
+        expect(tiles(rowTitled('Ava'))[0].classList.contains('playing')).toBe(false)
+      } finally { vi.useRealTimers() }
+    })
+    it('on: Natural rows that arrive after a download enter in a stagger; ones that were there do not', async () => {
+      phone({ state: 'downloading', fraction: 0.5 })
+      await render(<VoiceList />)
+      mocks.nat = { ...idleNat, available: true, state: 'ready', bytes: 88e6 }
+      await act(async () => { mocks.natSubs.forEach(cb => cb()) })
+      expect(rowTitled('Heart').classList.contains('vp-in')).toBe(true)
+      expect(rowTitled('Michael').style.getPropertyValue('--i')).toBe('1')
+      await render(<VoiceList key="fresh" />)
+      expect(rowTitled('Heart').classList.contains('vp-in')).toBe(false)
+    })
+    it('the download bar scales instead of growing a width', async () => {
+      phone({ state: 'downloading', fraction: 0.42 })
+      await render(<VoiceList />)
+      const fill = host.querySelector('.vp-bar i')
+      expect(fill.getAttribute('style')).toBe('--p: 0.42;')
+      const css = (await import('node:fs')).readFileSync('src/index.css', 'utf8')
+      expect(css).toMatch(/\.vp-bar i\{[^}]*transform:scaleX\(var\(--p/)
+      expect(css).toMatch(/\.vp-bar i\{[^}]*transition:transform 1s linear/)
+    })
+    describe('off', () => {
+      beforeEach(() => { mocks.S.modules = { voices: false } })
+      it('a plain list: Automatic, then the voices by accent, no tiles, tiers, legend, Natural or hint', async () => {
+        phone({ state: 'ready', bytes: 88e6 }, [anna, net], ava)
+        await render(<VoiceList />)
+        expect(host.querySelector('[class*="tier-"]')).toBeNull()
+        expect(host.querySelector('.vp-legend')).toBeNull()
+        expect(titles()).toEqual(['Automatic', 'Anna', 'Nora'])
+        expect(host.textContent).not.toContain('Natural voice')
+        expect(host.textContent).not.toContain('Better voices are free')
+        expect(host.textContent).not.toContain('Standard')
+        expect(host.textContent).not.toContain('Premium')
+        expect(rowTitled('Automatic').querySelector('.lrow-s').textContent).toBe('Uses Ava, the best voice for your accent.')
+        expect(rowTitled('Nora').querySelector('.lrow-s').textContent).toBe('Needs internet')
+        expect(rowTitled('Anna').querySelector('.lrow-s')).toBeNull()
+      })
+      it('no free-voices hint and no Premium note, with or without a Premium voice', async () => {
+        phone({}, [anna], null)
+        await render(<VoiceList />)
+        expect(host.textContent).not.toContain('Better voices are free')
+        expect(rowTitled('Automatic').querySelector('.lrow-s').textContent).toBe('Uses Anna, your phone’s standard voice.')
+        phone({}, [ava, anna], ava)
+        await render(<VoiceList key="p" />)
+        expect(host.textContent).not.toContain('Nothing to add')
+      })
+      it('a stored Natural pick reads as Automatic, and is kept', async () => {
+        phone({ state: 'ready', bytes: 88e6 })
+        localStorage.setItem('og_speech_voice', 'natural:af_heart')
+        await render(<VoiceList />)
+        expect(rowTitled('Automatic').querySelector('.lrow-k')).not.toBeNull()
+        expect(host.querySelectorAll('.lrow-k')).toHaveLength(1)
+        expect(localStorage.getItem('og_speech_voice')).toBe('natural:af_heart')
+      })
+      it('an Apple pick keeps its check', async () => {
+        phone({}, [ava, anna])
+        localStorage.setItem('og_speech_voice', 'anna')
+        await render(<VoiceList />)
+        expect(rowTitled('Anna').querySelector('.lrow-k')).not.toBeNull()
+        expect(rowTitled('Automatic').querySelector('.lrow-k')).toBeNull()
+      })
+    })
+    it('reduced motion: the check and the new rows fade, the bar does not slide', async () => {
+      const css = (await import('node:fs')).readFileSync('src/components/VoiceSettings.css', 'utf8')
+      const block = css.slice(css.lastIndexOf('@media (prefers-reduced-motion: reduce)'))
+      expect(block).toMatch(/\.vp-in \{[^}]*animation-name: vs-fade/)
+      expect(block).toMatch(/\.vp-voice \.lrow-k \{[^}]*animation-name: vs-fade/)
+      const idx = (await import('node:fs')).readFileSync('src/index.css', 'utf8')
+      expect(idx).toMatch(/prefers-reduced-motion:reduce\)\{[^@]*\.vp-bar i\{transition:none/)
+    })
+  })
   it('the microphone and the recorder', () => {
     expect(micErrorText({ name: 'NotAllowedError' })).toMatch(/microphone is off/)
     expect(micErrorText(new Error('x'))).toMatch(/No microphone/)

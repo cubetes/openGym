@@ -6065,6 +6065,8 @@ export default {
   "Automatic · {0}": "Otomatik · {0}",
   "Standard": "Standart",
   "Uses {0} ({1}), the best voice for your accent.": "{0} ({1}) kullanılıyor, aksanın için en iyi ses.",
+  "Uses {0}, the best voice for your accent.": "{0} kullanılıyor, aksanın için en iyi ses.",
+  "Voice types: {0}": "Ses türleri: {0}",
   "Better voices are free": "Daha iyi sesler ücretsiz",
   "Better {0} voices are free": "{0} için daha iyi sesler ücretsiz",
   "Show me how": "Nasıl yapılır göster",

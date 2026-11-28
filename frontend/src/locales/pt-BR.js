@@ -4469,6 +4469,7 @@ export const PT_BR_OVERRIDES = {
   "Save workout": "Salvar treino",
   // --- Choose a voice (Settings > Voice) ---
   "Uses {0} ({1}), the best voice for your accent.": "Usa {0} ({1}), a melhor voz para o seu sotaque.",
+  "Uses {0}, the best voice for your accent.": "Usa {0}, a melhor voz para o seu sotaque.",
   "Show me how": "Mostre como",
   "You already have a Premium voice. Nothing to add.": "Você já tem uma voz Premium. Não há nada para adicionar.",
   "Get a better voice": "Consiga uma voz melhor",

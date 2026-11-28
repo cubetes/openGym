@@ -64,7 +64,17 @@
 .text-big .vs-dd { font-size: 15px }
 .text-big .vhero-n { font-size: 28px }
 
+/* The picker (VoiceList): a tier tile leads each row, the check pops in, new Natural rows rise in a stagger. */
+.lrow-i.lrow-lead { width: auto; height: auto; border-radius: 0; background: none; font-size: inherit }
+.vp-voice .lrow-k { animation: vs-pop 160ms var(--ease-out) both }
+.vp-in { animation: vp-in 240ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms) }
+@keyframes vp-in { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
+.vp-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0 16px 14px; font-size: var(--fs-footnote); color: var(--label-2) }
+.vp-legend span { display: inline-flex; align-items: center; gap: 6px }
+
 @media (prefers-reduced-motion: reduce) {
+  .vp-in { animation-name: vs-fade; animation-duration: 140ms; animation-delay: 0s }
+  .vp-voice .lrow-k { animation-name: vs-fade; animation-duration: 140ms; animation-delay: 0s }
   .vhero-wave i, .vhero.play .vhero-wave i { animation: none; transform: scaleY(.5) }
   .btn.vhero-try, .vs-tile, .vs-bub { transition: none }
   .btn.vhero-try:active, .vs-tile:active, .vs-bub:active { transform: none }

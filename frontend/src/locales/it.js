@@ -6075,6 +6075,8 @@ export default {
   "Automatic · {0}": "Automatica · {0}",
   "Standard": "Standard",
   "Uses {0} ({1}), the best voice for your accent.": "Usa {0} ({1}), la voce migliore per il tuo accento.",
+  "Uses {0}, the best voice for your accent.": "Usa {0}, la voce migliore per il tuo accento.",
+  "Voice types: {0}": "Tipi di voce: {0}",
   "Better voices are free": "Le voci migliori sono gratis",
   "Better {0} voices are free": "Le voci migliori per {0} sono gratis",
   "Show me how": "Mostrami come",

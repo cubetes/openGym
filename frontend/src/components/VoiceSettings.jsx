@@ -71,7 +71,9 @@ export function useVoices() {
   return st
 }
 
-const tierOf = (v, ios) => (v.quality === 'premium' ? t('Premium') : v.quality === 'enhanced' ? t('Enhanced') : ios ? t('Standard') : null)
+// The tier word on a row: Premium and Enhanced everywhere, Standard only on the iPhone (Android has no ladder).
+const tierWord = (v, ios) => (v.quality === 'premium' || v.quality === 'enhanced' ? tierName(v.quality) : ios ? tierName('standard') : null)
+const LADDER = ['natural', 'premium', 'enhanced', 'standard']
 
 /** The Natural voice model's state; refreshed on mount, so a download that ended while away shows. */
 function useNatural() {
@@ -121,14 +123,27 @@ export function VoiceList() {
   const { voices: list, auto, ios } = useVoices()
   const voices = list || []
   const nat = useNatural()
+  const on = isOn(useStore(s => s.S), 'voices')
   const [, redraw] = useState(0)
-  const cur = pickedVoice() // read each render: it turns '' when the model goes away
+  const [playKey, setPlayKey] = useState(null) // the row whose sample plays: its voice id, or 'auto'
+  const timer = useRef(0)
+  useEffect(() => () => clearTimeout(timer.current), [])
+  const downloaded = useRef(false) // Natural rows that appear after a download enter with a rise; ones already there do not
+  if (nat.state === 'downloading') downloaded.current = true
+  // read each render: it turns '' when the model goes away. With Better voices off a Natural pick reads as Automatic; the pick itself stays stored.
+  const stored = pickedVoice()
+  const cur = !on && isNatural(stored) ? '' : stored
   const pick = (id, say = id) => {
     setPickedVoice(id)
     savePrefs(useStore.getState().update)
     redraw(n => n + 1)
-    sayIt(sampleLine(S_()) || sampleCue(S_().unit), { voice: say, ...(isNatural(id) ? { fallback: auto?.id || '' } : {}) })
+    const text = sampleLine(S_()) || sampleCue(S_().unit)
+    sayIt(text, { voice: say, ...(isNatural(id) ? { fallback: auto?.id || '' } : {}) })
+    clearTimeout(timer.current)
+    setPlayKey(id || 'auto')
+    timer.current = setTimeout(() => setPlayKey(null), speakMs(text, speechRateNum(S_())))
   }
+  const tile = (key, id, glyph) => on ? <TierTile tier={key} glyph={glyph} playing={playKey === (id || 'auto')} /> : null
   // Opening the page with a Natural pick, or picking one, has the model make the fixed lines ahead.
   useEffect(() => { if (isNatural(cur)) cues.prepareFixed() }, [cur])
   const [showApple, setShowApple] = useState(false)
@@ -136,7 +151,7 @@ export function VoiceList() {
   const premium = voices.some(v => v.quality === 'premium')
   // With no Premium or Enhanced voice, voiceOpts passes '' and the phone speaks its default for the language, which is the top of this ranked list in practice; the name is that list's first voice.
   const autoNote = !ios ? null : auto
-    ? t('Uses {0} ({1}), the best voice for your accent.', voiceLabel(auto), auto.quality === 'premium' ? t('Premium') : t('Enhanced'))
+    ? (on ? t('Uses {0} ({1}), the best voice for your accent.', voiceLabel(auto), tierName(tierKey(auto))) : t('Uses {0}, the best voice for your accent.', voiceLabel(auto)))
     : voices[0] ? t('Uses {0}, your phone’s standard voice.', voiceLabel(voices[0])) : t('Uses your phone’s standard voice.')
   const sel = on => (on ? ', ' + t('selected') : '')
   const groups = []
@@ -146,39 +161,44 @@ export function VoiceList() {
   }
   const apple = <>
     {groups.map(g => <Section key={g.lang} title={groupName(g.lang)}>
-      {g.voices.map(v => <Row key={v.id} icon={cur === v.id ? 'speaker' : 'play'} iconTint="var(--teal)" title={voiceLabel(v)} ariaLabel={[voiceLabel(v), tierOf(v, ios)].filter(Boolean).join(', ') + sel(cur === v.id)}
-        subtitle={v.online ? t('Needs internet') : null} value={tierOf(v, ios)} className="vp-voice"
+      {g.voices.map(v => <Row key={v.id} icon={tile(tierKey(v, { ios }), v.id)} title={voiceLabel(v)} ariaLabel={[voiceLabel(v), on && tierWord(v, ios)].filter(Boolean).join(', ') + sel(cur === v.id)}
+        subtitle={v.online ? t('Needs internet') : null} value={on ? tierWord(v, ios) : null} className="vp-voice"
         accessory={cur === v.id ? 'check' : 'none'} onClick={() => pick(v.id)} />)}
     </Section>)}
-    {ios && !premium && <section className="sect"><div className="sect-b vp-card">
+    {on && ios && !premium && <section className="sect"><div className="sect-b vp-card">
       <div className="vp-hint"><Icon name="info" aria-hidden="true" /><div>
         <b>{isEnglish() ? t('Better voices are free') : t('Better {0} voices are free', lang)}</b>
         <span>{t('Settings > Accessibility > Read & Speak > Voices')}</span>
       </div></div>
       <Button variant="tinted" className="vp-how" onClick={() => useUI.getState().openSheet(close => <StepsSheet close={close} lang={lang} />)}>{t('Show me how')}</Button>
     </div></section>}
-    {ios && premium && <p className="sect-f vp-note"><Icon name="info" aria-hidden="true" />{t('You already have a Premium voice. Nothing to add.')}</p>}
+    {on && ios && premium && <p className="sect-f vp-note"><Icon name="info" aria-hidden="true" />{t('You already have a Premium voice. Nothing to add.')}</p>}
   </>
-  const natural = ios && (nat.available || nat.debugModel)
+  const natural = on && ios && (nat.available || nat.debugModel)
   // With the model installed the Natural voices lead and the Apple voices fold into one row (frame 6); a pick among them keeps them open.
   const folded = natural && isEnglish() && nat.state === 'ready' && !showApple && !(cur && !isNatural(cur)) && voices.length > 0
   const names = voices.slice(0, 3).map(voiceLabel).join(', ')
+  const kinds = LADDER.filter(k => k !== 'natural' || natural).concat(voices.some(v => v.online) ? ['online'] : [])
   return <>
     <span id="vp-live" className="vh" role="status" aria-live="polite" />
+    {on && <>
+      <div className="vp-legend" aria-hidden="true">{kinds.map(k => <span key={k}><TierTile tier={k} size="xs" />{tierName(k)}</span>)}</div>
+      <span className="vh">{t('Voice types: {0}', kinds.map(tierName).join(', '))}</span>
+    </>}
     <Section footer={voices.length ? null : t('No other voices for this language here. Your device’s settings can add more.')}>
-      <Row icon={cur ? 'play' : 'speaker'} iconTint="var(--teal)" title={t('Automatic')} subtitle={autoNote} ariaLabel={t('Automatic') + sel(!cur)} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', auto?.id || '')} />
+      <Row icon={tile('plain', '', 'bolt')} className="vp-voice" title={t('Automatic')} subtitle={autoNote} ariaLabel={t('Automatic') + sel(!cur)} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', auto?.id || '')} />
     </Section>
-    {natural && nat.state === 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} />}
+    {natural && nat.state === 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} tile={tile} fresh={downloaded.current} />}
     {folded
       ? <Section title={t('Apple voices')}><Row title={names} ariaLabel={t('Apple voices') + ', ' + names} accessory="chevron" onClick={() => setShowApple(true)} /></Section>
       : apple}
-    {natural && nat.state !== 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} />}
+    {natural && nat.state !== 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} tile={tile} />}
     {!ios && list !== null && MOBILE && <p className="sect-f vp-note"><Icon name="info" aria-hidden="true" />{t('Natural voice is on iPhone first. Android uses your phone’s voices for now.')}</p>}
   </>
 }
 
 /** Natural voice in the picker: the offer, the download, a stop, and the installed voices with Remove. */
-function NaturalGroup({ nat, cur, pick }) {
+function NaturalGroup({ nat, cur, pick, tile, fresh }) {
   const [wifi, setWifi] = useState(() => readPrefs().wifiOnly)
   const lastMb = useRef(0) // where a download was when it stopped; the state forgets it
   const total = nat.total > 0 ? mbOf(nat.total) : NATURAL_MB
@@ -196,7 +216,7 @@ function NaturalGroup({ nat, cur, pick }) {
     return <>
       <Section title={<span className="vp-head">{t('Natural voice · English')}<span className="vp-pill">{t('Installed')}</span></span>}
         footer={t('Lines are made during the rest, so you do not hear a delay. Where it has no voice for your language, the Apple voice speaks.')}>
-        {NATURAL_VOICES.map(v => <Row key={v.id} icon={cur === v.id ? 'speaker' : 'play'} iconTint="var(--teal)" title={v.name} value={v.region} className="vp-voice"
+        {NATURAL_VOICES.map((v, i) => <Row key={v.id} icon={tile('natural', v.id)} title={v.name} value={v.region} className={'vp-voice' + (fresh ? ' vp-in' : '')} style={fresh ? { '--i': i } : null}
           ariaLabel={[v.name, t('Natural voice'), v.region].join(', ') + sel(v.id)} accessory={cur === v.id ? 'check' : 'none'} onClick={() => pick(v.id)} />)}
       </Section>
       {!nat.debugModel && <Section><Row danger title={t('Remove download')} subtitle={t('Frees {0} MB', mb)} onClick={() => confirmSheet({
@@ -213,7 +233,7 @@ function NaturalGroup({ nat, cur, pick }) {
         <span className="lrow-m">
           <span className="lrow-t">{t('Downloading')}</span>
           <span className="lrow-s">{wifi ? t('{0} of {1} MB · Wi-Fi only', doneMb, total) : t('{0} of {1} MB', doneMb, total)}</span>
-          <span className="vp-bar" role="progressbar" aria-label={t('Natural voice download, {0} percent', pct)} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}><i style={{ width: pct + '%' }} /></span>
+          <span className="vp-bar" role="progressbar" aria-label={t('Natural voice download, {0} percent', pct)} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}><i style={{ '--p': Math.min(1, nat.fraction || 0) }} /></span>
         </span>
         <Button variant="ghost" className="vp-act" onClick={() => cancelNatural()}>{t('Cancel')}</Button>
       </div>

@@ -6069,6 +6069,8 @@ export default {
   "Automatic · {0}": "Автоматически · {0}",
   "Standard": "Стандартный",
   "Uses {0} ({1}), the best voice for your accent.": "Используется {0} ({1}), лучший голос для вашего акцента.",
+  "Uses {0}, the best voice for your accent.": "Используется {0}, лучший голос для вашего акцента.",
+  "Voice types: {0}": "Типы голосов: {0}",
   "Better voices are free": "Лучшие голоса бесплатны",
   "Better {0} voices are free": "Лучшие голоса для языка «{0}» бесплатны",
   "Show me how": "Покажите, как",
