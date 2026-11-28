@@ -3,8 +3,8 @@
 div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-radius:0}
 .vo,.vo-fx{position:fixed;inset-inline:16px;bottom:var(--vp-b);height:56px;max-width:528px;margin-inline:auto;pointer-events:none}
 .vo{z-index:65;color:var(--label);--vo-tint:color-mix(in srgb,var(--label) 11%,transparent)}
-/* The halo, the ripples and the edge glow sit at z 40, under the page (#app is lifted to 41 while the orb shows, index.css) and the rest bar, so they only ever light the empty page. */
-.vo-fx{z-index:40}
+/* The halo, the ripples and the edge glow sit at z 0, under the page (#app is lifted to 1 while the orb shows, index.css; the status-bar strip and seasonal decor stay above) and the rest bar, so they only ever light the empty page. */
+.vo-fx{z-index:0}
 .vo-halo{position:absolute;inset-inline-end:-50px;bottom:-50px;width:156px;height:156px;border-radius:50%;pointer-events:none;
   background:radial-gradient(circle,var(--tier-a) 0,var(--tier-b) 34%,transparent 68%);mix-blend-mode:screen;transform:scale(.62);opacity:.14;
   will-change:transform,opacity}
@@ -15,7 +15,7 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 .vo-rp{position:absolute;inset-inline-end:0;bottom:0;width:56px;height:56px;border-radius:50%;border:1.5px solid var(--tier-a);opacity:0;pointer-events:none}
 
 /* Bar mode: the edge glow, 230 px of tier light along the screen's bottom edge, behind the page controls. */
-.vo-glow{position:fixed;inset-inline:-30px;bottom:0;height:230px;z-index:40;pointer-events:none;opacity:0;
+.vo-glow{position:fixed;inset-inline:-30px;bottom:0;height:230px;z-index:0;pointer-events:none;opacity:0;
   transition:opacity 280ms var(--ease-out),transform 300ms var(--ease)}
 .vo-glow.on{opacity:.7}
 :root[data-theme="light"] .vo-glow.on{opacity:.6}
