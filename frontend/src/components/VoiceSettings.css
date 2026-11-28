@@ -20,17 +20,17 @@
 .vhero-wave { display: flex; align-items: center; justify-content: center; gap: 3px; height: 56px; margin: 10px 0 12px }
 .vhero-wave i { flex: none; width: 4px; height: 100%; border-radius: 2px; background: var(--tier-a); transform: scaleY(.12); opacity: .55; transition: opacity 120ms var(--ease-out) }
 /* Each bar grows from the rest height (positive delays: none jumps to mid-swing); ending, they keep moving while they fade out. */
-.vhero:is(.play, .end) .vhero-wave i { animation: vhero-wv var(--d) cubic-bezier(.77, 0, .175, 1) infinite alternate; animation-delay: var(--dl) }
+.vhero:is(.play, .end) .vhero-wave i { animation: vhero-wv var(--d) var(--ease-in-out) infinite alternate; animation-delay: var(--dl) }
 .vhero.play .vhero-wave i { opacity: 1 }
 .vhero.end .vhero-wave i { opacity: 0 }
 @keyframes vhero-wv { from { transform: scaleY(.12) } to { transform: scaleY(var(--h)) } }
 .btn.vhero-try { width: 100%; min-height: 52px; border-radius: 16px; transition: transform 160ms var(--ease-out) }
-.btn.vhero-try:active { transform: scale(.97) }
+.btn.vhero-try:active { transform: scale(var(--press-scale)) }
 
 /* Style: six tiles, two columns, they grow in height at large text. */
 .vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px }
 .vs-tile { position: relative; display: block; min-height: 84px; padding: 10px 12px; border: 0; border-radius: 16px; background: var(--surface); box-shadow: inset 0 0 0 .5px var(--sep); font: inherit; color: var(--label); text-align: start; cursor: pointer; transition: transform 160ms var(--ease-out) }
-.vs-tile:active { transform: scale(.97) }
+.vs-tile:active { transform: scale(var(--press-scale)) }
 .vs-tile.sel { box-shadow: inset 0 0 0 2px var(--c); background: var(--surface-2, var(--surface)); background: color-mix(in srgb, var(--c) 14%, var(--surface)) }
 .vs-tile.own { background: transparent; box-shadow: none; border: 1.5px dashed var(--label-3, var(--sep)) }
 .vs-tile.own.sel { border-color: var(--c); box-shadow: inset 0 0 0 .5px var(--c) }
@@ -48,7 +48,7 @@
 /* The picked style's first lines, each a button. */
 .vs-smp { display: flex; flex-direction: column; gap: 6px; margin-top: 10px }
 .vs-bub { display: block; width: 100%; min-height: 44px; padding: 8px 12px; border: 0; border-radius: 16px 16px 16px 5px; background: var(--surface-2, var(--surface)); background: color-mix(in srgb, var(--c) 22%, var(--surface-2, var(--surface))); font: inherit; font-size: var(--fs-subhead); line-height: 1.3; color: var(--label); text-align: start; cursor: pointer; transition: transform 160ms var(--ease-out) }
-.vs-bub:active { transform: scale(.97) }
+.vs-bub:active { transform: scale(var(--press-scale)) }
 .vs-bub small { display: flex; align-items: center; gap: 4px; margin-bottom: 2px; font-size: var(--fs-caption2); color: var(--label-2) }
 :root[data-theme="light"] .vs-bub small { color: rgba(60,60,67,.9) }
 .vs-bub small .icn { width: 10px; height: 10px }

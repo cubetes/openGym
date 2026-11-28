@@ -68,5 +68,6 @@ describe('styles', () => {
     expect(readFileSync('src/components/VoiceTier.css', 'utf8')).toMatch(/prefers-reduced-motion/)
     expect(readFileSync('src/components/VoiceTier.css', 'utf8')).toMatch(/\.tier-play, \.tier-tile \.tier-glyph \{ transition: opacity 120ms linear !important \}/)
     expect(readFileSync('src/index.css', 'utf8')).toMatch(/--ease-out:\s*cubic-bezier\(0\.23, 1, 0\.32, 1\)/)
+    expect(readFileSync('src/index.css', 'utf8')).toMatch(/--ease-in-out:\s*cubic-bezier\(0\.77, 0, 0\.175, 1\)/)
   })
 })

@@ -22,12 +22,12 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 .vo-glow.rest{transform:translateY(-72px)}
 .vo-glow i{position:absolute;inset:0;transform-origin:50% 100%;
   background:radial-gradient(60% 100% at 50% 100%,var(--tier-a),transparent 70%),radial-gradient(45% 80% at 12% 100%,var(--tier-b),transparent 70%),radial-gradient(40% 70% at 92% 100%,var(--tier-a),transparent 70%);
-  animation:vo-breathe 2.6s cubic-bezier(.77,0,.175,1) infinite paused}
+  animation:vo-breathe 2.6s var(--ease-in-out) infinite paused}
 /* Paused, not removed, when the voice stops: the glow fades out from the frame it was on. */
 .vo-glow.sp i{animation-play-state:running}
 @keyframes vo-breathe{0%,100%{opacity:.62;transform:scaleY(.86)}50%{opacity:1;transform:scaleY(1.08)}}
 .vo-gh{position:absolute;bottom:0;left:0;width:200px;height:150px;mix-blend-mode:screen;transform:translateX(-200px);
-  background:radial-gradient(50% 100% at 50% 100%,var(--tier-b),transparent 72%);animation:vo-sweep 4s cubic-bezier(.77,0,.175,1) 1 both paused}
+  background:radial-gradient(50% 100% at 50% 100%,var(--tier-b),transparent 72%);animation:vo-sweep 4s var(--ease-in-out) 1 both paused}
 :root[data-theme="light"] .vo-gh{mix-blend-mode:normal}
 .vo-glow.sp .vo-gh{animation-play-state:running}
 @keyframes vo-sweep{to{transform:translateX(420px)}}
@@ -80,7 +80,7 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 .vo-btn{flex:1;min-height:48px;border-radius:14px;background:var(--vo-tint)!important;display:flex;align-items:center;justify-content:center;gap:8px;font-size:.9375rem;font-weight:600;text-align:center;line-height:1.15}
 .vo-round{flex:none;width:48px;height:48px;border-radius:50%;background:var(--vo-tint)!important;display:grid;place-items:center;font-size:1.125rem}
 .vo-acts button,.vo-btn,.vo-round{transition:transform 160ms var(--ease-out)}
-.vo-acts button:active,.vo-btn:active,.vo-round:active{transform:scale(.97)}
+.vo-acts button:active,.vo-btn:active,.vo-round:active{transform:scale(var(--press-scale))}
 .vo-stack button:focus-visible,.vo-orb:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 
 /* The orb: 56 px round, the tier's gradient, three rounded lines (scaleY only). */
@@ -88,7 +88,7 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
   pointer-events:auto;color:#fff;touch-action:manipulation;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;
   transform:scale(var(--s,1));transition:transform 200ms var(--ease-out),opacity 200ms var(--ease-out)}
 .vo-orb *{pointer-events:none}
-.vo-orb.held{--s:.92;transition-duration:160ms}
+.vo-orb.held{--s:var(--press-scale-sm);transition-duration:160ms}
 .vo-orb.muted{--s:.86}
 .vo-orb.muted.held{--s:.79}
 /* The orb's entrance: from .95 and clear, on its own transition. */

@@ -18,8 +18,9 @@ const HOLD_MS = 500
 const HINT_DELAY = 600
 const HINT_MS = 4000
 const SETTLE_MS = 100 // the muted look waits for the grey wash to peak (96 ms)
-const RIPPLE_EASE = 'cubic-bezier(.23,1,.32,1)'
-const EASE = 'cubic-bezier(.32,.72,0,1)'
+// WAAPI cannot read var(): the shared curves, read once from index.css (a plain ease-out if the sheet is missing).
+const curves = {}
+const ease = name => (curves[name] ??= getComputedStyle(document.documentElement).getPropertyValue(name).trim() || 'ease-out')
 const reduced = () => !!globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
 // The voice in use: its tier (the orb colour) and its name. Automatic reads as what it speaks with.
@@ -138,7 +139,7 @@ function Orb() {
     el.className = 'vo-rp'
     if (!el.animate) return
     fx.current.append(el)
-    el.animate([{ transform: 'scale(1)', opacity: 0.5 }, { transform: 'scale(1.9)', opacity: 0 }], { duration: 650, easing: RIPPLE_EASE }).onfinish = () => el.remove()
+    el.animate([{ transform: 'scale(1)', opacity: 0.5 }, { transform: 'scale(1.9)', opacity: 0 }], { duration: 650, easing: ease('--ease-out') }).onfinish = () => el.remove()
   }
   useEffect(() => {
     if (!speaking || loop.current.raf) return
@@ -266,7 +267,7 @@ function Orb() {
       const d = last - now + (before - root.current.getBoundingClientRect().top) // plus what the running slide still added
       last = now
       if (!d || reduced()) return
-      for (const el of [root.current, fx.current]) { const a = el.animate?.([{ transform: `translateY(${d}px)` }, { transform: 'none' }], { duration: 300, easing: EASE }); if (a) slide.push(a) }
+      for (const el of [root.current, fx.current]) { const a = el.animate?.([{ transform: `translateY(${d}px)` }, { transform: 'none' }], { duration: 300, easing: ease('--ease') }); if (a) slide.push(a) }
     }
     const mo = new MutationObserver(move)
     mo.observe(document.body, { attributes: true, attributeFilter: ['class', 'style'] })

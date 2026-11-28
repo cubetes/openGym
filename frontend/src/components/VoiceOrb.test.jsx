@@ -754,9 +754,9 @@ describe('the style', () => {
 
   it('uses the shared curves and the hold and press values of the design', () => {
     expect(css).toMatch(/\.vo-bar\.on\{[^}]*260ms var\(--ease\)/)
-    expect(css).toMatch(/\.vo-orb\.held\{--s:\.92/)
+    expect(css).toMatch(/\.vo-orb\.held\{--s:var\(--press-scale-sm\)/)
     expect(css).toMatch(/\.vo-orb\.muted\.held\{--s:\.79/)
-    expect(css).toMatch(/:active\{transform:scale\(\.97\)\}/)
+    expect(css).toMatch(/:active\{transform:scale\(var\(--press-scale\)\)\}/)
   })
 
   it('spins the blobs only while speaking, and keeps the glow still under reduced motion', () => {
@@ -770,7 +770,7 @@ describe('the style', () => {
     expect(css).toMatch(/\.vo-fx\{z-index:0[;}]/)
     expect(css).toMatch(/\.vo-glow\{[^}]*z-index:0/)
     expect(css).toMatch(/:root\[data-theme="light"\] \.vo-ge\{display:block\}/)
-    expect(css).toMatch(/cubic-bezier\(\.77,0,\.175,1\) infinite/)
+    expect(css).toMatch(/var\(--ease-in-out\) infinite/)
     const rm = css.slice(css.indexOf('@media (prefers-reduced-motion:reduce)'))
     expect(rm).toMatch(/\.vo-b1,\.vo-b2\{animation:none\}/)
     expect(rm).toMatch(/\.vo-glow i\{animation:none\}/)

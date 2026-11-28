@@ -75,7 +75,7 @@ describe('AlertTile', () => {
     const css = readFileSync('src/components/AlertTile.css', 'utf8')
     expect(css).toMatch(/prefers-reduced-motion/)
     expect(css).toMatch(/\.at-sw:active \{ opacity: \.6 \}/)
-    expect(css).toMatch(/\.at:has\(\.at-sw:active\)\s*\{\s*transform:\s*scale\(\.97\)/)
+    expect(css).toMatch(/\.at:has\(\.at-sw:active\)\s*\{\s*transform:\s*scale\(var\(--press-scale\)\)/)
     expect(css).toMatch(/\.at\s*\{[^}]*transition:\s*background var\(--med\) var\(--ease\)/)
     expect(css).toMatch(/\.text-big \.alert-grid\s*\{\s*grid-template-columns:\s*1fr\s*\}/)
     expect(css).toMatch(/\.at-op\s*\{[^}]*min-height:\s*44px/)
