@@ -327,12 +327,12 @@ function Orb() {
     <div ref={fx} className={'vo-fx tier-' + voice.key + (muted || silent || bar ? ' off' : '')} aria-hidden="true">
       <i ref={halo} className="vo-halo" />
     </div>
-    {/* In bar mode the halo gives way to the light along the screen's bottom edge (one glow at a time). */}
-    {bar && <div className={'vo-glow tier-' + voice.key + (speaking ? ' on sp' : muted ? ' on mut' : '') + (rest ? ' rest' : '')} aria-hidden="true"><i />
-      {/* The bright patch crosses once over the estimated length of the line (not for 1 or 2 words); the hairline is the light-mode edge. */}
-      {speaking && c.text.trim().split(/\s+/).length > 2 && <b key={c.shownAt} className="vo-gh" style={{ animationDuration: speakMs(c.text) + 'ms' }} />}
+    {/* In bar mode the halo gives way to the light along the screen's bottom edge (one glow at a time). It stays mounted, so closing the bar fades it out. */}
+    <div className={'vo-glow tier-' + voice.key + (!bar ? '' : speaking ? ' on sp' : muted ? ' on mut' : '') + (rest ? ' rest' : '')} aria-hidden="true"><i />
+      {/* The bright patch crosses once over the estimated length of the line (not for 1 or 2 words); it pauses when the voice stops, so it fades with the glow. The hairline is the light-mode edge. */}
+      {!muted && !silent && c.text && c.text.trim().split(/\s+/).length > 2 && <b key={c.shownAt} className="vo-gh" style={{ animationDuration: speakMs(c.text) + 'ms' }} />}
       <b className="vo-ge" />
-    </div>}
+    </div>
     <div ref={root} className={'vo tier-' + voice.key}>
       <div className="vo-stack"
         onFocus={() => useCaption.getState().open()}

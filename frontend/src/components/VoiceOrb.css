@@ -4,13 +4,13 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 .vo,.vo-fx{position:fixed;inset-inline:16px;bottom:var(--vp-b);height:56px;max-width:528px;margin-inline:auto;pointer-events:none}
 .vo{z-index:65;color:var(--label);--vo-tint:color-mix(in srgb,var(--label) 11%,transparent)}
 /* The halo, the ripples and the edge glow sit at z 0, under the page (#app is lifted to 1 while the orb shows, index.css; the status-bar strip and seasonal decor stay above) and the rest bar, so they only ever light the empty page. */
-.vo-fx{z-index:0}
+.vo-fx{z-index:0;transition:opacity 200ms var(--ease-out)}
 .vo-halo{position:absolute;inset-inline-end:-50px;bottom:-50px;width:156px;height:156px;border-radius:50%;pointer-events:none;
   background:radial-gradient(circle,var(--tier-a) 0,var(--tier-b) 34%,transparent 68%);mix-blend-mode:screen;transform:scale(.62);opacity:.14;
   will-change:transform,opacity}
 :root[data-theme="light"] .vo-halo{mix-blend-mode:normal}
-/* Muted, silent or bar mode: no halo (the inline level from the loop is cleared on the way out, but a frame may still hold it). */
-.vo-fx.off .vo-halo{opacity:0!important;transition:opacity 200ms var(--ease-out)}
+/* Muted, silent or bar mode: no halo. The whole layer fades both ways; the loop's inline values on the halo stay untouched. */
+.vo-fx.off{opacity:0}
 /* One ring per word peak, spawned and removed by the component (WAAPI). */
 .vo-rp{position:absolute;inset-inline-end:0;bottom:0;width:56px;height:56px;border-radius:50%;border:1.5px solid var(--tier-a);opacity:0;pointer-events:none}
 
@@ -26,10 +26,10 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
 :root[data-theme="light"] .vo-glow i{mix-blend-mode:normal}
 .vo-glow.sp i{animation:vo-breathe 2.6s cubic-bezier(.77,0,.175,1) infinite}
 @keyframes vo-breathe{0%,100%{opacity:.62;transform:scaleY(.86)}50%{opacity:1;transform:scaleY(1.08)}}
-.vo-gh{display:none;position:absolute;bottom:0;left:0;width:200px;height:150px;mix-blend-mode:screen;transform:translateX(-200px);
-  background:radial-gradient(50% 100% at 50% 100%,var(--tier-b),transparent 72%)}
+.vo-gh{position:absolute;bottom:0;left:0;width:200px;height:150px;mix-blend-mode:screen;transform:translateX(-200px);
+  background:radial-gradient(50% 100% at 50% 100%,var(--tier-b),transparent 72%);animation:vo-sweep 4s cubic-bezier(.77,0,.175,1) 1 both paused}
 :root[data-theme="light"] .vo-gh{mix-blend-mode:normal}
-.vo-glow.sp .vo-gh{display:block;animation:vo-sweep 4s cubic-bezier(.77,0,.175,1) 1 both}
+.vo-glow.sp .vo-gh{animation-play-state:running}
 @keyframes vo-sweep{to{transform:translateX(420px)}}
 .vo-ge{display:none;position:absolute;left:30px;right:30px;bottom:0;height:2px;opacity:.9;background:linear-gradient(90deg,transparent,var(--tier-a) 30%,var(--tier-a) 70%,transparent)}
 :root[data-theme="light"] .vo-ge{display:block}
@@ -131,7 +131,7 @@ div.vo,div.vo-fx,div.vo-glow{background:none;box-shadow:none;border:0;border-rad
   .vo-b1,.vo-b2{animation:none}
   .vo-glow{transition:opacity 150ms linear}
   .vo-glow.sp i{animation:none}
-  .vo-glow.sp .vo-gh{display:none}
+  .vo-gh{display:none}
   .vo-bar,.vo-bar.on,.vo-panel,.vo-panel.on,.vo-hint{transform:none;transition:opacity 150ms linear}
   .vo-words,.vo-bar.on .vo-words{transition:opacity 150ms linear}
   .vo-ln>span{transition:opacity 150ms linear}

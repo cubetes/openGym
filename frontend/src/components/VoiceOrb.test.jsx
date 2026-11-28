@@ -635,7 +635,7 @@ describe('the motion', () => {
   it('the edge glow is only in bar mode, tinted, hidden from screen readers, and lifts over the rest bar', async () => {
     await mount()
     await show(SHORT)
-    expect(q('.vo-glow')).toBeNull()
+    expect(q('.vo-glow').className).not.toMatch(/\b(on|sp|mut)\b/)
     await click(orb())
     const g = q('.vo-glow')
     expect(g.getAttribute('aria-hidden')).toBe('true')
@@ -646,6 +646,16 @@ describe('the motion', () => {
     await mount()
     expect(q('.vo-glow').className).toContain('rest')
     expect(q('.vo-fx').className).toContain('off') // the halo gives way
+  })
+
+  it('closing the bar keeps the glow mounted, so it fades out', async () => {
+    await mount()
+    await show(SHORT)
+    await click(orb())
+    expect(q('.vo-glow').className).toMatch(/\bon\b/)
+    await click(orb())
+    expect(q('.vo-glow')).not.toBeNull()
+    expect(q('.vo-glow').className).not.toMatch(/\bon\b/)
   })
 
   it('the bright patch runs once over the estimated length, but not for a 1 or 2 word line', async () => {
@@ -698,14 +708,14 @@ describe('the style', () => {
     expect(css).toMatch(/\.vo-glow\{[^}]*height:230px/)
     const idx = readFileSync('src/index.css', 'utf8')
     expect(idx).toMatch(/body\.vpill #app\{position:relative;z-index:1\}/) // the page paints over the glow (z 0), under the status-bar strip (z 30)
-    expect(css).toMatch(/\.vo-fx\{z-index:0\}/)
+    expect(css).toMatch(/\.vo-fx\{z-index:0[;}]/)
     expect(css).toMatch(/\.vo-glow\{[^}]*z-index:0/)
     expect(css).toMatch(/:root\[data-theme="light"\] \.vo-ge\{display:block\}/)
     expect(css).toMatch(/cubic-bezier\(\.77,0,\.175,1\) infinite/)
     const rm = css.slice(css.indexOf('@media (prefers-reduced-motion:reduce)'))
     expect(rm).toMatch(/\.vo-b1,\.vo-b2\{animation:none\}/)
     expect(rm).toMatch(/\.vo-glow\.sp i\{animation:none\}/)
-    expect(rm).toMatch(/\.vo-glow\.sp \.vo-gh\{display:none\}/)
+    expect(rm).toMatch(/\.vo-gh\{display:none\}/)
     expect(rm).toMatch(/\.vo-glow\{transition:opacity 150ms linear\}/)
   })
 })
