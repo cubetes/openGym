@@ -116,6 +116,11 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
         // the app makes a sound (Discord: "the app pauses my music"). .ambient mixes with it and
         // keeps to the ring/silent switch; not activated here, only the kind it will be.
         RestAlertPlugin.mixWithMusic()
+        if #available(iOS 16.0, *) {
+            Task { await NaturalVoiceEngine.shared.setOnLoading { [weak self] on in
+                DispatchQueue.main.async { self?.notifyListeners("voiceLoading", data: ["on": on]) }
+            } }
+        }
     }
 
     /** The app's resting audio session: mixes with other audio, never interrupts it. */

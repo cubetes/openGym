@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
-const h = vi.hoisted(() => ({ ui: { timer: null, work: null, countIn: null }, picked: 'natural:af_heart', speech: true }))
+const h = vi.hoisted(() => ({ loading: null, ui: { timer: null, work: null, countIn: null }, picked: 'natural:af_heart', speech: true }))
 vi.mock('../store/useStore.js', async () => {
   const { create } = await import('zustand')
   const useStore = create(set => ({
@@ -20,7 +20,7 @@ vi.mock('../lib/speech.js', () => ({
   hush: vi.fn(), speechSupported: () => h.speech, onVoices: () => () => {}, pickedVoice: () => h.picked,
   voiceLabel: v => v.name, voiceState: () => ({ voices: [], auto: null }),
 }))
-vi.mock('../lib/rest-alert.js', () => ({ tickNative: vi.fn() }))
+vi.mock('../lib/rest-alert.js', () => ({ tickNative: vi.fn(), onVoiceLoading: cb => { h.loading = cb; return () => { h.loading = null } } }))
 vi.mock('../lib/nav.js', () => ({ nav: vi.fn() }))
 vi.mock('../lib/spoken-cues.js', async () => {
   const { useStore } = await import('../store/useStore.js')
@@ -737,7 +737,52 @@ describe('the motion', () => {
   })
 })
 
+describe('the loading ring', () => {
+  const load = on => act(async () => { h.loading({ on }) })
+
+  it('shows after 300 ms of loading, names it for screen readers, and goes with loading-off', async () => {
+    await mount()
+    const label = orb().getAttribute('aria-label')
+    await load(true)
+    await run(299)
+    expect(orb().classList.contains('loading')).toBe(false)
+    await run(2)
+    expect(orb().classList.contains('loading')).toBe(true)
+    expect(orb().getAttribute('aria-label')).toBe(label + ' Loading, please wait…')
+    await load(false)
+    expect(orb().classList.contains('loading')).toBe(false)
+    expect(orb().getAttribute('aria-label')).toBe(label)
+  })
+
+  it('never shows for a load that ends within 300 ms', async () => {
+    await mount()
+    await load(true)
+    await run(200)
+    await load(false)
+    await run(500)
+    expect(orb().classList.contains('loading')).toBe(false)
+  })
+
+  it('shows on a muted orb too, which keeps its muted look', async () => {
+    await setS({ ...S0, active: { ...S0.active, voiceMuted: true } })
+    await mount()
+    await run(200)
+    await load(true)
+    await run(301)
+    expect(orb().classList.contains('loading')).toBe(true)
+    expect(orb().classList.contains('muted')).toBe(true)
+  })
+})
+
 describe('the style', () => {
+  it('turns the loading ring once, and holds it still under reduced motion', () => {
+    const css = readFileSync('src/components/VoiceOrb.css', 'utf8')
+    expect(css).toMatch(/\.vo-orb\.loading \.vo-ring::after\{animation:vo-spin 1s linear infinite\}/)
+    expect(css).toMatch(/@keyframes vo-spin\{to\{transform:rotate\(1turn\)\}\}/)
+    const rm = css.slice(css.indexOf('@media (prefers-reduced-motion:reduce)'))
+    expect(rm).toMatch(/\.vo-orb\.loading \.vo-ring::after\{animation:none!important\}/)
+  })
+
   const css = readFileSync('src/components/VoiceOrb.css', 'utf8')
 
   it('has a reduced-motion block, and never animates a layout property', () => {

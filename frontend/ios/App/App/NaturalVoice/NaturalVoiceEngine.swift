@@ -25,6 +25,10 @@ actor NaturalVoiceEngine {
     private var britishLoaded = false
     private var idle: Task<Void, Never>?
     private var loggedDictionary = false
+    /// The plugin's: told once when a real model load starts and once when it ends (the orb shows a ring meanwhile).
+    private var onLoading: (@Sendable (Bool) -> Void)?
+
+    func setOnLoading(_ cb: @escaping @Sendable (Bool) -> Void) { onLoading = cb }
 
     private init() {
         NotificationCenter.default.addObserver(forName: UIApplication.didReceiveMemoryWarningNotification, object: nil, queue: nil) { _ in
@@ -88,7 +92,8 @@ actor NaturalVoiceEngine {
         guard let dir = Self.modelDir() else { throw NaturalVoiceError.noModel }
         let task = Task { try await KokoroTTSModel.fromPretrained(cacheDir: dir, computeUnits: .cpuAndNeuralEngine, warmUp: true) }
         loading = task
-        defer { loading = nil }
+        onLoading?(true)
+        defer { loading = nil; onLoading?(false) }
         let m = try await task.value
         model = m
         britishLoaded = false  // fromPretrained loads the US dictionaries

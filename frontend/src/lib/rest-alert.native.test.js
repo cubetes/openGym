@@ -504,6 +504,24 @@ describe('spoken cues through the phone', () => {
     await new Promise(r => setTimeout(r, 0))
   })
 
+  it('onVoiceLoading listens for voiceLoading on the phone and is inert elsewhere', async () => {
+    h.platform = 'ios'
+    h.calls = []
+    let alert = await import('./rest-alert.js')
+    const off = alert.onVoiceLoading(() => {})
+    await new Promise(r => setTimeout(r, 0))
+    expect(h.calls).toContain('addListener')
+    expect(h.args.addListener).toBe('voiceLoading')
+    expect(() => off()).not.toThrow()
+    vi.resetModules()
+    h.platform = 'web'
+    h.calls = []
+    alert = await import('./rest-alert.js')
+    expect(typeof alert.onVoiceLoading(() => {})).toBe('function')
+    await new Promise(r => setTimeout(r, 0))
+    expect(h.calls).not.toContain('addListener')
+  })
+
   it('Android ducks for a line and lets go when nothing is left to say', () => {
     const java = readFileSync(new URL('../../android/app/src/main/java/ch/duartesantos/opengym/SpeechCue.java', import.meta.url), 'utf8')
     expect(java).toMatch(/AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK|RestAlert\.duck\(/)

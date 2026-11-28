@@ -6,7 +6,7 @@ import { useVoiceLevel, smooth, lineLevels, curveMs } from '../lib/voice-level.j
 import { cues } from '../lib/spoken-cues.js'
 import { hush, onVoices, pickedVoice, speechSupported, voiceLabel, voiceState } from '../lib/speech.js'
 import { NATURAL_VOICES } from '../lib/natural-voice.js'
-import { tickNative } from '../lib/rest-alert.js'
+import { onVoiceLoading, tickNative } from '../lib/rest-alert.js'
 import { isOn } from '../lib/modules.js'
 import { nav } from '../lib/nav.js'
 import { t } from '../lib/i18n.js'
@@ -67,6 +67,13 @@ function Orb() {
   const on = useStore(s => isOn(s.S, 'voices'))
   const seen = useStore(s => s.S.voiceHintSeen === true)
   const voice = useVoiceInfo(on)
+  // The Natural model is loading: a ring shows, but only once the load has taken over 300 ms (no flash on a fast one).
+  const [loading, setLoading] = useState(false)
+  useEffect(() => {
+    let timer
+    const off = onVoiceLoading(ev => { clearTimeout(timer); if (ev?.on) timer = setTimeout(() => setLoading(true), 300); else setLoading(false) })
+    return () => { clearTimeout(timer); off() }
+  }, [])
   const [acts, setActs] = useState(false) // the panel above the bar is open (the store's `expanded` also holds the line while focused)
   const [held, setHeld] = useState(false)
   const [hint, setHint] = useState(false)
@@ -104,7 +111,7 @@ function Orb() {
 
   // The one animation loop: runs while the voice speaks (or a real curve is still playing) and ends when the level is back to nothing.
   const gate = useRef({})
-  gate.current = { ok: !muted && !silent, speaking, bar }
+  gate.current = { ok: !muted && !silent && !loading, speaking, bar }
   const endLoop = () => {
     const l = loop.current
     cancelAnimationFrame(l.raf)
@@ -147,7 +154,7 @@ function Orb() {
     Object.assign(loop.current, { calm: reduced(), light: document.documentElement.dataset.theme === 'light', bars: [...lines.current.children] })
     loop.current.raf = requestAnimationFrame(frame)
   }, [speaking])
-  useEffect(() => { if (settled || silent) endLoop() }, [settled, silent])
+  useEffect(() => { if (settled || silent || loading) endLoop() }, [settled, silent, loading])
   useEffect(() => () => { cancelAnimationFrame(loop.current.raf); fx.current?.querySelectorAll('.vo-rp').forEach(r => r.remove()) }, [])
 
   const setBar = v => update(S => { S.voiceBar = v })
@@ -342,7 +349,8 @@ function Orb() {
         : speaking ? (bar ? t('Voice, speaking, {0}. Hide the words.', who) : t('Voice, speaking, {0}. Show the words.', who))
           : (bar ? t('Voice, {0}. Hide the words.', who) : t('Voice, {0}. Show the words.', who))
 
-  const cls = ['vo-orb', settled && 'muted', silent && 'sil', speaking && 'sp', held && 'held', dot && 'dot'].filter(Boolean).join(' ')
+  const orbLabel = loading ? label + ' ' + t('Loading, please wait…') : label
+  const cls = ['vo-orb', loading && 'loading', settled && 'muted', silent && 'sil', speaking && 'sp', held && 'held', dot && 'dot'].filter(Boolean).join(' ')
   // Focus inside the bar holds the line (the store defers hide while `expanded`), so it never goes from under a finger or a screen reader.
   return <>
     <div ref={fx} className={'vo-fx' + (muted || silent || bar ? ' off' : '')} aria-hidden="true">
@@ -367,10 +375,11 @@ function Orb() {
         </div>
         <div ref={panel} className={'vo-panel' + (panelOpen ? ' on' : '')} inert={!panelOpen}>{body}</div>
       </div>
-      <button type="button" className={cls} aria-expanded={bar} aria-label={label}
+      <button type="button" className={cls} aria-expanded={bar} aria-label={orbLabel}
         onPointerDown={down} onPointerUp={release} onPointerLeave={release} onPointerCancel={release}
         onContextMenu={e => e.preventDefault()} onClick={click}>
         <span ref={orbBody} className="vo-body"><i className="vo-b1" /><i className="vo-b2" /><i ref={core} className="vo-core" /><i className={'vo-wash' + (wash ? ' go' : '')} key={wash} /></span>
+        <span className="vo-ring" aria-hidden="true" />
         <span ref={lines} className="vo-lines" aria-hidden="true"><b /><b /><b /></span>
         <span className="vo-dot" aria-hidden="true" />
       </button>

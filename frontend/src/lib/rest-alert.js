@@ -243,6 +243,18 @@ export function onVoiceLine(cb) {
   return () => { off = true; if (handle) handle.remove() }
 }
 
+/** The Natural model starts ({ on: true }) or finishes ({ on: false }) loading. Returns the way to stop listening; nothing off the phones. */
+export function onVoiceLoading(cb) {
+  if (!MOBILE) return () => {}
+  let off = false
+  let handle = null
+  restPlugin()
+    .then(p => p && p.RestAlert.addListener('voiceLoading', ev => { if (!off) cb(ev) }))
+    .then(h => { handle = h; if (off && h) h.remove() })
+    .catch(() => {})
+  return () => { off = true; if (handle) handle.remove() }
+}
+
 /** A light tap: the phone's own where there is one, else a short buzz. Never throws. */
 export function tickNative() {
   const buzz = () => { try { navigator.vibrate?.(8) } catch { /* no haptics here */ } }

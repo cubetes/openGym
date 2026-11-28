@@ -114,6 +114,14 @@
 .vo-orb.muted .vo-body,.vo-orb.sil .vo-body{transition:transform 200ms var(--ease-out)}
 .vo-orb.muted .vo-body i:not(.vo-wash),.vo-orb.sil .vo-body i:not(.vo-wash){display:none}
 .vo-orb.muted .vo-lines,.vo-orb.sil .vo-lines{color:var(--label-2)}
+.vo-orb.loading .vo-lines b{transform:scaleY(.4);transition:transform 200ms var(--ease-out)}
+/* The model is loading: a thin ring round the orb, one bright arc turning over a faint track. */
+.vo-ring{position:absolute;inset:-4px;border-radius:50%;opacity:0;transition:opacity 150ms var(--ease-out)}
+.vo-ring::before,.vo-ring::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--acc)}
+.vo-ring::before{opacity:.25}
+.vo-ring::after{border-color:transparent;border-top-color:var(--acc)}
+.vo-orb.loading .vo-ring{opacity:1}
+.vo-orb.loading .vo-ring::after{animation:vo-spin 1s linear infinite}
 .vo-orb.muted .vo-lines b,.vo-orb.sil .vo-lines b{transform:scaleY(.4);transition:transform 200ms var(--ease-out)}
 .vo-dot{display:none;position:absolute;inset-inline-end:1px;top:1px;width:14px;height:14px;border-radius:50%;background:var(--acc);border:2.5px solid var(--bg)}
 .vo-orb.dot .vo-dot{display:block;animation:vo-pop 160ms var(--ease-out) both}
@@ -144,7 +152,9 @@
   .vo-cap,.vo-acts button,.vo-btn,.vo-round{transition:none}
   /* No press scale: an instant dim says the press landed. */
   .vo-cap:active,.vo-acts button:active,.vo-btn:active,.vo-round:active{transform:none;opacity:.6}
-  .vo-orb.muted .vo-lines b,.vo-orb.sil .vo-lines b{transition:none}
+  .vo-ring{transition:opacity 150ms linear!important}
+  .vo-orb.loading .vo-ring::after{animation:none!important}
+  .vo-orb.muted .vo-lines b,.vo-orb.sil .vo-lines b,.vo-orb.loading .vo-lines b{transition:none}
   .vo-orb.dot .vo-dot{animation:vo-fade 160ms linear both!important}
   @keyframes vo-fade{from{opacity:0}}
   @starting-style{.vo-bar.on,.vo-panel.on{transform:none}.vo-ln>span{filter:none;transform:none}}
