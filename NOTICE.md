@@ -197,6 +197,6 @@ openGym's own work, and each keeps its own licence:
   2.0; the licence text is `LICENSE-speech-swift` in that folder. openGym changed it: it trims
   each chunk, adds an 80 ms gap between chunks, and drops the download code.
 - **Kokoro-82M**, the voice model. By hexgrad, Apache License 2.0. The Core ML conversion
-  (`aufklarer/Kokoro-82M-CoreML`) is by aufklarer. The phone downloads it on request; it is not
+  (`aufklarer/Kokoro-82M-CoreML-INT8`) is by aufklarer. The phone downloads it on request; it is not
   in the app or this repository.
 - **misaki**, the British English pronunciation dictionaries. By hexgrad, Apache License 2.0.

@@ -21,7 +21,7 @@ import Foundation
 public final class KokoroTTSModel {
 
     /// Default HuggingFace model ID.
-    public static let defaultModelId = "aufklarer/Kokoro-82M-CoreML"
+    public static let defaultModelId = "aufklarer/Kokoro-82M-CoreML-INT8"
     /// German voice bundles: one Kokoro checkpoint per voice, each with its
     /// single `dm_martin` / `df_victoria` preset and `dict_de.json`.
     public static let germanMartinModelId = "aufklarer/Kokoro-82M-German-Martin-CoreML"

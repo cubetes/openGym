@@ -157,11 +157,12 @@ The full-quality files only ever travel from the release machine to Apple, like 
 #### Natural voice pack (Background Assets)
 
 The Natural voice (iPhone, English) is one Apple-hosted asset pack, `voice-natural-en`, about
-320 MB, on demand. It changes only when the model does, not with every release. The model is
+90 MB, on demand. It changes only when the model does, not with every release. The model is
 Apache-2.0, so unlike the animations the licence does not limit where it lives. It is too big for
 the repo, so it is built on the release machine and uploaded here.
 
-1. Fetch `aufklarer/Kokoro-82M-CoreML` at revision `d21aa979562ed8c0f4ff6b9e64807cef8e7a38e4`
+1. Fetch `aufklarer/Kokoro-82M-CoreML-INT8` (the compressed model) at revision
+   `4ef656f55554ceb242ed11febbdbbffd60dd5938`
    from Hugging Face into one folder. Take only what the app uses: `kokoro_5s.mlmodelc/`,
    `G2PEncoder.mlmodelc/`, `G2PDecoder.mlmodelc/`, `us_gold.json`, `us_silver.json`,
    `vocab_index.json`, `g2p_vocab.json`, `config.json`, and `voices/af_heart.json`,

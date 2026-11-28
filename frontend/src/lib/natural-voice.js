@@ -13,7 +13,7 @@
 import { MOBILE } from './mobile.js'
 
 export const PREFS_KEY = 'gym_natural_v1'
-export const NATURAL_MB = 330 // shown until Apple's own figure (info) is in
+export const NATURAL_MB = 90 // shown until Apple's own figure (info) is in
 export const NATURAL_VOICES = [
   { id: 'natural:af_heart', name: 'Heart', region: 'US' },
   { id: 'natural:am_michael', name: 'Michael', region: 'US' },

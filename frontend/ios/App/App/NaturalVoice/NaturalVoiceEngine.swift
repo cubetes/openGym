@@ -4,10 +4,16 @@ import UIKit
 // The Natural voice: Kokoro on Core ML makes a line into a WAV in Caches. RestAlertPlugin plays the file.
 // Text never leaves the phone.
 
+/// The one place the model folder is named, readable on every iOS the plugin runs on.
+enum NaturalVoicePaths {
+    static let revision = "4ef656f5"
+    static var copiedDir: URL { NaturalVoicePaths.copiedDir }
+}
+
 @available(iOS 16.0, *)
 actor NaturalVoiceEngine {
     static let shared = NaturalVoiceEngine()
-    static let revision = "d21aa979"
+    static let revision = NaturalVoicePaths.revision
     private static let keep = 300
     private static let idleSeconds: UInt64 = 300
 
@@ -26,10 +32,7 @@ actor NaturalVoiceEngine {
     // MARK: - where the model is
 
     /// The folder B1 copies the pack into. `complete.json` ({"files": {name: size}}) is written last, so a half copy never counts.
-    static var copiedDir: URL {
-        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("NaturalVoice/\(revision)", isDirectory: true)
-    }
+    static var copiedDir: URL { NaturalVoicePaths.copiedDir }
 
     static func modelDir() -> URL? {
         let dir = copiedDir

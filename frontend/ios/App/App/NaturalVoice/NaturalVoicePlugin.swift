@@ -45,10 +45,7 @@ public class NaturalVoicePlugin: CAPPlugin, CAPBridgedPlugin {
         return nil
     }
 
-    private static var copiedDir: URL {
-        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("NaturalVoice/d21aa979", isDirectory: true)
-    }
+    private static var copiedDir: URL { NaturalVoicePaths.copiedDir }
 
     /// The DEBUG model folder (Ruling 6): in use, but not ours to delete.
     private static var debugModel: Bool {
