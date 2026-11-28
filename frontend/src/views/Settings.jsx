@@ -880,7 +880,8 @@ export default function Settings({ page = null, find = null, via = null, entryKe
       const flashOn = !!S.timerFlash
       const flashValue = appAndroid ? (S.restLightScreen !== false ? t('Wakes the screen') : t('Screen stays dark')) : t('Screen blinks')
       const cuesOn = S.spokenCues === true
-      const voiceValue = voiceRowValue({ ...voiceState(), stuck: voiceState().ios && !voiceState().auto }, pickedVoice()) ?? t('Automatic') // null while the voices load: the strip stays
+      // only while cues are on, as the old Voice row did; null while the voices load, the strip stays
+      const voiceValue = cuesOn ? voiceRowValue({ ...voiceState(), stuck: voiceState().ios && !voiceState().auto }, pickedVoice()) ?? t('Automatic') : null
       const find = (...a) => a.map(x => t(x)).join('|')
       // The tiles are the only place for these channels (flow-studio.md Round 4). A strip shows
       // only while its channel is on; Android Flash keeps one either way, since "Light up the
