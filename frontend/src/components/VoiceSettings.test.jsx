@@ -507,10 +507,12 @@ describe('Settings → Timer alerts → Voice', () => {
       await render(<VoiceList />)
       const live = host.querySelector('#vp-live')
       expect(live.getAttribute('aria-live')).toBe('polite')
-      await tap(rowTitled('Heart'))
+      await tap(rowTitled('Automatic'))
       await act(async () => { await new Promise(r => setTimeout(r, 80)) })
       expect(live.textContent).toBe('Playing')
     })
+    const lineText = () => sampleLine(mocks.S) || sampleCue('kg')
+    const say = ev => mocks.lineCbs.forEach(cb => cb({ text: lineText(), levels: [], ...ev }))
     it('a Natural sample waits: no playing look, the text after 300 ms, both end with the line', async () => {
       phone(ready)
       await render(<VoiceList />)
@@ -527,9 +529,56 @@ describe('Settings → Timer alerts → Voice', () => {
         expect(rowTitled('Heart').querySelector('.tier-tile.playing')).toBeNull()
         await act(async () => { vi.advanceTimersByTime(60) })
         expect(host.querySelector('#vp-live').textContent).toBe('Loading, please wait…')
-        await act(async () => { mocks.lineCbs.forEach(cb => cb({ text: 'x', ms: 2000 })) })
+        await act(async () => { say({ ms: 2000 }) })
         expect(sub()).toBeNull()
         expect(rowTitled('Heart').querySelector('.tier-tile.playing')).not.toBeNull()
+      } finally { vi.useRealTimers() }
+    })
+    it('another line\u2019s event does not end the wait; Playing is announced when the line starts, not at the tap', async () => {
+      phone(ready)
+      await render(<VoiceList />)
+      vi.useFakeTimers()
+      try {
+        await tap(rowTitled('Heart'))
+        await act(async () => { vi.advanceTimersByTime(400) })
+        await act(async () => { mocks.lineCbs.forEach(cb => cb({ text: 'a workout cue', levels: [], ms: 900 })) })
+        expect(rowTitled('Heart').querySelector('.lrow-s')?.textContent).toBe('Loading, please wait…')
+        expect(rowTitled('Heart').querySelector('.tier-tile.playing')).toBeNull()
+        await act(async () => { vi.advanceTimersByTime(60) })
+        expect(host.querySelector('#vp-live').textContent).toBe('Loading, please wait…')
+        await act(async () => { say({ ms: 2000 }) })
+        await act(async () => { vi.advanceTimersByTime(60) })
+        expect(host.querySelector('#vp-live').textContent).toBe('Playing')
+      } finally { vi.useRealTimers() }
+    })
+    it('a cover (the Apple voice speaks the line) ends the wait and the look ends on the estimate, not 15 s later', async () => {
+      phone(ready)
+      await render(<VoiceList />)
+      vi.useFakeTimers()
+      try {
+        await tap(rowTitled('Heart'))
+        await act(async () => { vi.advanceTimersByTime(400) })
+        expect(rowTitled('Heart').querySelector('.lrow-s')).not.toBeNull()
+        await act(async () => { say({ ms: 0, cover: true }) })
+        expect(rowTitled('Heart').querySelector('.lrow-s')).toBeNull()
+        expect(rowTitled('Heart').querySelector('.tier-tile.playing')).not.toBeNull()
+        await act(async () => { vi.advanceTimersByTime(speakMs(lineText(), 1) + 10) })
+        expect(rowTitled('Heart').querySelector('.tier-tile.playing')).toBeNull()
+      } finally { vi.useRealTimers() }
+    })
+    it('the hero says Playing only once a Natural line starts', async () => {
+      phone(ready)
+      localStorage.setItem('og_speech_voice', 'natural:af_heart')
+      await render(<VoiceSettings />)
+      vi.useFakeTimers()
+      try {
+        const btn = () => [...host.querySelectorAll('.btn')].find(b => /^(Try it|Playing)$/.test(b.textContent))
+        await act(async () => { btn().click() })
+        expect(btn().textContent).toBe('Try it')
+        expect(host.querySelector('.vhero.play')).toBeNull()
+        await act(async () => { mocks.lineCbs.forEach(cb => cb({ text: sampleCue('kg'), levels: [], ms: 800 })) })
+        expect(btn().textContent).toBe('Playing')
+        expect(host.querySelector('.vhero.play')).not.toBeNull()
       } finally { vi.useRealTimers() }
     })
     it('a line that starts at once never shows the text', async () => {
@@ -538,7 +587,7 @@ describe('Settings → Timer alerts → Voice', () => {
       vi.useFakeTimers()
       try {
         await tap(rowTitled('Heart'))
-        await act(async () => { mocks.lineCbs.forEach(cb => cb({ text: 'x', ms: 2000 })) })
+        await act(async () => { say({ ms: 2000 }) })
         await act(async () => { vi.advanceTimersByTime(400) })
         expect(rowTitled('Heart').querySelector('.lrow-s')).toBeNull()
         expect(rowTitled('Heart').querySelector('.tier-tile.playing')).not.toBeNull()

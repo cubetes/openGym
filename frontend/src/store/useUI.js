@@ -915,7 +915,8 @@ if (MOBILE) {
   useStore.subscribe(allowNatural)
   subscribeBuildCaps(allowNatural)
   // The Natural voice says how loud and how long the line really is; the orb and the caption follow it.
-  onVoiceLine(ev => { useVoiceLevel.getState().fromNative(ev); useCaption.getState().heard(ev.text, ev.ms) })
+  // A cover (the Apple voice speaks a Natural line) carries no levels or length: the orb keeps its own look.
+  onVoiceLine(ev => { if (ev.cover) return; useVoiceLevel.getState().fromNative(ev); useCaption.getState().heard(ev.text, ev.ms) })
   onAppActive(() => { refreshVoices().catch(() => {}); refreshNatural() })
 }
 

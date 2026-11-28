@@ -49,13 +49,14 @@ let wait = 0, waitT = 0, offWait = () => {}
 const waitSubs = new Set()
 const setWait = v => { wait = v; waitSubs.forEach(f => f()) }
 const stopWait = () => { clearTimeout(waitT); offWait(); if (wait) setWait(0) }
-const startWait = () => {
+const startWait = text => {
   stopWait()
   setWait(1)
-  offWait = onVoiceLine(ev => { if (ev?.ms > 0) stopWait() })
+  // The phone sends the line's event when it starts (a cover too: the Apple voice speaks it); a workout cue's event is not this sample's.
+  offWait = onVoiceLine(ev => { if (ev?.text === text) { stopWait(); announcePlaying() } })
   waitT = setTimeout(() => {
     setWait(2); announce(t('Loading, please wait…'))
-    waitT = setTimeout(stopWait, 15000) // lean: if the Natural render fails the phone covers with the Apple voice and sends no event; the text stays until this cap
+    waitT = setTimeout(stopWait, 15000) // the phone waits no longer than this for the model
   }, 300)
 }
 const useWait = () => useSyncExternalStore(f => { waitSubs.add(f); return () => waitSubs.delete(f) }, () => wait)
@@ -63,8 +64,8 @@ let celebrated = 0 // the Natural install the picker has already shown arriving
 let endPlaying = null // the hero's Playing state; anything else that speaks ends it
 const sayIt = (text, extra = {}) => {
   const o = { ...voiceOpts(S_()), queue: false, patient: true, ...extra }
-  endPlaying?.(); announcePlaying(); hush(); stopWait()
-  if (isNatural(o.voice)) startWait()
+  endPlaying?.(); hush(); stopWait()
+  if (isNatural(o.voice)) startWait(text); else announcePlaying()
   speak(text, o)
 }
 let offLine = () => {}
@@ -76,9 +77,9 @@ const endAfter = (timer, all, last, speed, done, natural = false) => {
   const end = () => { stopWait(); done() }
   timer.current = setTimeout(end, speakMs(all, speed) + (natural ? 15000 : 0))
   offLine = onVoiceLine(ev => {
-    if (ev?.text !== last || !(ev.ms > 0)) return
+    if (ev?.text !== last || !(ev.ms > 0 || ev.cover)) return
     clearTimeout(timer.current)
-    timer.current = setTimeout(end, ev.ms)
+    timer.current = setTimeout(end, ev.cover ? speakMs(last, speed) : ev.ms) // a cover has no length: the plain estimate
   })
 }
 const fmtX = n => `${Math.round(n * 100) / 100}×`
@@ -498,7 +499,7 @@ function VoiceHero({ vs, cur, openList }) {
       <span className="vhero-chg">{t('Change')}<Icon name="chevronRight" aria-hidden="true" /></span>
     </button>
     <div className="vhero-wave" aria-hidden="true">{WAVE.map((st, i) => <i key={i} style={st} />)}</div>
-    <Button variant="primary" className="vhero-try" icon="play" onClick={tryIt}>{playing ? t('Playing') : t('Try it')}</Button>
+    <Button variant="primary" className="vhero-try" icon="play" onClick={tryIt}>{lit ? t('Playing') : t('Try it')}</Button>
   </div>
 }
 
