@@ -4597,6 +4597,14 @@ button.wl-summary{width:100%;padding:0 0 10px;text-align:start;border-radius:var
 .vp-steps{list-style:none;margin:0 0 16px;padding:0;display:flex;flex-direction:column;gap:12px}
 .vp-steps li{display:flex;gap:12px;align-items:flex-start;font-size:var(--fs-body);line-height:1.3}
 .vp-n{flex:none;width:24px;height:24px;border-radius:50%;background:var(--acc-soft);color:var(--acc-ink);font-size:var(--fs-footnote);font-weight:600;display:inline-flex;align-items:center;justify-content:center}
+.vp-act{width:auto;flex:none;min-height:44px}
+.vp-head{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.vp-pill{background:var(--acc-soft);color:var(--acc-ink);border-radius:999px;padding:1px 8px;font-size:var(--fs-caption, 12px);font-weight:600;text-transform:none;letter-spacing:0;white-space:nowrap}
+.vp-bar{display:block;height:4px;margin-top:8px;border-radius:2px;background:var(--surface-3);overflow:hidden}
+.vp-bar i{display:block;height:100%;background:var(--acc);transition:width 1s linear}
+.vp-bad{color:var(--red)}
+.vp-fade{animation:fade-only 120ms ease}
+.vp-dim .lrow-t{color:var(--label-2)}
 @keyframes voice-rec-pulse{from{opacity:1}to{opacity:.55}}
 @media (prefers-reduced-motion:reduce){.voice-rec .lrow-i{animation:none}}
 

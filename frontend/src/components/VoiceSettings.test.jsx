@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
 const mocks = vi.hoisted(() => {
-  const state = { S: null, sheets: [], opts: [], mobile: false, voices: { voices: [], auto: null, ios: false }, subs: [], refresh: () => Promise.resolve() }
+  const state = { S: null, sheets: [], opts: [], mobile: false, voices: { voices: [], auto: null, ios: false }, subs: [], refresh: () => Promise.resolve(), nat: null, natCalls: [], natSubs: [], loc: 'en-GB' }
   state.snapshot = () => ({ S: state.S, update: mut => { const next = structuredClone(state.S); mut(next); state.S = next } })
   return state
 })
@@ -22,6 +22,18 @@ vi.mock('../store/useUI.js', () => {
   return { useUI }
 })
 vi.mock('../lib/mobile.js', () => ({ get MOBILE() { return mocks.mobile }, nativePlatform: () => Promise.resolve(null) }))
+const idleNat = { available: false, debugModel: false, state: 'none', fraction: null, bytes: 0, total: null, error: null }
+// The model's state is natural-voice.js's business (its own tests); here it is whatever the test says.
+vi.mock('../lib/natural-voice.js', async importOriginal => ({
+  ...(await importOriginal()),
+  naturalState: () => mocks.nat,
+  onNatural: cb => { mocks.natSubs.push(cb); return () => {} },
+  refreshNatural: () => { mocks.natCalls.push(['refresh']); return Promise.resolve(mocks.nat) },
+  downloadNatural: o => { mocks.natCalls.push(['download', o]); return Promise.resolve('ready') },
+  cancelNatural: () => { mocks.natCalls.push(['cancel']); return Promise.resolve() },
+  removeNatural: () => { mocks.natCalls.push(['remove']); return Promise.resolve(true) },
+}))
+vi.mock('../lib/i18n-core.js', async importOriginal => ({ ...(await importOriginal()), dateLocale: () => mocks.loc }))
 // The phone's voice list is the lib's business (speech.test.js); here it is whatever the test says.
 vi.mock('../lib/speech.js', async importOriginal => {
   const o = await importOriginal()
@@ -34,6 +46,7 @@ vi.mock('../lib/speech.js', async importOriginal => {
   }
 })
 
+const { cues } = await import('../lib/spoken-cues.js')
 const { default: VoiceSettings, VoiceList, momentSummary, micErrorText, recordType } = await import('./VoiceSettings.jsx')
 
 let host, root, spoken
@@ -47,6 +60,10 @@ beforeEach(() => {
   mocks.subs = []
   mocks.refresh = () => Promise.resolve()
   mocks.mobile = false
+  mocks.nat = idleNat
+  mocks.natCalls = []
+  mocks.natSubs = []
+  mocks.loc = 'en-GB'
   mocks.voices = { voices: [{ id: 'anna', name: 'Anna', lang: 'en-GB', online: false }], auto: null, ios: false }
   host = document.createElement('div')
   document.body.appendChild(host)
@@ -119,6 +136,7 @@ describe('Settings → Timer alerts → Voice', () => {
   })
   it('a Natural pick hides Pitch', async () => {
     localStorage.setItem('og_speech_voice', 'natural:af_heart')
+    mocks.nat = { ...idleNat, available: true, state: 'ready', bytes: 90e6 }
     await render(<VoiceSettings />)
     expect(titles()).not.toContain('Pitch')
     expect(host.querySelectorAll('[role="slider"]')).toHaveLength(1)
@@ -222,6 +240,178 @@ describe('Settings → Timer alerts → Voice', () => {
       localStorage.setItem('og_speech_voice', 'anna')
       await render(<VoiceSettings />)
       expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Anna')
+    })
+  })
+  describe('Natural voice in the picker', () => {
+    afterEach(() => vi.restoreAllMocks())
+    const phone = nat => { mocks.mobile = true; mocks.voices = { voices: [{ id: 'anna', name: 'Anna', lang: 'en-GB', online: false }], auto: null, ios: true }; mocks.nat = { ...idleNat, available: true, ...nat } }
+    const ready = { state: 'ready', bytes: 88.6e6 }
+    const button = text => [...host.querySelectorAll('button')].find(b => b.textContent === text)
+    const headers = () => [...host.querySelectorAll('.sect-t')].map(e => e.textContent)
+    const tap = async el => { await act(async () => { el.click() }) }
+    it('the offer: size, Download with Wi-Fi only on, and the switch is kept', async () => {
+      phone({})
+      await render(<VoiceList />)
+      expect(headers()).toContain('Natural voice')
+      expect(host.textContent).toContain('One download, about 90 MB.')
+      expect(host.textContent).toContain('Made on your phone. Nothing leaves it.')
+      expect(host.querySelector('[role="switch"]').getAttribute('aria-checked')).toBe('true')
+      await tap(button('Download'))
+      expect(mocks.natCalls).toContainEqual(['download', { wifiOnly: true }])
+      await tap(host.querySelector('[role="switch"]'))
+      expect(JSON.parse(localStorage.getItem('gym_natural_v1')).wifiOnly).toBe(false)
+      await tap(button('Download'))
+      expect(mocks.natCalls.at(-1)).toEqual(['download', { wifiOnly: false }])
+    })
+    it('Apple’s figure replaces the 90 MB', async () => {
+      phone({ total: 120e6 })
+      await render(<VoiceList />)
+      expect(host.textContent).toContain('One download, about 120 MB.')
+    })
+    it('the picker asks the model for its state and lets go on leaving', async () => {
+      phone({})
+      await render(<VoiceList />)
+      expect(mocks.natCalls).toContainEqual(['refresh'])
+    })
+    it('downloading: progress text, a labelled bar, Cancel', async () => {
+      phone({ state: 'downloading', fraction: 0.42 })
+      await render(<VoiceList />)
+      expect(host.textContent).toContain('Downloading')
+      expect(host.textContent).toContain('38 of 90 MB · Wi-Fi only')
+      const bar = host.querySelector('[role="progressbar"]')
+      expect(bar.getAttribute('aria-label')).toBe('Natural voice download, 42 percent')
+      expect(bar.getAttribute('aria-valuenow')).toBe('42')
+      expect(host.textContent).toContain('The download keeps going while the app is open.')
+      await tap(button('Cancel'))
+      expect(mocks.natCalls).toContainEqual(['cancel'])
+      await tap(host.querySelector('[role="switch"]'))
+      await render(<VoiceList key="off" />)
+      expect(host.textContent).toContain('38 of 90 MB')
+      expect(host.textContent).not.toContain('Wi-Fi only ')
+    })
+    it('a failed download says so, where it dropped, and Try again downloads', async () => {
+      phone({ state: 'downloading', fraction: 0.44 })
+      await render(<VoiceList />)
+      phone({ state: 'none', error: 'failed' })
+      await act(async () => { mocks.natSubs.forEach(cb => cb()) })
+      expect(host.textContent).toContain('Download stopped. Try again.')
+      expect(host.textContent).toContain('The connection dropped at 40 MB.')
+      await tap(button('Try again'))
+      expect(mocks.natCalls).toContainEqual(['download', { wifiOnly: true }])
+    })
+    it('a failure with nothing downloaded or for Wi-Fi leaves the "dropped" line out', async () => {
+      phone({ state: 'none', error: 'needs-wifi' })
+      await render(<VoiceList />)
+      expect(host.textContent).toContain('Download stopped. Try again.')
+      expect(host.textContent).not.toContain('The connection dropped')
+    })
+    it('installed: the header, the badge and three voices; Heart picked shows its check and says it', async () => {
+      phone(ready)
+      localStorage.setItem('og_speech_voice', 'natural:af_heart')
+      await render(<VoiceList />)
+      expect(headers()[0]).toBe('Natural voice · EnglishInstalled')
+      expect(host.querySelector('.vp-pill').textContent).toBe('Installed')
+      expect(titles()).toEqual(['Automatic', 'Heart', 'Michael', 'Emma', 'Remove download', 'Anna'])
+      expect(rowTitled('Heart').getAttribute('aria-label')).toBe('Heart, Natural voice, US, selected')
+      expect(rowTitled('Emma').getAttribute('aria-label')).toBe('Emma, Natural voice, UK')
+      expect(rowTitled('Heart').querySelector('.lrow-k')).not.toBeNull()
+      expect(rowTitled('Automatic').querySelector('.lrow-k')).toBeNull()
+      expect(host.textContent).toContain('Where it has no voice for your language, the Apple voice speaks.')
+    })
+    it('tapping Heart picks it, loads the model and plays the sample in that voice', async () => {
+      phone(ready)
+      const prepare = vi.spyOn(cues, 'prepareFixed').mockImplementation(() => {})
+      await render(<VoiceList />)
+      expect(prepare).not.toHaveBeenCalled()
+      await tap(rowTitled('Heart'))
+      expect(localStorage.getItem('og_speech_voice')).toBe('natural:af_heart')
+      expect(prepare).toHaveBeenCalledTimes(1)
+      expect(mocks.opts.at(-1).voice).toBe('natural:af_heart')
+      expect(rowTitled('Heart').querySelector('.lrow-k')).not.toBeNull()
+      prepare.mockRestore()
+    })
+    it('opening the page with a usable Natural pick loads the model once', async () => {
+      phone(ready)
+      localStorage.setItem('og_speech_voice', 'natural:am_michael')
+      const prepare = vi.spyOn(cues, 'prepareFixed').mockImplementation(() => {})
+      await render(<VoiceList />)
+      await render(<VoiceList />)
+      expect(prepare).toHaveBeenCalledTimes(1)
+      prepare.mockRestore()
+    })
+    it('Remove asks first and removes only after Remove', async () => {
+      phone(ready)
+      await render(<VoiceList />)
+      expect(rowTitled('Remove download').querySelector('.lrow-s').textContent).toBe('Frees 89 MB')
+      await tap(rowTitled('Remove download'))
+      expect(mocks.natCalls).not.toContainEqual(['remove'])
+      expect(mocks.sheets).toHaveLength(1)
+      const close = vi.fn()
+      await render(mocks.sheets[0](close))
+      expect(host.textContent).toContain('Remove Natural voice?')
+      expect(host.textContent).toContain('Frees 89 MB. You can download it again.')
+      await tap(button('Cancel'))
+      expect(mocks.natCalls).not.toContainEqual(['remove'])
+      await tap(button('Remove'))
+      expect(mocks.natCalls).toContainEqual(['remove'])
+    })
+    it('a debug model has no Remove row', async () => {
+      phone({ ...ready, available: false, debugModel: true })
+      await render(<VoiceList />)
+      expect(titles()).toContain('Heart')
+      expect(titles()).not.toContain('Remove download')
+    })
+    it('the Apple voices fold into one row while Natural is installed, and open on a tap', async () => {
+      phone(ready)
+      await render(<VoiceList />)
+      expect(headers()).toContain('Apple voices')
+      expect(headers()).not.toContain('English (UK)')
+      await tap(rowTitled('Anna'))
+      expect(headers()).toContain('English (UK)')
+    })
+    it('a stored Heart pick with no model reads as Automatic, checked, and keeps what is stored', async () => {
+      phone({ state: 'none' })
+      mocks.voices.auto = { id: 'anna', name: 'Anna', lang: 'en-GB', quality: 'enhanced' }
+      localStorage.setItem('og_speech_voice', 'natural:af_heart')
+      await render(<VoiceList />)
+      expect(rowTitled('Automatic').querySelector('.lrow-k')).not.toBeNull()
+      await render(<VoiceSettings />)
+      expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Automatic · Anna')
+      expect(titles()).toContain('Pitch')
+      expect(localStorage.getItem('og_speech_voice')).toBe('natural:af_heart')
+    })
+    it('the Voice row reads Natural voice · Heart with the model ready, and Pitch is gone', async () => {
+      phone(ready)
+      localStorage.setItem('og_speech_voice', 'natural:af_heart')
+      await render(<VoiceSettings />)
+      expect(rowTitled('Voice').querySelector('.lrow-v').textContent).toBe('Natural voice · Heart')
+      expect(titles()).not.toContain('Pitch')
+    })
+    it('a German app gets the note, no Download and no Natural voices', async () => {
+      mocks.loc = 'de-DE'
+      phone(ready)
+      await render(<VoiceList />)
+      expect(host.textContent).toMatch(/Not in .+ yet/)
+      expect(host.textContent).toContain('Your Apple voice keeps speaking.')
+      expect(host.textContent).toContain('Natural voice speaks English for now. Other languages keep the Apple voice.')
+      expect(button('Download')).toBeUndefined()
+      expect(titles()).not.toContain('Heart')
+    })
+    it('an iPhone without the downloader and no debug model shows nothing', async () => {
+      phone({ available: false })
+      await render(<VoiceList />)
+      expect(host.textContent).not.toContain('Natural voice')
+    })
+    it('Android says Natural voice is on iPhone first; no Download', async () => {
+      mocks.mobile = true
+      mocks.voices = { voices: [{ id: 'g', name: 'Google US English', lang: 'en-US' }], auto: null, ios: false }
+      await render(<VoiceList />)
+      expect(host.textContent).toContain('Natural voice is on iPhone first. Android uses your phone’s voices for now.')
+      expect(button('Download')).toBeUndefined()
+    })
+    it('the web shows nothing about Natural voice', async () => {
+      await render(<VoiceList />)
+      expect(host.textContent).not.toContain('Natural voice')
     })
   })
   it('a moment says what it holds', () => {

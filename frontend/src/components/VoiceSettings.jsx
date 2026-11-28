@@ -15,9 +15,10 @@ import { useStore } from '../store/useStore.js'
 import { savePrefs } from '../lib/device-prefs-sync.js'
 import { useUI } from '../store/useUI.js'
 import { t } from '../lib/i18n.js'
-import { speak, hush, voiceState, onVoices, refreshVoices, langName, speechLang, voiceLabel, voiceOpts, pickedVoice, storedVoice, setPickedVoice, speechRateNum, speechPitchNum, setSpeechRate, setSpeechPitch, speechSupported, SPEECH_MIN, SPEECH_MAX } from '../lib/speech.js'
-import { isNatural } from '../lib/natural-voice.js'
-import { sampleCue } from '../lib/spoken-cues.js'
+import { speak, hush, voiceState, onVoices, refreshVoices, langName, speechLang, voiceLabel, voiceOpts, pickedVoice, setPickedVoice, speechRateNum, speechPitchNum, setSpeechRate, setSpeechPitch, speechSupported, SPEECH_MIN, SPEECH_MAX } from '../lib/speech.js'
+import { isNatural, NATURAL_VOICES, NATURAL_MB, naturalState, onNatural, refreshNatural, downloadNatural, cancelNatural, removeNatural, readPrefs, writePrefs } from '../lib/natural-voice.js'
+import { sampleCue, cues } from '../lib/spoken-cues.js'
+import { confirmSheet } from '../sheets.jsx'
 import { MOMENTS, MOMENT_COPY, STYLE_COPY, STYLE_IDS, cueStyleOf, linesFor, ownLines, setOwnLines, startOwnFrom, hasOwnLines, sampleLine, LINES_MAX, LINE_MAX } from '../lib/voice-styles.js'
 import { voiceClipsOf, addVoiceClip, removeVoiceClip, CLIPS_PER_MOMENT, CLIP_SEC } from '../lib/voice-clips.js'
 import { MOBILE } from '../lib/mobile.js'
@@ -25,7 +26,7 @@ import { mediaStore } from '../lib/media-store.js'
 import { fmtClip } from '../lib/media-refs.js'
 import { unlock, chime } from '../lib/sound.js'
 import { soundErrorText } from './OwnSounds.jsx'
-import { Section, Row, Slider, Button, TextField } from './ui.jsx'
+import { Section, Row, Slider, Switch, Button, TextField } from './ui.jsx'
 import Icon from './Icon.jsx'
 
 const toast = m => useUI.getState().toast(m)
@@ -60,8 +61,22 @@ export function useVoices() {
 
 const tierOf = (v, ios) => (v.quality === 'premium' ? t('Premium') : v.quality === 'enhanced' ? t('Enhanced') : ios ? t('Standard') : null)
 
-/** What the Voice row says. A Natural pick is named here too (Natural voice, task C3b). */
+/** The Natural voice model's state; refreshed on mount, so a download that ended while away shows. */
+function useNatural() {
+  const [st, setSt] = useState(naturalState)
+  useEffect(() => {
+    const off = onNatural(() => setSt(naturalState()))
+    refreshNatural()
+    return off
+  }, [])
+  return st
+}
+const mbOf = bytes => Math.round(bytes / 1e6)
+
+/** What the Voice row says. `cur` is the usable pick, so an unusable Natural pick reads as Automatic (Ruling 7). */
 function voiceRowValue({ voices, auto, stuck }, cur) {
+  const nat = NATURAL_VOICES.find(v => v.id === cur)
+  if (nat) return t('Natural voice · {0}', nat.name)
   if (voices === null) return null
   const picked = voices.find(v => v.id === cur)
   if (picked) return voiceLabel(picked)
@@ -93,13 +108,18 @@ const isEnglish = () => speechLang().split('-')[0] === 'en'
 export function VoiceList() {
   const { voices: list, auto, ios } = useVoices()
   const voices = list || []
-  const [cur, setCur] = useState(pickedVoice())
+  const nat = useNatural()
+  const [, redraw] = useState(0)
+  const cur = pickedVoice() // read each render: it turns '' when the model goes away
   const pick = (id, say = id) => {
     setPickedVoice(id)
     savePrefs(useStore.getState().update)
-    setCur(id)
-    sayIt(sampleLine(S_()) || sampleCue(S_().unit), { voice: say })
+    redraw(n => n + 1)
+    sayIt(sampleLine(S_()) || sampleCue(S_().unit), { voice: say, ...(isNatural(id) ? { fallback: auto?.id || '' } : {}) })
   }
+  // Opening the page with a Natural pick, or picking one, has the model make the fixed lines ahead.
+  useEffect(() => { if (isNatural(cur)) cues.prepareFixed() }, [cur])
+  const [showApple, setShowApple] = useState(false)
   const lang = langName(speechLang().split('-')[0])
   const premium = voices.some(v => v.quality === 'premium')
   // With no Premium or Enhanced voice, voiceOpts passes '' and the phone speaks its default for the language, which is the top of this ranked list in practice; the name is that list's first voice.
@@ -112,10 +132,7 @@ export function VoiceList() {
     const g = groups.find(x => x.lang === v.lang)
     if (g) g.voices.push(v); else groups.push({ lang: v.lang, voices: [v] })
   }
-  return <>
-    <Section footer={voices.length ? null : t('No other voices for this language here. Your device’s settings can add more.')}>
-      <Row icon={cur ? 'play' : 'speaker'} iconTint="var(--teal)" title={t('Automatic')} subtitle={autoNote} ariaLabel={t('Automatic') + sel(!cur)} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', auto?.id || '')} />
-    </Section>
+  const apple = <>
     {groups.map(g => <Section key={g.lang} title={groupName(g.lang)}>
       {g.voices.map(v => <Row key={v.id} icon={cur === v.id ? 'speaker' : 'play'} iconTint="var(--teal)" title={voiceLabel(v)} ariaLabel={[voiceLabel(v), tierOf(v, ios)].filter(Boolean).join(', ') + sel(cur === v.id)}
         subtitle={v.online ? t('Needs internet') : null} value={tierOf(v, ios)} className="vp-voice"
@@ -129,8 +146,80 @@ export function VoiceList() {
       <Button variant="tinted" className="vp-how" onClick={() => useUI.getState().openSheet(close => <StepsSheet close={close} lang={lang} />)}>{t('Show me how')}</Button>
     </div></section>}
     {ios && premium && <p className="sect-f vp-note"><Icon name="info" aria-hidden="true" />{t('You already have a Premium voice. Nothing to add.')}</p>}
-    {/* Task C3b: the Natural voice group goes here, after the Apple voices. */}
   </>
+  const natural = ios && (nat.available || nat.debugModel)
+  // With the model installed the Natural voices lead and the Apple voices fold into one row (frame 6); a pick among them keeps them open.
+  const folded = natural && isEnglish() && nat.state === 'ready' && !showApple && !(cur && !isNatural(cur))
+  return <>
+    <Section footer={voices.length ? null : t('No other voices for this language here. Your device’s settings can add more.')}>
+      <Row icon={cur ? 'play' : 'speaker'} iconTint="var(--teal)" title={t('Automatic')} subtitle={autoNote} ariaLabel={t('Automatic') + sel(!cur)} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', auto?.id || '')} />
+    </Section>
+    {natural && nat.state === 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} />}
+    {folded
+      ? <Section title={t('Apple voices')}><Row title={voices.slice(0, 3).map(voiceLabel).join(', ')} accessory="chevron" onClick={() => setShowApple(true)} /></Section>
+      : apple}
+    {natural && nat.state !== 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} />}
+    {!ios && list !== null && MOBILE && <p className="sect-f vp-note"><Icon name="info" aria-hidden="true" />{t('Natural voice is on iPhone first. Android uses your phone’s voices for now.')}</p>}
+  </>
+}
+
+/** Natural voice in the picker: the offer, the download, a stop, and the installed voices with Remove. */
+function NaturalGroup({ nat, cur, pick }) {
+  const [wifi, setWifi] = useState(() => readPrefs().wifiOnly)
+  const lastMb = useRef(0) // where a download was when it stopped; the state forgets it
+  const total = nat.total > 0 ? mbOf(nat.total) : NATURAL_MB
+  const doneMb = Math.round((nat.fraction || 0) * total)
+  if (nat.state === 'downloading') lastMb.current = doneMb
+  const switchRow = <Row title={t('Wi-Fi only')}><Switch checked={wifi} onChange={v => { writePrefs({ wifiOnly: v }); setWifi(v) }} /></Row>
+  if (!isEnglish()) {
+    return <Section className="vp-dim" title={t('Natural voice')} footer={t('Natural voice speaks English for now. Other languages keep the Apple voice.')}>
+      <Row title={t('Not in {0} yet', langName(speechLang().split('-')[0]))} subtitle={t('Your Apple voice keeps speaking.')} />
+    </Section>
+  }
+  if (nat.state === 'ready') {
+    const sel = id => (cur === id ? ', ' + t('selected') : '')
+    const mb = mbOf(nat.bytes) || total
+    return <>
+      <Section title={<span className="vp-head">{t('Natural voice · English')}<span className="vp-pill">{t('Installed')}</span></span>}
+        footer={t('Lines are made during the rest, so you do not hear a delay. Where it has no voice for your language, the Apple voice speaks.')}>
+        {NATURAL_VOICES.map(v => <Row key={v.id} icon={cur === v.id ? 'speaker' : 'play'} iconTint="var(--teal)" title={v.name} value={v.region} className="vp-voice"
+          ariaLabel={[v.name, t('Natural voice'), v.region].join(', ') + sel(v.id)} accessory={cur === v.id ? 'check' : 'none'} onClick={() => pick(v.id)} />)}
+      </Section>
+      {!nat.debugModel && <Section><Row danger title={t('Remove download')} subtitle={t('Frees {0} MB', mb)} onClick={() => confirmSheet({
+        title: t('Remove Natural voice?'), message: t('Frees {0} MB. You can download it again.', mb), confirmText: t('Remove'), danger: true, onConfirm: () => removeNatural(),
+      })} /></Section>}
+    </>
+  }
+  const downloading = nat.state === 'downloading'
+  const failed = !downloading && nat.error && nat.error !== 'cancelled'
+  const pct = Math.round((nat.fraction || 0) * 100)
+  return <Section title={t('Natural voice')} footer={downloading ? t('You can leave this page. The download keeps going while the app is open.') : t('Made on your phone. Nothing leaves it. It uses a bit more battery than Apple voices.')}>
+    {downloading
+      ? <div className="lrow">
+        <span className="lrow-m">
+          <span className="lrow-t">{t('Downloading')}</span>
+          <span className="lrow-s">{wifi ? t('{0} of {1} MB · Wi-Fi only', doneMb, total) : t('{0} of {1} MB', doneMb, total)}</span>
+          <span className="vp-bar" role="progressbar" aria-label={t('Natural voice download, {0} percent', pct)} aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}><i style={{ width: pct + '%' }} /></span>
+        </span>
+        <Button variant="ghost" className="vp-act" onClick={() => cancelNatural()}>{t('Cancel')}</Button>
+      </div>
+      : failed
+        ? <div className="lrow vp-fade">
+          <span className="lrow-m">
+            <span className="lrow-t vp-bad">{t('Download stopped. Try again.')}</span>
+            {nat.error !== 'needs-wifi' && lastMb.current > 0 && <span className="lrow-s">{t('The connection dropped at {0} MB.', lastMb.current)}</span>}
+          </span>
+          <Button variant="primary" className="vp-act" onClick={() => downloadNatural({ wifiOnly: wifi })}>{t('Try again')}</Button>
+        </div>
+        : <div className="lrow">
+          <span className="lrow-m">
+            <span className="lrow-t">{t('More human, offline')}</span>
+            <span className="lrow-s">{t('One download, about {0} MB.', total)}</span>
+          </span>
+          <Button variant="primary" className="vp-act" onClick={() => downloadNatural({ wifiOnly: wifi })}>{t('Download')}</Button>
+        </div>}
+    {switchRow}
+  </Section>
 }
 
 /** A row with a slider under its title: speed or pitch, 0.5× to 2×. */
@@ -286,6 +375,7 @@ export default function VoiceSettings({ openList }) {
   const S = useStore(s => s.S)
   const update = useStore(s => s.update)
   const vs = useVoices()
+  useNatural() // redraws the Voice row when the model arrives or goes
   const { voices } = vs
   const stuck = vs.ios && !vs.auto
   const style = cueStyleOf(S)
@@ -307,7 +397,7 @@ export default function VoiceSettings({ openList }) {
       <Row icon="personCircle" iconTint="var(--teal)" title={t('Voice')} value={voiceRowValue({ ...vs, stuck }, cur)} accessory="chevron" onClick={openList} />
       <SliderRow icon="gauge" title={t('Speed')} value={speechRateNum(S)} set={setSpeechRate} low={t('Slower')} high={t('Faster')} />
       {/* Kokoro has no pitch, and shifting it afterwards spoils the sound (Ruling 2). */}
-      {!isNatural(storedVoice()) && <SliderRow icon="speaker" title={t('Pitch')} value={speechPitchNum(S)} set={setSpeechPitch} low={t('Lower')} high={t('Higher')} />}
+      {!isNatural(cur) && <SliderRow icon="speaker" title={t('Pitch')} value={speechPitchNum(S)} set={setSpeechPitch} low={t('Lower')} high={t('Higher')} />}
       <Row icon="play" iconTint="var(--green)" title={t('Try it')} onClick={() => { sayIt(sampleCue(S.unit)); speak(sampleLine(S), { ...voiceOpts(S) }) }} />
     </Section>
     <Section title={t('Style')} footer={t('Only the words change. The voice is always one of your device’s own.')}>
