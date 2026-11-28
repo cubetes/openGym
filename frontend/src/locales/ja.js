@@ -5998,6 +5998,7 @@ export default {
   "Standard": "標準",
   "Uses {0} ({1}), the best voice for your accent.": "{0}（{1}）を使います。あなたのアクセントに最適な音声です。",
   "Uses {0}, the best voice for your accent.": "{0}を使います。あなたのアクセントに最適な音声です。",
+  "Natural": "ナチュラル",
   "Voice types: {0}": "音声の種類: {0}",
   "Better voices are free": "より良い音声は無料です",
   "Better {0} voices are free": "{0}のより良い音声は無料です",

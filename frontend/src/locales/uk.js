@@ -6063,6 +6063,7 @@ export default {
   "Standard": "Стандартний",
   "Uses {0} ({1}), the best voice for your accent.": "Використовується {0} ({1}), найкращий голос для твого акценту.",
   "Uses {0}, the best voice for your accent.": "Використовується {0}, найкращий голос для твого акценту.",
+  "Natural": "Природний",
   "Voice types: {0}": "Типи голосів: {0}",
   "Better voices are free": "Кращі голоси безплатні",
   "Better {0} voices are free": "Кращі голоси для мови «{0}» безплатні",

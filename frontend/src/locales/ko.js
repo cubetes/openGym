@@ -6066,6 +6066,7 @@ export default {
   "Standard": "표준",
   "Uses {0} ({1}), the best voice for your accent.": "{0}({1}) 음성을 사용해요. 내 억양에 가장 잘 맞는 음성이에요.",
   "Uses {0}, the best voice for your accent.": "{0} 음성을 사용해요. 내 억양에 가장 잘 맞는 음성이에요.",
+  "Natural": "내추럴",
   "Voice types: {0}": "음성 종류: {0}",
   "Better voices are free": "더 좋은 음성은 무료예요",
   "Better {0} voices are free": "더 좋은 {0} 음성은 무료예요",

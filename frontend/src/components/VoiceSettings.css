@@ -27,7 +27,7 @@
 .vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px }
 .vs-tile { position: relative; display: block; min-height: 84px; padding: 10px 12px; border: 0; border-radius: 16px; background: var(--surface); box-shadow: inset 0 0 0 .5px var(--sep); font: inherit; color: var(--label); text-align: start; cursor: pointer; transition: transform 160ms var(--ease-out) }
 .vs-tile:active { transform: scale(.97) }
-.vs-tile.sel { box-shadow: inset 0 0 0 2px var(--c); background: color-mix(in srgb, var(--c) 14%, var(--surface)) }
+.vs-tile.sel { box-shadow: inset 0 0 0 2px var(--c); background: var(--surface-2, var(--surface)); background: color-mix(in srgb, var(--c) 14%, var(--surface)) }
 .vs-tile.own { background: transparent; box-shadow: none; border: 1.5px dashed var(--label-3, var(--sep)) }
 .vs-tile.own.sel { border-color: var(--c); box-shadow: inset 0 0 0 .5px var(--c) }
 .vs-ch { display: flex; align-items: center; gap: 8px; padding-inline-end: 20px }
@@ -42,7 +42,7 @@
 
 /* The picked style's first lines, each a button. */
 .vs-smp { display: flex; flex-direction: column; gap: 6px; margin-top: 10px }
-.vs-bub { display: block; width: 100%; min-height: 44px; padding: 8px 12px; border: 0; border-radius: 16px 16px 16px 5px; background: color-mix(in srgb, var(--c) 22%, var(--surface-2, var(--surface))); font: inherit; font-size: 15px; line-height: 1.3; color: var(--label); text-align: start; cursor: pointer; transition: transform 160ms var(--ease-out) }
+.vs-bub { display: block; width: 100%; min-height: 44px; padding: 8px 12px; border: 0; border-radius: 16px 16px 16px 5px; background: var(--surface-2, var(--surface)); background: color-mix(in srgb, var(--c) 22%, var(--surface-2, var(--surface))); font: inherit; font-size: 15px; line-height: 1.3; color: var(--label); text-align: start; cursor: pointer; transition: transform 160ms var(--ease-out) }
 .vs-bub:active { transform: scale(.97) }
 .vs-bub small { display: flex; align-items: center; gap: 4px; margin-bottom: 2px; font-size: 11px; color: var(--label-2) }
 :root[data-theme="light"] .vs-bub small { color: rgba(60,60,67,.9) }
@@ -69,7 +69,7 @@
 .vp-voice .lrow-k { animation: vs-pop 160ms var(--ease-out) both }
 .vp-in { animation: vp-in 240ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms) }
 @keyframes vp-in { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
-.vp-legend { display: flex; flex-wrap: wrap; gap: 6px 11px; margin: 0 16px 14px; font-size: var(--fs-caption, 12px); color: var(--label-2) }
+.vp-legend { display: flex; flex-wrap: wrap; gap: 6px 8px; margin: 0 16px 14px; font-size: var(--fs-caption, 12px); color: var(--label-2) }
 .vp-legend span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap }
 
 @media (prefers-reduced-motion: reduce) {

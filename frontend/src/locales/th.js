@@ -6077,6 +6077,7 @@ export default {
   "Standard": "มาตรฐาน",
   "Uses {0} ({1}), the best voice for your accent.": "ใช้ {0} ({1}) เสียงที่เหมาะกับสำเนียงของคุณที่สุด",
   "Uses {0}, the best voice for your accent.": "ใช้ {0} เสียงที่เหมาะกับสำเนียงของคุณที่สุด",
+  "Natural": "ธรรมชาติ",
   "Voice types: {0}": "ประเภทเสียง: {0}",
   "Better voices are free": "เสียงที่ดีกว่าใช้ได้ฟรี",
   "Better {0} voices are free": "เสียงภาษา{0}ที่ดีกว่าใช้ได้ฟรี",

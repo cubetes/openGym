@@ -6032,6 +6032,7 @@ export default {
   "Standard": "Standardní",
   "Uses {0} ({1}), the best voice for your accent.": "Používá {0} ({1}), nejlepší hlas pro tvůj přízvuk.",
   "Uses {0}, the best voice for your accent.": "Používá {0}, nejlepší hlas pro tvůj přízvuk.",
+  "Natural": "Přirozený",
   "Voice types: {0}": "Typy hlasů: {0}",
   "Better voices are free": "Lepší hlasy jsou zdarma",
   "Better {0} voices are free": "Lepší hlasy pro {0} jsou zdarma",

@@ -6113,6 +6113,7 @@ export default {
   "Standard": "Standard",
   "Uses {0} ({1}), the best voice for your accent.": "Använder {0} ({1}), den bästa rösten för din brytning.",
   "Uses {0}, the best voice for your accent.": "Använder {0}, den bästa rösten för din brytning.",
+  "Natural": "Naturlig",
   "Voice types: {0}": "Rösttyper: {0}",
   "Better voices are free": "Bättre röster är gratis",
   "Better {0} voices are free": "Bättre röster för {0} är gratis",

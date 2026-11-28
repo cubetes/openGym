@@ -6086,6 +6086,7 @@ export default {
   "Standard": "Standard",
   "Uses {0} ({1}), the best voice for your accent.": "Nutzt {0} ({1}), die beste Stimme für deinen Akzent.",
   "Uses {0}, the best voice for your accent.": "Nutzt {0}, die beste Stimme für deinen Akzent.",
+  "Natural": "Natürlich",
   "Voice types: {0}": "Stimmtypen: {0}",
   "Better voices are free": "Bessere Stimmen sind kostenlos",
   "Better {0} voices are free": "Bessere Stimmen für {0} sind kostenlos",

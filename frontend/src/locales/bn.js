@@ -6145,6 +6145,7 @@ export default {
   "Standard": "স্ট্যান্ডার্ড",
   "Uses {0} ({1}), the best voice for your accent.": "{0} ({1}) ব্যবহার করছে, আপনার উচ্চারণের জন্য সেরা কণ্ঠ।",
   "Uses {0}, the best voice for your accent.": "{0} ব্যবহার করছে, আপনার উচ্চারণের জন্য সেরা কণ্ঠ।",
+  "Natural": "প্রাকৃতিক",
   "Voice types: {0}": "কণ্ঠের ধরন: {0}",
   "Better voices are free": "ভালো কণ্ঠ বিনামূল্যে",
   "Better {0} voices are free": "{0} ভাষার ভালো কণ্ঠ বিনামূল্যে",

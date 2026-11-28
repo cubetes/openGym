@@ -6031,6 +6031,7 @@ export default {
   "Standard": "Standar",
   "Uses {0} ({1}), the best voice for your accent.": "Memakai {0} ({1}), suara terbaik untuk aksenmu.",
   "Uses {0}, the best voice for your accent.": "Memakai {0}, suara terbaik untuk aksenmu.",
+  "Natural": "Alami",
   "Voice types: {0}": "Jenis suara: {0}",
   "Better voices are free": "Suara yang lebih baik itu gratis",
   "Better {0} voices are free": "Suara {0} yang lebih baik itu gratis",

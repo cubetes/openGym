@@ -6006,6 +6006,7 @@ export default {
   "Standard": "Standard",
   "Uses {0} ({1}), the best voice for your accent.": "Bruger {0} ({1}), den bedste stemme til din accent.",
   "Uses {0}, the best voice for your accent.": "Bruger {0}, den bedste stemme til din accent.",
+  "Natural": "Naturlig",
   "Voice types: {0}": "Stemmetyper: {0}",
   "Better voices are free": "Bedre stemmer er gratis",
   "Better {0} voices are free": "Bedre stemmer til {0} er gratis",

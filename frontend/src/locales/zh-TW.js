@@ -6059,6 +6059,7 @@ export default {
   "Standard": "標準",
   "Uses {0} ({1}), the best voice for your accent.": "使用 {0}（{1}），最適合你口音的語音。",
   "Uses {0}, the best voice for your accent.": "使用 {0}，最適合你口音的語音。",
+  "Natural": "自然",
   "Voice types: {0}": "語音類型：{0}",
   "Better voices are free": "更好的語音是免費的",
   "Better {0} voices are free": "更好的{0}語音是免費的",

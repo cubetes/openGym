@@ -6032,6 +6032,7 @@ export default {
   "Standard": "Tiêu chuẩn",
   "Uses {0} ({1}), the best voice for your accent.": "Dùng {0} ({1}), giọng hay nhất cho giọng của bạn.",
   "Uses {0}, the best voice for your accent.": "Dùng {0}, giọng hay nhất cho giọng của bạn.",
+  "Natural": "Tự nhiên",
   "Voice types: {0}": "Các loại giọng: {0}",
   "Better voices are free": "Giọng hay hơn là miễn phí",
   "Better {0} voices are free": "Giọng {0} hay hơn là miễn phí",

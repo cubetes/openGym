@@ -74,6 +74,7 @@ export function useVoices() {
 // The tier word on a row: Premium and Enhanced everywhere, Standard only on the iPhone (Android has no ladder).
 const tierWord = (v, ios) => (v.quality === 'premium' || v.quality === 'enhanced' ? tierName(v.quality) : ios ? tierName('standard') : null)
 const LADDER = ['natural', 'premium', 'enhanced', 'standard']
+const legendName = k => (k === 'natural' ? t('Natural') : tierName(k)) // short, so the legend fits one line
 
 /** The Natural voice model's state; refreshed on mount, so a download that ended while away shows. */
 function useNatural() {
@@ -182,8 +183,8 @@ export function VoiceList() {
   return <>
     <span id="vp-live" className="vh" role="status" aria-live="polite" />
     {on && <>
-      <div className="vp-legend" aria-hidden="true">{kinds.map(k => <span key={k}><TierTile tier={k} size="xs" />{tierName(k)}</span>)}</div>
-      <span className="vh">{t('Voice types: {0}', kinds.map(tierName).join(', '))}</span>
+      <div className="vp-legend" aria-hidden="true">{kinds.map(k => <span key={k}><TierTile tier={k} size="xs" />{legendName(k)}</span>)}</div>
+      <span className="vh">{t('Voice types: {0}', kinds.map(legendName).join(', '))}</span>
     </>}
     <Section footer={voices.length ? null : t('No other voices for this language here. Your device’s settings can add more.')}>
       <Row icon={tile('plain', '', 'bolt')} className="vp-voice" title={t('Automatic')} subtitle={autoNote} ariaLabel={t('Automatic') + sel(!cur)} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', auto?.id || '')} />
