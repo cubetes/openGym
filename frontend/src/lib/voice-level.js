@@ -45,7 +45,7 @@ export const useVoiceLevel = create((set, get) => ({
 
   // A line that is no longer the one on screen is ignored, so the orb never follows the wrong curve.
   fromNative ({ text, levels } = {}) {
-    if (!text || text !== useCaption.getState().text || !Array.isArray(levels)) return
+    if (!text || text !== useCaption.getState().text || !Array.isArray(levels) || !levels.length) return
     set({ text, curve: levels.map(clamp), start: now(), real: true })
   },
 

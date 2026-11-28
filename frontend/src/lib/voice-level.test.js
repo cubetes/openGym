@@ -60,6 +60,13 @@ describe('useVoiceLevel', () => {
     expect(useVoiceLevel.getState().real).toBe(false)
     expect(useVoiceLevel.getState().curve).toBe(before)
   })
+  it('an empty levels list (unreadable WAV) keeps the estimate', () => {
+    useCaption.getState().show('Rest is over')
+    const before = useVoiceLevel.getState().curve
+    useVoiceLevel.getState().fromNative({ text: 'Rest is over', levels: [] })
+    expect(useVoiceLevel.getState().real).toBe(false)
+    expect(useVoiceLevel.getState().curve).toBe(before)
+  })
   it('an empty curve reads as silence', () => {
     useVoiceLevel.setState({ curve: [] })
     expect(useVoiceLevel.getState().now()).toBe(0)

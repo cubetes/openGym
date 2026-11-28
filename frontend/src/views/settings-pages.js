@@ -7,7 +7,7 @@
 // and checks that each entry below really is a row there.
 import { t } from '../lib/i18n.js'
 import { ACCENT_NAMES } from '../lib/format.js'
-import { MODULES } from '../lib/modules.js'
+import { MODULES, moduleBuilt } from '../lib/modules.js'
 import { OFFLINE_OFF_MODULES } from '../lib/build-caps.js'
 import { available, shownThemes } from '../lib/seasonal.js'
 
@@ -151,7 +151,7 @@ export const SEARCH = [
   // Modules
   ...MODULES.map(m => ({ page: 'modules', title: m.title, icon: m.icon, tint: m.tint,
     // Community is a row only where the server has a library (views/Modules.jsx).
-    ...(m.id === 'community' ? { when: c => !!c.library } : {}),
+    when: c => moduleBuilt(m.id) && (m.id !== 'community' || !!c.library),
     // Not built into openGym Offline at all (lib/build-caps.js).
     ...(OFFLINE_OFF_MODULES.includes(m.id) ? { net: true } : {}),
     get kw() { return MODULE_KW[m.id] + (m.id === 'seasonal' ? ' ' + seasonKw() : '') + ' module turn on off hide' } })),

@@ -2,6 +2,7 @@
 // search hit, and the network log is there in the phone app only.
 import { describe, expect, it } from 'vitest'
 import { pageVisible, searchSettings } from './settings-pages.js'
+import { setIphoneBuild } from '../lib/build-caps.js'
 
 const tr = s => s
 const phone = { mobile: true, android: true, mod: () => true, user: null }
@@ -28,5 +29,15 @@ describe('Settings in openGym Offline', () => {
     expect(titles('check for updates', offline)).toEqual([])
     expect(titles('network log', offline)).toContain('Network log')
     expect(titles('ai coach', offline)).not.toContain('AI Coach')
+  })
+
+  it('lists Better voices only in the iPhone build', () => {
+    const titles = () => searchSettings('better voices', phone, tr).map(h => h.title)
+    try {
+      setIphoneBuild(false)
+      expect(titles()).not.toContain('Better voices')
+      setIphoneBuild(true)
+      expect(titles()).toContain('Better voices')
+    } finally { setIphoneBuild(true) }
   })
 })
