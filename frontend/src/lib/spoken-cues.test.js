@@ -1,9 +1,11 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 
-const h = vi.hoisted(() => ({ voice: '' }))
-vi.mock('./speech.js', () => ({ speak: vi.fn(() => Promise.resolve(true)), voiceOpts: S => ({ rate: S?.speechRate === 'fast' ? 1.25 : 1, pitch: 1, voice: h.voice }) }))
+const h = vi.hoisted(() => ({ voice: '', S: null }))
+vi.mock('../store/useStore.js', () => ({ useStore: { getState: () => ({ update: mut => mut(h.S) }) } }))
+vi.mock('./speech.js', () => ({ speak: vi.fn(() => Promise.resolve(true)), hush: vi.fn(), speechRateNum: S => (S?.speechRate === 'fast' ? 1.25 : 1), voiceOpts: S => ({ rate: S?.speechRate === 'fast' ? 1.25 : 1, pitch: 1, voice: h.voice }) }))
 vi.mock('./rest-alert.js', () => ({ prepareNative: vi.fn(() => Promise.resolve(true)) }))
-const { speak } = await import('./speech.js')
+const { speak, hush } = await import('./speech.js')
+const { useCaption } = await import('./voice-caption.js')
 const { prepareNative } = await import('./rest-alert.js')
 const { nextSetAfter, setCueText, restStartText, cues, bindCueState, cuesOn, sampleCue } = await import('./spoken-cues.js')
 
@@ -12,7 +14,7 @@ const set = (w, r, done = false, extra = {}) => ({ w, r, done, ...extra })
 const entry = (id, sets, target = { mode: 'reps' }, extra = {}) => ({ id, target, sets, ...extra })
 const S = (entries, extra = {}) => ({ unit: 'kg', spokenCues: true, active: { cur: 0, entries }, ...extra })
 
-afterEach(() => { speak.mockClear(); prepareNative.mockClear(); h.voice = ''; bindCueState(null) })
+afterEach(() => { useCaption.getState().hide(); useCaption.setState({ last: '' }); hush.mockClear(); speak.mockClear(); prepareNative.mockClear(); h.voice = ''; bindCueState(null) })
 
 describe('what comes next after a rest', () => {
   test('the same exercise, then the next one down the list', () => {
@@ -223,5 +225,62 @@ describe('lines made ahead in the Natural voice', () => {
     cues.began()
     cues.prepareFixed()
     expect(prepareNative).not.toHaveBeenCalled()
+  })
+})
+
+describe('the voice pill and the mute', () => {
+  const st = (active = {}) => S([entry(BENCH, [set(80, 8, true), set(80, 8)])], { active: { cur: 0, entries: [entry(BENCH, [set(80, 8, true), set(80, 8)])], ...active } })
+  const flush = () => new Promise(r => setTimeout(r, 0))
+  test('a spoken line shows, with the speech speed', () => {
+    bindCueState(() => ({ ...st(), speechRate: 'fast' }))
+    cues.restStarted(0)
+    expect(useCaption.getState()).toMatchObject({ text: 'Set 2, 80 kilos, 8 reps', silent: false, muted: false })
+  })
+  test.each([false, 'muted'])('a line that resolves %s shows again as silent', async r => {
+    speak.mockResolvedValueOnce(r)
+    bindCueState(() => st())
+    cues.restStarted(0)
+    await flush()
+    expect(useCaption.getState()).toMatchObject({ text: 'Set 2, 80 kilos, 8 reps', silent: true })
+  })
+  test('a replaced caption is not brought back', async () => {
+    speak.mockResolvedValueOnce(false)
+    bindCueState(() => st())
+    cues.restStarted(0)
+    useCaption.getState().show('Something newer')
+    await flush()
+    expect(useCaption.getState()).toMatchObject({ text: 'Something newer', silent: false })
+  })
+  test('the count and Go! are spoken but not shown', () => {
+    bindCueState(() => st())
+    cues.count(3); cues.go()
+    expect(speak).toHaveBeenCalledTimes(2)
+    expect(useCaption.getState().text).toBe('')
+  })
+  test('a muted workout speaks nothing and shows the line muted', () => {
+    bindCueState(() => st({ voiceMuted: true }))
+    cues.restStarted(0); cues.count(2)
+    expect(speak).not.toHaveBeenCalled()
+    expect(useCaption.getState()).toMatchObject({ text: 'Set 2, 80 kilos, 8 reps', muted: true })
+  })
+  test('mute sets and clears the flag, and stops speech', () => {
+    h.S = { active: {} }
+    cues.mute(true)
+    expect(h.S.active.voiceMuted).toBe(true)
+    expect(hush).toHaveBeenCalledTimes(1)
+    cues.mute(false)
+    expect(h.S.active.voiceMuted).toBeUndefined()
+    expect(hush).toHaveBeenCalledTimes(1)
+  })
+  test('replay says the last line again, and honours the mute', () => {
+    bindCueState(() => st())
+    cues.restStarted(0)
+    speak.mockClear()
+    cues.replay()
+    expect(speak).toHaveBeenCalledWith('Set 2, 80 kilos, 8 reps', expect.anything())
+    bindCueState(() => st({ voiceMuted: true }))
+    cues.replay()
+    expect(speak).toHaveBeenCalledTimes(1)
+    expect(useCaption.getState().muted).toBe(true)
   })
 })

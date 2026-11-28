@@ -25,7 +25,9 @@ import { fmtNum } from './format.js'
 import { t, tn, tnf, exerciseNameFor } from './i18n-core.js'
 import { EXIDX } from './exercises.js'
 import { viewEntry, exUnitOf } from './ex-unit.js'
-import { speak, voiceOpts } from './speech.js'
+import { speak, hush, voiceOpts, speechRateNum } from './speech.js'
+import { useCaption, caption } from './voice-caption.js'
+import { useStore } from '../store/useStore.js'
 import { isNatural } from './natural-voice.js'
 import { prepareNative } from './rest-alert.js'
 import { pickLine, linesFor } from './voice-styles.js'
@@ -144,18 +146,27 @@ export const VOICE_ON_SILENT = true
 let freeAt = 0      // when everything handed over so far should be done
 let clipUntil = 0   // until when a clip is playing: a line waits for it
 
+// `plain` keeps a line off the voice pill (the hold count). The pill shows first and learns after:
+// a line the phone could not say, or was muted for, shows again as silent (if still the caption).
+const voice = (S, text, { plain, ...opts } = {}) => {
+  const speed = speechRateNum(S)
+  if (!plain) caption.show(text, { speed })
+  Promise.resolve(speak(text, { ...voiceOpts(S), onSilent: VOICE_ON_SILENT, ...opts })).then(r => {
+    if (!plain && (r === false || r === 'muted') && useCaption.getState().text === text) caption.show(text, { silent: true, speed })
+  }).catch(() => {})
+}
 const sayNow = (S, text, opts = {}) => {
-  const o = voiceOpts(S)
-  speak(text, { ...o, onSilent: VOICE_ON_SILENT, ...opts }).catch?.(() => {})
-  freeAt = Math.max(freeAt, Date.now()) + speechMs(text, o.rate)
+  voice(S, text, opts)
+  freeAt = Math.max(freeAt, Date.now()) + speechMs(text, voiceOpts(S).rate)
 }
 const say = (S, text, opts = {}) => {
   if (!text) return
+  if (S.active?.voiceMuted === true) { if (!opts.plain) caption.show(text, { muted: true }); return }
   if (opts.queue === false) { clipUntil = 0; freeAt = Date.now(); sayNow(S, text, opts); return }
   const wait = clipUntil - Date.now()
   if (wait > 0) {
     freeAt = Math.max(freeAt, clipUntil) + speechMs(text, voiceOpts(S).rate)
-    setTimeout(() => { const now = readStore?.() || S; speak(text, { ...voiceOpts(now), onSilent: VOICE_ON_SILENT, ...opts }).catch?.(() => {}) }, wait)
+    setTimeout(() => voice(readStore?.() || S, text, opts), wait)
     return
   }
   sayNow(S, text, opts)
@@ -197,7 +208,7 @@ function playClip(S, clip, fallback) {
 
 /** A moment: a clip of one's own when it has one, else a line of the style ('' says nothing). */
 function moment(S, name) {
-  const clip = pickClip(S, name)
+  const clip = S.active?.voiceMuted === true ? null : pickClip(S, name)
   if (clip) { playClip(S, clip, pickLine(S, name)); return }
   say(S, pickLine(S, name))
 }
@@ -253,9 +264,16 @@ export const cues = {
     if (text) say(S, text)
   },
   /** A count-in or the end of a hold: a number, cutting off whatever is still being said. */
-  count(n) { if (n >= 1 && n <= 3) { const S = live(); if (S) say(S, String(n), { queue: false }) } },
+  count(n) { if (n >= 1 && n <= 3) { const S = live(); if (S) say(S, String(n), { queue: false, plain: true }) } },
+  /** Mute the voice for this workout, or unmute: it goes with `S.active`. */
+  mute(on) {
+    useStore.getState().update(S => { if (S.active) S.active.voiceMuted = on ? true : undefined }, false)
+    if (on) hush()
+  },
+  /** Say the last pill line again (shows, speaks, respects mute). */
+  replay() { const S = live(); const text = useCaption.getState().last; if (S && text) say(S, text) },
   /** The count-in is over and the hold begins. */
-  go() { const S = live(); if (S) say(S, t('Go!'), { queue: false }) },
+  go() { const S = live(); if (S) say(S, t('Go!'), { queue: false, plain: true }) },
 }
 
 /** The line the Settings row says when tried: what a rest would announce. */
