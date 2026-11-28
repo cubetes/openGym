@@ -457,8 +457,10 @@ describe('spoken cues through the phone', () => {
     const alert = await import('./rest-alert.js')
     h.speakResult = { muted: true }
     await expect(alert.speakNative('Go', { voice: 'natural:af_heart', fallback: 'com.apple.voice.x' })).resolves.toBe('muted')
-    expect(h.args.speak).toMatchObject({ voice: 'natural:af_heart', fallback: 'com.apple.voice.x' })
+    expect(h.args.speak).toMatchObject({ voice: 'natural:af_heart', fallback: 'com.apple.voice.x', patient: false })
     h.speakResult = { muted: false }
+    await expect(alert.speakNative('Go', { voice: 'natural:af_heart', patient: true })).resolves.toBe(true)
+    expect(h.args.speak.patient).toBe(true) // a Settings sample waits for the Natural voice instead of the 2 s cover
     await expect(alert.speakNative('Go')).resolves.toBe(true)
     h.speakResult = {}
     await expect(alert.speakNative('Go')).resolves.toBe(true)

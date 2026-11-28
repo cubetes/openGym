@@ -121,10 +121,10 @@ function speakWeb(text, { lang, rate, pitch, voice }) {
  * `onSilent` is on by default: a voice someone switched on is heard through the iPhone's silent
  * switch and whether or not the end-of-rest sound is on (lib/spoken-cues.js VOICE_ON_SILENT).
  */
-export async function speak(text, { rate = 1, pitch = 1, voice = '', fallback = '', lang = speechLang(), onSilent = true, queue = true } = {}) {
+export async function speak(text, { rate = 1, pitch = 1, voice = '', fallback = '', lang = speechLang(), onSilent = true, queue = true, patient = false } = {}) {
   if (!text) return false
   // 'muted' (the phone's volume is 0) is truthy and passes through for the pill (lib/voice-caption.js).
-  if (MOBILE) { const res = await speakNative(text, { lang, rate, pitch, voice, fallback, onSilent, flush: !queue }); if (res) return res }
+  if (MOBILE) { const res = await speakNative(text, { lang, rate, pitch, voice, fallback, onSilent, flush: !queue, patient }); if (res) return res }
   if (!queue) { try { webSpeech()?.cancel() } catch { /* nothing to stop */ } }
   return speakWeb(text, { lang, rate, pitch, voice })
 }

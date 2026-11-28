@@ -906,7 +906,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
         // over" and the count of a hold, in the app's language. Off by default. The strip is the
         // way into Settings → Timer alerts → Voice (components/VoiceSettings.jsx).
         speech && { key: 'cues', tint: 'var(--teal)', icon: 'chat', name: t('Spoken cues'), on: cuesOn, label: cuesOn ? `${t('Spoken cues')}, ${voiceValue}` : t('Spoken cues'),
-          onToggle: v => { update(s => { s.spokenCues = v }); if (v) speak(sampleCue(S.unit), voiceOpts(S)) },
+          onToggle: v => { update(s => { s.spokenCues = v }); if (v) speak(sampleCue(S.unit), { ...voiceOpts(S), patient: true }) },
           find: find('Spoken cues'), stripFind: find('Voice'),
           value: cuesOn ? voiceValue : undefined, onStrip: () => nav('/settings/voice'), stripLabel: t('Voice') },
       ].filter(Boolean)

@@ -39,6 +39,8 @@ public enum NaturalVoiceMath {
 
     /// Longest wait for the natural voice before the system voice speaks instead.
     public static let fallBackSec = 2.0
+    /// A Settings sample the person asked to hear in this voice waits longer: a cold model load can take a few seconds.
+    public static let patientFallBackSec = 15.0
     public static func shouldFallBack(waited: Double, hasAudio: Bool, failed: Bool) -> Bool {
         !hasAudio && (failed || waited >= fallBackSec)
     }

@@ -202,10 +202,11 @@ export function toneNative(kind, { onSilent = false, at = 0 } = {}) {
 // `flush`: cut off what is still being said first (a countdown number).
 // `voice`: a voice's id from voicesNative (Settings → Timer alerts → Voice), '' for the default;
 // `pitch` 0.5 to 2; `fallback`: the Apple voice's id when `voice` is a natural one that is not ready in time. Resolves true, false, or 'muted' (the phone's volume is 0). An app from before v1.4.5's voice picker ignores both.
-export function speakNative(text, { lang = '', rate = 1, pitch = 1, voice = '', fallback = '', onSilent = false, flush = false } = {}) {
+// `patient`: a Settings sample waits for the natural voice (the model may still be loading) instead of the cue's 2 s cover.
+export function speakNative(text, { lang = '', rate = 1, pitch = 1, voice = '', fallback = '', onSilent = false, flush = false, patient = false } = {}) {
   if (!MOBILE || !text) return Promise.resolve(false)
   return restPlugin()
-    .then(plugin => (plugin ? plugin.RestAlert.speak({ text: String(text), lang: String(lang || ''), rate: Number(rate) || 1, pitch: Number(pitch) || 1, voice: String(voice || ''), fallback: String(fallback || ''), onSilent: onSilent === true, flush: flush === true }).then(res => (res && res.muted === true ? 'muted' : true)) : false))
+    .then(plugin => (plugin ? plugin.RestAlert.speak({ text: String(text), lang: String(lang || ''), rate: Number(rate) || 1, pitch: Number(pitch) || 1, voice: String(voice || ''), fallback: String(fallback || ''), onSilent: onSilent === true, flush: flush === true, patient: patient === true }).then(res => (res && res.muted === true ? 'muted' : true)) : false))
     .catch(() => false)
 }
 

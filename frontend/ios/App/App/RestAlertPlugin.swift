@@ -257,11 +257,12 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
         let fallback = call.getString("fallback") ?? ""
         let onSilent = call.getBool("onSilent") ?? false
         let flush = call.getBool("flush") ?? false
+        let patient = call.getBool("patient") ?? false
         DispatchQueue.main.async {
             // The line is not heard at volume 0, whichever voice says it.
             let muted = AVAudioSession.sharedInstance().outputVolume == 0
             if voiceId.hasPrefix("natural:"), #available(iOS 16, *) {
-                self.speakNatural(text, raw: String(voiceId.dropFirst("natural:".count)), apple: (lang, rate, pitch, fallback, onSilent), flush: flush)
+                self.speakNatural(text, raw: String(voiceId.dropFirst("natural:".count)), apple: (lang, rate, pitch, fallback, onSilent), flush: flush, patient: patient)
             } else {
                 self.speakApple(text, lang: lang, rate: rate, pitch: pitch, voiceId: voiceId.hasPrefix("natural:") ? fallback : voiceId, onSilent: onSilent, flush: flush)
             }
@@ -315,7 +316,8 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
     // MARK: the Natural voice (NaturalVoice/NaturalVoiceEngine.swift makes the sound, this plays it)
 
     @available(iOS 16.0, *)
-    private func speakNatural(_ text: String, raw: String, apple: (lang: String, rate: Float, pitch: Float, fallback: String, onSilent: Bool), flush: Bool) {
+    /// `patient` (a Settings sample): wait for the model to load instead of the cue's 2 s cover; a failure still falls back at once.
+    private func speakNatural(_ text: String, raw: String, apple: (lang: String, rate: Float, pitch: Float, fallback: String, onSilent: Bool), flush: Bool, patient: Bool = false) {
         let speed = Double(max(0.5, min(2, apple.rate)))
         let id = beginSound(.speech, onSilent: apple.onSilent)
         if flush {
@@ -337,8 +339,9 @@ public class RestAlertPlugin: CAPPlugin, CAPBridgedPlugin, AVSpeechSynthesizerDe
                 }
             }
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + NaturalVoiceMath.fallBackSec) {
-            if !line.done, NaturalVoiceMath.shouldFallBack(waited: NaturalVoiceMath.fallBackSec, hasAudio: line.wav != nil, failed: false) {
+        let wait = patient ? NaturalVoiceMath.patientFallBackSec : NaturalVoiceMath.fallBackSec
+        DispatchQueue.main.asyncAfter(deadline: .now() + wait) {
+            if !line.done, NaturalVoiceMath.shouldFallBack(waited: wait, hasAudio: line.wav != nil, failed: false) {
                 self.fallBack(line)
             }
         }

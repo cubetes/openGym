@@ -45,13 +45,14 @@ const announcePlaying = () => {
 }
 let celebrated = 0 // the Natural install the picker has already shown arriving
 let endPlaying = null // the hero's Playing state; anything else that speaks ends it
-const sayIt = (text, extra = {}) => { endPlaying?.(); announcePlaying(); hush(); speak(text, { ...voiceOpts(S_()), queue: false, ...extra }) }
+const sayIt = (text, extra = {}) => { endPlaying?.(); announcePlaying(); hush(); speak(text, { ...voiceOpts(S_()), queue: false, patient: true, ...extra }) }
 let offLine = () => {}
 /** Calls `done` once `last` has been said: when the Natural voice reports the line's real length, else after the word-count estimate for `all` (Apple voices report none). */
-const endAfter = (timer, all, last, speed, done) => {
+// A Natural sample may wait up to 15 s for the model (RestAlertPlugin patient wait): the estimate must not end it before it starts.
+const endAfter = (timer, all, last, speed, done, natural = false) => {
   clearTimeout(timer.current)
   offLine()
-  timer.current = setTimeout(done, speakMs(all, speed))
+  timer.current = setTimeout(done, speakMs(all, speed) + (natural ? 15000 : 0))
   offLine = onVoiceLine(ev => {
     if (ev?.text !== last || !(ev.ms > 0)) return
     clearTimeout(timer.current)
@@ -156,7 +157,7 @@ export function VoiceList() {
     const text = sampleLine(S_()) || sampleCue(S_().unit)
     sayIt(text, { voice: say, ...(isNatural(id) ? { fallback: auto?.id || '' } : {}) })
     setPlayKey(id || 'auto')
-    endAfter(timer, text, text, speechRateNum(S_()), () => setPlayKey(null))
+    endAfter(timer, text, text, speechRateNum(S_()), () => setPlayKey(null), isNatural(say))
   }
   const tile = (key, id, glyph) => on ? <TierTile tier={key} glyph={glyph} accent={accentClass(id)} playing={playKey === (id || 'auto')} /> : null
   const rowCls = id => 'vp-voice' + (playKey === (id || 'auto') ? ' vp-pick' : '') // the check pops on a pick, not on a visit
@@ -456,9 +457,9 @@ function VoiceHero({ vs, cur, openList }) {
   const tryIt = () => {
     const cue = sampleCue(S.unit), line = sampleLine(S)
     sayIt(cue)
-    speak(line, { ...voiceOpts(S) })
+    speak(line, { ...voiceOpts(S), patient: true })
     setPlaying(true)
-    endAfter(timer, `${cue}. ${line}`, line, speechRateNum(S), () => setPlaying(false))
+    endAfter(timer, `${cue}. ${line}`, line, speechRateNum(S), () => setPlaying(false), isNatural(voiceOpts(S).voice))
   }
   const ending = useEnding(playing)
   return <div className={`vhero tier-${key}${nat ? accentClass(cur) : ''}${playing ? ' play' : ''}${ending ? ' end' : ''}`}>
