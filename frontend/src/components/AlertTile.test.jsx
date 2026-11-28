@@ -80,4 +80,9 @@ describe('AlertTile', () => {
     expect(css).toMatch(/\.text-big \.alert-grid\s*\{\s*grid-template-columns:\s*1fr\s*\}/)
     expect(css).toMatch(/\.at-op\s*\{[^}]*min-height:\s*44px/)
   })
+
+  // The global .chip (index.css) pads 6px 13px: left on, the 22 px glyph overflowed a 10 px box and sat 6 px right of centre.
+  it('has no padding on the glyph chip, so the glyph centres in its square', () => {
+    expect(readFileSync('src/components/AlertTile.css', 'utf8')).toMatch(/\.at \.chip\s*\{[^}]*padding:\s*0;/)
+  })
 })
