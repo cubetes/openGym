@@ -77,6 +77,7 @@ import { coachAvailable } from '../lib/coach.js'
 import { REST_MAX, REST_PAUSE_MIN, REST_PAUSE_MAX, fmtRest, fmtDuration } from '../lib/duration.js'
 import { starterPlanSheet, confirmSheet, importFromApp, importFromHevy, equipmentProfileSheet, plateInventorySheet, dumbbellInventorySheet, barDefaultsSheet, menuSheet } from '../sheets.jsx'
 import Icon from '../components/Icon.jsx'
+import AlertTile from '../components/AlertTile.jsx'
 import { durationSheet } from '../components/DurationWheel.jsx'
 import { showsConnection, showsLocalLine } from '../components/SyncBanner.jsx'
 import BackupFolderRow, { useBackupFolder, autoBackupSubtitle } from '../components/BackupFolderRow.jsx'
@@ -300,6 +301,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
     const el = body.current
     const named = label => [...el.querySelectorAll('.lrow')].find(r => r.querySelector('.lrow-t')?.textContent === label)
       || [...el.querySelectorAll('.btn')].find(b => b.textContent.trim() === label)
+      || [...el.querySelectorAll('[data-find]')].find(e => e.dataset.find.split('|').includes(label))
     let tm = null
     const flash = row => {
       row.classList.add('sp-flash')
@@ -485,7 +487,7 @@ export default function Settings({ page = null, find = null, via = null, entryKe
   const canVibrate = vibrateSupported()
   const ctx = {
     user, mobile: MOBILE, offline, android, ios: MOBILE && ios, appIcons: MOBILE && !!platformNow(), demo: DEMO, wakeOK, hasMedia, pwOn, webauthn: webauthnOK(),
-    sound: !!S.sound, playOnSilent: playOnSilentSupported(), canVibrate, vibrate: S.vibrate !== false,
+    sound: !!S.sound, playOnSilent: playOnSilentSupported(), canVibrate, iPhone: appleTouchDevice(), vibrate: S.vibrate !== false,
     recordHints: recordHintsOn(S), effortScale: effortOf(S) !== 'none',
     profiles: (S.equipProfiles || []).length > 0, nameLang: EXERCISE_NAME_LANGS.includes(baseLang(lang)),
     pushOK: !MOBILE && pushSupported(), reminderOn: !!S.reminder?.on, nudge: !!S.reminder?.nudge,
@@ -870,75 +872,53 @@ export default function Settings({ page = null, find = null, via = null, entryKe
 
     alerts: () => {
       const iPhone = appleTouchDevice()
+      const speech = speechSupported()
+      const appAndroid = MOBILE && android
+      const soundName = slotSound(S, 'rest')?.name || t(REST_SOUND_LABEL[restSoundOf(S)])
+      const vibOn = canVibrate && S.vibrate !== false
+      const vibValue = appAndroid && S.vibrateOnSilent ? t('Vibrate on silent too') : t('Buzzes at the end')
+      const flashOn = !!S.timerFlash
+      const flashValue = appAndroid ? (S.restLightScreen !== false ? t('Wakes the screen') : t('Screen stays dark')) : t('Screen blinks')
+      const cuesOn = S.spokenCues === true
+      const voiceValue = voiceRowValue({ ...voiceState(), stuck: voiceState().ios && !voiceState().auto }, pickedVoice()) ?? t('Automatic') // null while the voices load: the strip stays
+      const find = (...a) => a.map(x => t(x)).join('|')
+      // The tiles are the only place for these channels (flow-studio.md Round 4). A strip shows
+      // only while its channel is on; Android Flash keeps one either way, since "Light up the
+      // screen at rest end" works with Flash off too.
+      const tiles = [
+        { key: 'sound', tint: 'var(--pink)', icon: 'speaker', name: t('Sound'), on: !!S.sound, label: `${t('Sound')}, ${soundName}`,
+          // Turning the sound on is a tap: unlock the audio context now so a timer that ends
+          // before the next set check can already sound (iOS, #152).
+          onToggle: v => { if (v) unlock(true); update(s => { s.sound = v }) },
+          find: find('Play a sound'), stripFind: find('Sound', 'Play even on silent'),
+          value: S.sound ? soundName : undefined, onStrip: restSoundSheet, stripLabel: t('Sound options') },
+        canVibrate && { key: 'vibrate', tint: 'var(--indigo)', icon: 'vibrate', name: t('Vibrate'), on: vibOn, label: vibOn ? `${t('Vibrate')}, ${vibValue}` : t('Vibrate'),
+          onToggle: v => update(s => { s.vibrate = v }),
+          find: find('Vibrate'), stripFind: find('Vibrate on silent too'),
+          value: vibOn ? vibValue : undefined, onStrip: appAndroid ? vibrateSheet : undefined, stripLabel: t('Vibrate options') },
+        { key: 'flash', tint: 'var(--yellow)', icon: 'sun', name: t('Flash the screen'), on: flashOn, label: flashOn || appAndroid ? `${t('Flash the screen')}, ${flashValue}` : t('Flash the screen'),
+          onToggle: v => update(s => { s.timerFlash = v }),
+          find: find('Flash the screen'), stripFind: appAndroid ? find('Light up the screen at rest end') : undefined,
+          value: flashOn || appAndroid ? flashValue : undefined, onStrip: appAndroid ? flashSheet : undefined, stripLabel: t('Flash options') },
+        // Spoken cues (lib/spoken-cues.js): the next set as a rest starts, "10 seconds", "Rest is
+        // over" and the count of a hold, in the app's language. Off by default. The strip is the
+        // way into Settings → Timer alerts → Voice (components/VoiceSettings.jsx).
+        speech && { key: 'cues', tint: 'var(--teal)', icon: 'chat', name: t('Spoken cues'), on: cuesOn, label: cuesOn ? `${t('Spoken cues')}, ${voiceValue}` : t('Spoken cues'),
+          onToggle: v => { update(s => { s.spokenCues = v }); if (v) speak(sampleCue(S.unit), voiceOpts(S)) },
+          find: find('Spoken cues'), stripFind: find('Voice'),
+          value: cuesOn ? voiceValue : undefined, onStrip: () => nav('/settings/voice'), stripLabel: t('Voice') },
+      ].filter(Boolean)
       return <>
-        <Section title={t('When a rest ends')}>
-          <Row icon="speaker" iconTint="var(--pink)" title={t('Play a sound')}>
-            {/* Turning the sound on is a tap: unlock the audio context now so a timer that ends
-                before the next set check can already sound (iOS, #152). */}
-            <Switch checked={!!S.sound} onChange={v => { if (v) unlock(true); update(s => { s.sound = v }) }} />
-          </Row>
-          {/* The chime that replaced the original three beeps (Discord: "too quiet under music")
-              is not an improvement for everyone: louder is a cost with headphones or in a quiet
-              room, and some want a sound that feels like theirs (#306). The chime by default; the
-              sheet plays each one as you tap it (restSoundSheet). */}
-          {S.sound && <Row icon="speaker" iconTint="var(--pink)" title={t('Sound')} value={slotSound(S, 'rest')?.name || t(REST_SOUND_LABEL[restSoundOf(S)])}
-            accessory="chevron" onClick={restSoundSheet} />}
-          {/* iOS only (WebKit's audio-session API, iOS 17+): with it off the ring/silent switch
-              mutes the timer. On, in Safari the phone treats the timer like a music player
-              (exclusive, and the music app is not told it may resume), so it is a choice, off by
-              default. In the iPhone app only the native end tone rings through, and music keeps
-              playing (lib/sound.js setPlayOnSilent). */}
-          {S.sound && playOnSilentSupported() && (
-            <Row icon="speaker" iconTint="var(--orange)" title={t('Play even on silent')}
-              subtitle={<>{MOBILE ? t('The end of a rest rings through silent. Music turns down for it and keeps playing.') : t('Music playing on this phone stops during a workout and does not resume by itself.')}<br />{t('iPhone only')}</>}>
-              <Switch checked={!!S.soundOnSilent} onChange={v => update(s => { s.soundOnSilent = v })} />
-            </Row>
-          )}
-        </Section>
-        {/* The buzz at the end of a rest or a hold and on a set tick, on its own switch like the
-            sound (Discord, asierlama). iOS has no navigator.vibrate: the row stays, greyed out,
-            and says so, instead of an iPhone user looking for a setting that is not there. */}
-        <Section footer={!canVibrate && iPhone ? t('iPhone doesn’t let openGym vibrate. A sound or a flash does the job.') : null}>
-          <Row icon="vibrate" iconTint="var(--indigo)" title={t('Vibrate')} className={canVibrate ? '' : 'dis'}
-            subtitle={canVibrate ? null : iPhone ? t('Not on iPhone') : t('Not supported in this browser.')}>
-            <Switch checked={canVibrate && S.vibrate !== false} disabled={!canVibrate} onChange={v => update(s => { s.vibrate = v })} />
-          </Row>
-          {/* Android app only (#375), and only shown there, so it needs no "Android app only" hint: silent mode mutes the ordinary buzz and the notification's,
-              so the end of a rest or a hold can buzz as an alarm instead. Opt-in, like the iOS row
-              above: an alarm-class buzz is the most insistent thing an app can do on some phones. */}
-          {MOBILE && android && canVibrate && S.vibrate !== false && (
-            <Row icon="vibrate" iconTint="var(--indigo)" title={t('Vibrate on silent too')}
-              subtitle={t('The end of a rest or a hold buzzes like an alarm, even in silent mode.')}>
-              <Switch checked={!!S.vibrateOnSilent} onChange={v => update(s => { s.vibrateOnSilent = v })} />
-            </Row>
-          )}
-          <Row icon="sun" iconTint="var(--yellow)" title={t('Flash the screen')}>
-            <Switch checked={!!S.timerFlash} onChange={v => update(s => { s.timerFlash = v })} />
-          </Row>
-          {/* Android app (#1475): the end of a rest wakes a locked phone. On, as it always was;
-              off for a phone in a pocket that should stay dark through a long workout. */}
-          {MOBILE && android && <Row icon="phoneScreen" iconTint="var(--yellow)" title={t('Light up the screen at rest end')}
-            subtitle={t('Off keeps a locked phone dark. The buzz and the sound still come.')}>
-            <Switch aria-label={t('Light up the screen at rest end')} checked={S.restLightScreen !== false} onChange={v => update(s => { s.restLightScreen = v })} />
-          </Row>}
-        </Section>
-        {/* Spoken cues (lib/spoken-cues.js): the next set as a rest starts, the first set when a
-            workout begins and each superset member the focus moves to without a rest (#1210),
-            "10 seconds", "Rest is over" and the count of a hold, in the app's language. The
-            phone's own voice in the apps (music ducks and comes back), the browser's elsewhere.
-            Off by default. */}
-        {/* No group title: it only repeated the switch's own "Spoken cues" (1.4.5 features pass). */}
-        <Section footer={speechSupported() ? t('Only while the app is on screen. Music turns down for a moment, it never stops.') : t('This browser can’t speak. Try another one.')}>
-          <Row icon="chat" iconTint="var(--teal)" title={t('Spoken cues')} className={speechSupported() ? '' : 'dis'}
-            subtitle={t('Says your next set, “10 seconds” and “Rest is over”, and counts holds down.')}>
-            <Switch aria-label={t('Spoken cues')} checked={S.spokenCues === true} disabled={!speechSupported()}
-              onChange={v => { update(s => { s.spokenCues = v }); if (v) speak(sampleCue(S.unit), voiceOpts(S)) }} />
-          </Row>
-          {/* Settings → Timer alerts → Voice (components/VoiceSettings.jsx, v1.4.5): the voice,
-              speed and pitch, a style, and lines and clips of your own per moment. */}
-          {S.spokenCues === true && <Row icon="chat" iconTint="var(--teal)" title={t('Voice')} value={voiceRowValue({ ...voiceState(), stuck: voiceState().ios && !voiceState().auto }, pickedVoice())}
-            subtitle={voiceState().ios && !voiceState().auto && !pickedVoice() ? t('Better voices need a download. Tap Voice to see how.') : null} accessory="chevron" onClick={() => nav('/settings/voice')} />}
-        </Section>
+        <div className="alert-grid">
+          {tiles.map(({ key, ...tile }, i) => <AlertTile key={key} {...tile} wide={tiles.length % 2 === 1 && i === tiles.length - 1} />)}
+        </div>
+        <div className="alert-foot">
+          {speech ? <>
+            <p className="sect-f">{t('Says your next set, “10 seconds” and “Rest is over”, and counts holds down.')}</p>
+            <p className="sect-f">{t('Only while the app is on screen. Music turns down for a moment, it never stops.')}</p>
+            {iPhone && !canVibrate && <p className="sect-f" data-find={find('Vibrate')}>{t('iPhone doesn’t let openGym vibrate. A sound or a flash does the job.')}</p>}
+          </> : <p className="sect-f" data-find={find('Spoken cues', 'Voice')}>{t('This browser can’t speak. Try another one.')}</p>}
+        </div>
       </>
     },
 
@@ -1660,6 +1640,16 @@ export function RestSoundSheet({ close }) {
         subtitle={REST_SOUND_HINT[id] ? t(REST_SOUND_HINT[id]) : null} accessory={on ? 'check' : 'none'}
         onClick={() => pickRestSound(id, slot)} /> })}
     </Section>
+    {/* iOS only (WebKit's audio-session API, iOS 17+): with it off the ring/silent switch mutes
+        the timer. On, in Safari the phone treats the timer like a music player (exclusive, and
+        the music app is not told it may resume), so it is a choice, off by default. In the iPhone
+        app only the native end tone rings through, and music keeps playing (lib/sound.js). */}
+    {slot === 'rest' && playOnSilentSupported() && <Section>
+      <Row icon="speaker" iconTint="var(--orange)" title={t('Play even on silent')}
+        subtitle={<>{MOBILE ? t('The end of a rest rings through silent. Music turns down for it and keeps playing.') : t('Music playing on this phone stops during a workout and does not resume by itself.')}<br />{t('iPhone only')}</>}>
+        <Switch checked={!!S.soundOnSilent} onChange={v => useStore.getState().update(s => { s.soundOnSilent = v })} />
+      </Row>
+    </Section>}
     <OwnSounds slot={slot} />
     {slot === 'rest' && <RestKindSounds S={S} />}
     <div style={{ height: 14 }} />
@@ -1667,6 +1657,27 @@ export function RestSoundSheet({ close }) {
   </>
 }
 const restSoundSheet = () => useUI.getState().openSheet(close => <RestSoundSheet close={close} />)
+
+// The options of the Vibrate and Flash tiles: one switch each, off or on by the setting's default.
+function AlertSwitchSheet({ close, title, row, subtitle, field, dflt }) {
+  const v = useStore(s => s.S[field])
+  return <>
+    <h3>{title}</h3>
+    <Section>
+      <Row icon={row.icon} iconTint={row.tint} title={row.title} subtitle={subtitle}>
+        <Switch aria-label={row.title} checked={!!(v ?? dflt)} onChange={x => useStore.getState().update(s => { s[field] = x })} />
+      </Row>
+    </Section>
+    <div style={{ height: 14 }} />
+    <Button variant="primary" onClick={close}>{t('Done')}</Button>
+  </>
+}
+// Android app (#375): silent mode mutes the ordinary buzz, so a rest or a hold can buzz as an alarm. Opt-in.
+const vibrateSheet = () => useUI.getState().openSheet(close => <AlertSwitchSheet close={close} title={t('Vibrate')} field="vibrateOnSilent" dflt={false}
+  row={{ icon: 'vibrate', tint: 'var(--indigo)', title: t('Vibrate on silent too') }} subtitle={t('The end of a rest or a hold buzzes like an alarm, even in silent mode.')} />)
+// Android app (#1475): the end of a rest wakes a locked phone. On by default; off keeps a pocketed phone dark.
+const flashSheet = () => useUI.getState().openSheet(close => <AlertSwitchSheet close={close} title={t('Flash the screen')} field="restLightScreen" dflt={true}
+  row={{ icon: 'phoneScreen', tint: 'var(--yellow)', title: t('Light up the screen at rest end') }} subtitle={t('Off keeps a locked phone dark. The buzz and the sound still come.')} />)
 
 // A sound for each kind of rest (#165, idea by @kurktchiev): the end of a rest says what comes
 // next without a look. Each kind follows the rest's sound until it is given one of its own

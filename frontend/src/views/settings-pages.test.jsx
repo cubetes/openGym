@@ -285,7 +285,7 @@ describe('the search lands on a row', () => {
       if (page === 'coach') continue
       mount(page)
       await settle()
-      const have = [...titles(), ...[...host.querySelectorAll('.btn')].map(b => b.textContent.trim())]
+      const have = [...titles(), ...[...host.querySelectorAll('.btn')].map(b => b.textContent.trim()), ...[...host.querySelectorAll('[data-find]')].flatMap(e => e.dataset.find.split('|'))]
       for (const title of want) expect(have, `${page}: ${title}`).toContain(title)
     }
   })
@@ -447,7 +447,7 @@ describe('the pages', () => {
     for (const [page, want] of Object.entries(byPage)) {
       mount(page)
       // A row, or a button with the same words (the "Works with" chips on Integrations).
-      const have = [...titles(), ...[...host.querySelectorAll('.btn')].map(b => b.textContent.trim())]
+      const have = [...titles(), ...[...host.querySelectorAll('.btn')].map(b => b.textContent.trim()), ...[...host.querySelectorAll('[data-find]')].flatMap(e => e.dataset.find.split('|'))]
       for (const title of want) expect(have, `${page}: ${title}`).toContain(title)
     }
   })
@@ -541,7 +541,7 @@ describe('the pages', () => {
 
   it('a search hit flashes its row', () => {
     mount('alerts', 'Flash the screen')
-    expect(rowTitled('Flash the screen').classList.contains('sp-flash')).toBe(true)
+    expect(host.querySelector('.at-sw[data-find="Flash the screen"]').classList.contains('sp-flash')).toBe(true)
   })
 })
 

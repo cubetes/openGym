@@ -210,7 +210,7 @@ export const SEARCH = [
   { page: 'alerts', title: 'Play a sound', icon: 'speaker', tint: 'var(--pink)', kw: 'sound sounds audio beep chime volume' },
   { page: 'alerts', title: 'Sound', icon: 'bell', tint: 'var(--pink)', kw: 'classic timer sound beep chime tone bell whistle soft ringtone custom rest end', opts: ['Chime (louder)', 'Classic beeps', 'Bell', 'Beep-beep', 'Whistle', 'Soft'], when: c => c.sound },
   { page: 'alerts', title: 'Play even on silent', icon: 'speaker', tint: 'var(--orange)', kw: 'silent mute ring switch iphone music', when: c => c.sound && c.playOnSilent },
-  { page: 'alerts', title: 'Vibrate', icon: 'vibrate', tint: 'var(--indigo)', kw: 'vibrate vibration haptic haptics buzz' },
+  { page: 'alerts', title: 'Vibrate', icon: 'vibrate', tint: 'var(--indigo)', kw: 'vibrate vibration haptic haptics buzz', when: c => c.canVibrate || c.iPhone },
   { page: 'alerts', title: 'Vibrate on silent too', icon: 'vibrate', tint: 'var(--indigo)', kw: 'alarm silent vibrate android', when: c => c.mobile && c.android && c.canVibrate && c.vibrate },
   { page: 'alerts', title: 'Flash the screen', icon: 'sun', tint: 'var(--yellow)', kw: 'flash light blink screen' },
   { page: 'alerts', title: 'Light up the screen at rest end', icon: 'phoneScreen', tint: 'var(--yellow)', kw: 'wake screen lock locked light up display dark pocket battery rest end', when: c => c.android },
@@ -219,6 +219,7 @@ export const SEARCH = [
   // Timer alerts → Voice
   { page: 'voice', title: 'Speed', icon: 'gauge', tint: 'var(--teal)', kw: 'voice speed speech rate slow fast speaking rate' },
   { page: 'voice', title: 'Pitch', icon: 'speaker', tint: 'var(--teal)', kw: 'voice pitch high low deep' },
+  { page: 'voice', title: 'Try it', icon: 'play', tint: 'var(--green)', kw: 'hear sample test voice play' },
   { page: 'voice', title: 'Hype man', icon: 'chat', tint: 'var(--teal)', kw: 'style personality calm drill sergeant deadpan your own lines motivation shout' },
   { page: 'voice', title: 'Just the facts', icon: 'chat', tint: 'var(--teal)', kw: 'style plain short facts only' },
   { page: 'voice', title: 'Calm coach', icon: 'chat', tint: 'var(--teal)', kw: 'style calm gentle coach' },

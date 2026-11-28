@@ -9,7 +9,7 @@ globalThis.IS_REACT_ACT_ENVIRONMENT = true
 // #375: "Vibrate when the phone is on silent" is an Android-app setting — only there can the
 // native side buzz as an alarm — and it belongs to Vibrate, so it shows only with Vibrate on.
 const mocks = vi.hoisted(() => {
-  const state = { S: null, MOBILE: false, android: false }
+  const state = { S: null, MOBILE: false, android: false, sheets: [] }
   state.snapshot = () => ({
     S: state.S,
     user: null,
@@ -31,7 +31,7 @@ vi.mock('../store/useStore.js', () => {
   return { useStore, DEF: { reminder: { time: '17:30' } }, hasData: () => false }
 })
 vi.mock('../store/useUI.js', () => {
-  const snap = () => ({ toast: vi.fn(), openSheet: vi.fn() })
+  const snap = () => ({ toast: vi.fn(), openSheet: fn => mocks.sheets.push(fn) })
   const useUI = selector => selector ? selector(snap()) : snap()
   useUI.getState = snap
   return { useUI }
@@ -68,6 +68,7 @@ beforeEach(() => {
   }
   mocks.MOBILE = false
   mocks.android = false
+  mocks.sheets = []
   mocks.checkForUpdate.mockClear()
   mocks.confirmSheet.mockClear()
   Object.defineProperty(navigator, 'vibrate', { value: () => true, configurable: true, writable: true })
@@ -89,20 +90,30 @@ const mount = async () => {
 const TITLE = 'Vibrate on silent too'
 const rowTitled = title => [...host.querySelectorAll('.lrow')].find(r => r.querySelector('.lrow-t')?.textContent === title)
 const switchIn = row => row.querySelector('[role="switch"]') || row.querySelector('input[type="checkbox"]') || row.querySelector('button')
+const tileNamed = name => [...host.querySelectorAll('.at')].find(a => a.querySelector('.nm')?.textContent === name)
+// Opens the sheet a strip asked for, in the same host.
+const openedSheet = () => act(() => root.render(mocks.sheets.at(-1)(() => {})))
 
 describe('Settings — vibrate when the phone is on silent', () => {
-  it('Android app: offered right under Vibrate, off by default, and writes the setting', async () => {
+  it('Android app: the Vibrate strip opens a sheet with the switch, off by default, and writes the setting', async () => {
     mocks.MOBILE = true
     mocks.android = true
     await mount()
+    const strip = tileNamed('Vibrate').querySelector('.at-op')
+    expect(strip.getAttribute('aria-label')).toBe('Vibrate options')
+    expect(strip.textContent).toBe('Buzzes at the end')
+    expect(strip.dataset.find).toBe('Vibrate on silent too')
+    act(() => { strip.click() })
+    openedSheet()
+    expect(host.querySelector('h3').textContent).toBe('Vibrate')
     const row = rowTitled(TITLE)
-    expect(row).toBeTruthy()
     expect(row.querySelector('.lrow-s').textContent).toBe('The end of a rest or a hold buzzes like an alarm, even in silent mode.')
-    const rows = [...host.querySelectorAll('.lrow')]
-    expect(rows.indexOf(row)).toBe(rows.indexOf(rowTitled('Vibrate')) + 1)
     expect(switchIn(row).getAttribute('aria-checked')).toBe('false')
     act(() => { switchIn(row).click() })
     expect(mocks.S.vibrateOnSilent).toBe(true)
+    act(() => { [...host.querySelectorAll('button')].find(b => b.textContent === 'Done').click() })
+    await mount()
+    expect(tileNamed('Vibrate').querySelector('.at-op').textContent).toBe('Vibrate on silent too')
   })
 
   it('not offered while Vibrate is off', async () => {
@@ -110,18 +121,44 @@ describe('Settings — vibrate when the phone is on silent', () => {
     mocks.android = true
     mocks.S.vibrate = false
     await mount()
-    expect(rowTitled('Vibrate')).toBeTruthy()
-    expect(rowTitled(TITLE)).toBeUndefined()
+    expect(tileNamed('Vibrate')).toBeTruthy()
+    expect(tileNamed('Vibrate').querySelector('.at-op')).toBeNull()
   })
 
   it('not offered on the web or in the iOS app', async () => {
     await mount()
-    expect(rowTitled('Vibrate')).toBeTruthy()
-    expect(rowTitled(TITLE)).toBeUndefined()
+    expect(tileNamed('Vibrate').querySelector('button.at-op')).toBeNull()
     act(() => root.unmount())
     root = createRoot(host)
     mocks.MOBILE = true
     await mount()
-    expect(rowTitled(TITLE)).toBeUndefined()
+    expect(tileNamed('Vibrate').querySelector('button.at-op')).toBeNull()
+  })
+
+  it('Android Flash: the strip is a button also with Flash off, and its sheet holds "Light up the screen at rest end"', async () => {
+    mocks.MOBILE = true
+    mocks.android = true
+    await mount()
+    const strip = tileNamed('Flash the screen').querySelector('.at-op')
+    expect(tileNamed('Flash the screen').querySelector('[role="switch"]').getAttribute('aria-checked')).toBe('false')
+    expect(strip.getAttribute('aria-label')).toBe('Flash options')
+    expect(strip.textContent).toBe('Wakes the screen')
+    expect(strip.dataset.find).toBe('Light up the screen at rest end')
+    act(() => { strip.click() })
+    openedSheet()
+    expect(host.querySelector('h3').textContent).toBe('Flash the screen')
+    const sw = switchIn(rowTitled('Light up the screen at rest end'))
+    expect(sw.getAttribute('aria-checked')).toBe('true')
+    act(() => { sw.click() })
+    expect(mocks.S.restLightScreen).toBe(false)
+    await mount()
+    expect(tileNamed('Flash the screen').querySelector('.at-op').textContent).toBe('Screen stays dark')
+  })
+
+  it('web Flash: no options, plain text only while on', async () => {
+    mocks.S.timerFlash = true
+    await mount()
+    expect(tileNamed('Flash the screen').querySelector('.at-op').textContent).toBe('Screen blinks')
+    expect(tileNamed('Flash the screen').querySelector('button.at-op')).toBeNull()
   })
 })
