@@ -145,6 +145,7 @@ export function VoiceList() {
     timer.current = setTimeout(() => setPlayKey(null), speakMs(text, speechRateNum(S_())))
   }
   const tile = (key, id, glyph) => on ? <TierTile tier={key} glyph={glyph} playing={playKey === (id || 'auto')} /> : null
+  const rowCls = id => 'vp-voice' + (playKey === (id || 'auto') ? ' vp-pick' : '') // the check pops on a pick, not on a visit
   // Opening the page with a Natural pick, or picking one, has the model make the fixed lines ahead.
   useEffect(() => { if (isNatural(cur)) cues.prepareFixed() }, [cur])
   const [showApple, setShowApple] = useState(false)
@@ -163,7 +164,7 @@ export function VoiceList() {
   const apple = <>
     {groups.map(g => <Section key={g.lang} title={groupName(g.lang)}>
       {g.voices.map(v => <Row key={v.id} icon={tile(tierKey(v, { ios }), v.id)} title={voiceLabel(v)} ariaLabel={[voiceLabel(v), on && tierWord(v, ios)].filter(Boolean).join(', ') + sel(cur === v.id)}
-        subtitle={v.online ? t('Needs internet') : null} value={on ? tierWord(v, ios) : null} className="vp-voice"
+        subtitle={v.online ? t('Needs internet') : null} value={on ? tierWord(v, ios) : null} className={rowCls(v.id)}
         accessory={cur === v.id ? 'check' : 'none'} onClick={() => pick(v.id)} />)}
     </Section>)}
     {on && ios && !premium && <section className="sect"><div className="sect-b vp-card">
@@ -187,19 +188,19 @@ export function VoiceList() {
       <span className="vh">{t('Voice types: {0}', kinds.map(legendName).join(', '))}</span>
     </>}
     <Section footer={voices.length ? null : t('No other voices for this language here. Your device’s settings can add more.')}>
-      <Row icon={tile('plain', '', 'bolt')} className="vp-voice" title={t('Automatic')} subtitle={autoNote} ariaLabel={t('Automatic') + sel(!cur)} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', auto?.id || '')} />
+      <Row icon={tile('plain', '', 'bolt')} className={rowCls('')} title={t('Automatic')} subtitle={autoNote} ariaLabel={t('Automatic') + sel(!cur)} accessory={!cur ? 'check' : 'none'} onClick={() => pick('', auto?.id || '')} />
     </Section>
-    {natural && nat.state === 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} tile={tile} fresh={downloaded.current} />}
+    {natural && nat.state === 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} tile={tile} rowCls={rowCls} fresh={downloaded.current} />}
     {folded
       ? <Section title={t('Apple voices')}><Row title={names} ariaLabel={t('Apple voices') + ', ' + names} accessory="chevron" onClick={() => setShowApple(true)} /></Section>
       : apple}
-    {natural && nat.state !== 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} tile={tile} />}
+    {natural && nat.state !== 'ready' && <NaturalGroup nat={nat} cur={cur} pick={pick} tile={tile} rowCls={rowCls} />}
     {!ios && list !== null && MOBILE && <p className="sect-f vp-note"><Icon name="info" aria-hidden="true" />{t('Natural voice is on iPhone first. Android uses your phone’s voices for now.')}</p>}
   </>
 }
 
 /** Natural voice in the picker: the offer, the download, a stop, and the installed voices with Remove. */
-function NaturalGroup({ nat, cur, pick, tile, fresh }) {
+function NaturalGroup({ nat, cur, pick, tile, rowCls, fresh }) {
   const [wifi, setWifi] = useState(() => readPrefs().wifiOnly)
   const lastMb = useRef(0) // where a download was when it stopped; the state forgets it
   const total = nat.total > 0 ? mbOf(nat.total) : NATURAL_MB
@@ -217,7 +218,7 @@ function NaturalGroup({ nat, cur, pick, tile, fresh }) {
     return <>
       <Section title={<span className="vp-head">{t('Natural voice · English')}<span className="vp-pill">{t('Installed')}</span></span>}
         footer={t('Lines are made during the rest, so you do not hear a delay. Where it has no voice for your language, the Apple voice speaks.')}>
-        {NATURAL_VOICES.map((v, i) => <Row key={v.id} icon={tile('natural', v.id)} title={v.name} value={v.region} className={'vp-voice' + (fresh ? ' vp-in' : '')} style={fresh ? { '--i': i } : null}
+        {NATURAL_VOICES.map((v, i) => <Row key={v.id} icon={tile('natural', v.id)} title={v.name} value={v.region} className={rowCls(v.id) + (fresh ? ' vp-in' : '')} style={fresh ? { '--i': i } : null}
           ariaLabel={[v.name, t('Natural voice'), v.region].join(', ') + sel(v.id)} accessory={cur === v.id ? 'check' : 'none'} onClick={() => pick(v.id)} />)}
       </Section>
       {!nat.debugModel && <Section><Row danger title={t('Remove download')} subtitle={t('Frees {0} MB', mb)} onClick={() => confirmSheet({
@@ -468,6 +469,7 @@ const BUBBLES = ['restStart', 'restOver']
 
 /** The six styles as tiles, then the picked style's first line for two moments, then "Edit these lines". */
 function StyleGrid({ S, style, pickStyle }) {
+  const [popped, setPopped] = useState(null) // the tile tapped this visit: only its check pops
   const [replace, makeOwn] = useEditLines()
   const own = style === 'own'
   const [, color] = STYLE_LOOK[style]
@@ -477,9 +479,9 @@ function StyleGrid({ S, style, pickStyle }) {
       {TILE_ORDER.map((id, i) => {
         const [icon, c] = STYLE_LOOK[id], nm = t(STYLE_COPY[id][0])
         return <button key={id} type="button" role="radio" aria-checked={style === id} aria-label={`${nm}, ${t('{0} of {1}', i + 1, TILE_ORDER.length)}`} data-find={nm}
-          className={'vs-tile' + (style === id ? ' sel' : '') + (id === 'own' ? ' own' : '')} style={{ '--c': c }} onClick={() => pickStyle(id)}>
+          className={'vs-tile' + (style === id ? ' sel' : '') + (id === 'own' ? ' own' : '')} style={{ '--c': c }} onClick={() => { setPopped(id); pickStyle(id) }}>
           <span className="vs-ch"><span className="vs-ico"><Icon name={icon} aria-hidden="true" /></span><span className="vs-nn">{nm}</span></span>
-          {style === id && <span className="vs-ok"><Icon name="check" aria-hidden="true" /></span>}
+          {style === id && <span className={'vs-ok' + (popped === id ? ' pop' : '')}><Icon name="check" aria-hidden="true" /></span>}
           <span className="vs-dd">{t(STYLE_COPY[id][1])}</span>
         </button>
       })}

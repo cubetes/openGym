@@ -38,8 +38,9 @@
 .vs-ico { display: grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 8px; background: var(--c); color: #fff }
 .vs-ico .icn { width: 16px; height: 16px }
 .vs-nn { font-size: var(--fs-subhead); font-weight: 600; line-height: 1.15; overflow-wrap: anywhere }
-.vs-ok { position: absolute; inset-inline-end: 9px; top: 9px; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 10px; background: var(--c); color: #fff; animation: vs-pop 160ms var(--ease-out) both }
+.vs-ok { position: absolute; inset-inline-end: 9px; top: 9px; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 10px; background: var(--c); color: #fff }
 .vs-ok .icn { width: 12px; height: 12px }
+.vs-ok.pop { animation: vs-pop 160ms var(--ease-out) both }
 @keyframes vs-pop { from { transform: scale(.8); opacity: 0 } to { transform: scale(1); opacity: 1 } }
 .vs-dd { display: block; margin-top: 6px; font-size: var(--fs-caption); line-height: 1.3; color: var(--label-2) }
 :root[data-theme="light"] .vs-dd { color: rgba(60,60,67,.9) }
@@ -65,9 +66,9 @@
 
 .text-big .vs-tile { min-height: 120px }
 
-/* The picker (VoiceList): a tier tile leads each row, the check pops in, new Natural rows rise in a stagger. */
+/* The picker (VoiceList): a tier tile leads each row, the check pops in on a pick, new Natural rows rise in a stagger. */
 .lrow-i.lrow-lead { width: auto; height: auto; border-radius: 0; background: none; font-size: inherit }
-.vp-voice .lrow-k { animation: vs-pop 160ms var(--ease-out) both }
+.vp-voice.vp-pick .lrow-k { animation: vs-pop 160ms var(--ease-out) both }
 .vp-in { animation: vp-in 240ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 40ms) }
 @keyframes vp-in { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
 .vp-legend { display: flex; flex-wrap: wrap; gap: 6px 8px; margin: 0 16px 14px; font-size: var(--fs-caption, 12px); color: var(--label-2) }
@@ -75,11 +76,11 @@
 
 @media (prefers-reduced-motion: reduce) {
   .vp-in { animation-name: vs-fade; animation-duration: 140ms; animation-delay: 0s }
-  .vp-voice .lrow-k { animation-name: vs-fade; animation-duration: 140ms; animation-delay: 0s }
+  .vp-voice.vp-pick .lrow-k { animation-name: vs-fade; animation-duration: 140ms; animation-delay: 0s }
   .vhero-wave i, .vhero:is(.play, .end) .vhero-wave i { animation: none }
   .vhero.play .vhero-wave i { transform: scaleY(.5) }
   .btn.vhero-try, .vs-tile, .vs-bub, .vhero-main { transition: none }
   .btn.vhero-try:active, .vs-tile:active, .vs-bub:active, .vhero-main:active { transform: none }
-  .vs-ok { animation: vs-fade 160ms linear both }
+  .vs-ok.pop { animation: vs-fade 160ms linear both }
   @keyframes vs-fade { from { opacity: 0 } to { opacity: 1 } }
 }

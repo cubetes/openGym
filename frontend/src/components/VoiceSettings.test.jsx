@@ -165,6 +165,13 @@ describe('Settings → Timer alerts → Voice', () => {
     expect(radio('Hype man').querySelector('.vs-ok')).not.toBeNull()
     expect(radio('Hype man').dataset.find).toBe('Hype man')
   })
+  it('the style check pops only on a tap', async () => {
+    await render(<VoiceSettings />)
+    expect(radio('Just the facts').querySelector('.vs-ok').classList.contains('pop')).toBe(false)
+    await act(async () => { radio('Calm coach').click() })
+    await render(<VoiceSettings />) // the mocked store does not redraw by itself
+    expect(radio('Calm coach').querySelector('.vs-ok').classList.contains('pop')).toBe(true)
+  })
   it('the two bubbles play the picked style’s lines', async () => {
     mocks.S.cueStyle = 'hype'
     await render(<VoiceSettings />)
@@ -557,7 +564,7 @@ describe('Settings → Timer alerts → Voice', () => {
     expect(block).toMatch(/vhero-wave i[^}]*animation: none/)
     expect(block).toMatch(/\.vs-tile:active[^}]*transform: none/)
     expect(block).toMatch(/\.vhero\.play \.vhero-wave i \{ transform: scaleY\(\.5\)/)
-    expect(block).toMatch(/\.vs-ok \{ animation: vs-fade/)
+    expect(block).toMatch(/\.vs-ok\.pop \{ animation: vs-fade/)
     expect(css).toMatch(/\.vhero-main:active \{ transform: scale\(var\(--press-scale-card\)\) \}/)
   })
   describe('the picker: tier tiles, and the plain list with Better voices off', () => {
@@ -652,6 +659,14 @@ describe('Settings → Timer alerts → Voice', () => {
         expect(host.querySelectorAll('.lrow-k')).toHaveLength(1)
         expect(localStorage.getItem('og_speech_voice')).toBe('natural:af_heart')
       })
+      it('the picker check pops only on a pick', async () => {
+        phone({}, [ava, anna])
+        localStorage.setItem('og_speech_voice', 'ava')
+        await render(<VoiceList />)
+        expect(host.querySelector('.vp-pick')).toBeNull()
+        await act(async () => { rowTitled('Anna').click() })
+        expect(rowTitled('Anna').classList.contains('vp-pick')).toBe(true)
+      })
       it('an Apple pick keeps its check', async () => {
         phone({}, [ava, anna])
         localStorage.setItem('og_speech_voice', 'anna')
@@ -664,7 +679,7 @@ describe('Settings → Timer alerts → Voice', () => {
       const css = (await import('node:fs')).readFileSync('src/components/VoiceSettings.css', 'utf8')
       const block = css.slice(css.lastIndexOf('@media (prefers-reduced-motion: reduce)'))
       expect(block).toMatch(/\.vp-in \{[^}]*animation-name: vs-fade/)
-      expect(block).toMatch(/\.vp-voice \.lrow-k \{[^}]*animation-name: vs-fade/)
+      expect(block).toMatch(/\.vp-voice\.vp-pick \.lrow-k \{[^}]*animation-name: vs-fade/)
       const idx = (await import('node:fs')).readFileSync('src/index.css', 'utf8')
       expect(idx).toMatch(/prefers-reduced-motion:reduce\)\{[^@]*\.vp-bar i\{transition:none/)
     })
